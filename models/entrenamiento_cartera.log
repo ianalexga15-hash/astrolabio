@@ -1,0 +1,13 @@
+{'TR': 50076, 'VA': 16440, 'TE': 16520} activos 40 corte TR 2024-08-02 corte VA 2025-09-17
+MLP ensamble de 3 semillas, 16 neuronas RMSE_VA media=0.052055 desv=0.000196 115s
+LSTM ensamble de 3 semillas, 8 neuronas RMSE_VA media=0.051624 desv=0.000036 324s
+Lineal alpha=0 RMSE 0.051987 regla {'umbral': 0.001, 'filtro': 'ninguno', 'rendimiento': 0.2316659576088531, 'drawdown': 0.47504254304157745, 'operaciones': 3945, 'win_rate': np.float64(0.5166759472114641), 'costos': np.float64(11138.65731781632)}
+Lineal alpha=100 RMSE 0.051972 regla {'umbral': 0.001, 'filtro': 'ninguno', 'rendimiento': 0.20751336322557346, 'drawdown': 0.46730088128580816, 'operaciones': 3925, 'win_rate': np.float64(0.5133823807936946), 'costos': np.float64(10968.315549923622)}
+Lineal alpha=1000 RMSE 0.05192 regla {'umbral': 0.0005, 'filtro': 'ninguno', 'rendimiento': 0.2347422834314159, 'drawdown': 0.47321664677778913, 'operaciones': 3800, 'win_rate': np.float64(0.5080074298429869), 'costos': np.float64(10889.562882915856)}
+MLP ensamble de 3 semillas, 16 neuronas RMSE 0.051823 regla {'umbral': 0.004, 'filtro': 'ninguno', 'rendimiento': 0.3688020022151013, 'drawdown': 0.23760213211993014, 'operaciones': 3027, 'win_rate': np.float64(0.4908597280450568), 'costos': np.float64(8818.49017512133)}
+LSTM ensamble de 3 semillas, 8 neuronas RMSE 0.051605 regla {'umbral': 0.004, 'filtro': 'ninguno', 'rendimiento': 0.5400471489397363, 'drawdown': 0.2701769357537624, 'operaciones': 1157, 'win_rate': np.float64(0.5290345043794777), 'costos': np.float64(3640.547082719251)}
+ELEGIDO LSTM ensamble de 3 semillas, 8 neuronas {'umbral': 0.004, 'filtro': 'ninguno', 'rendimiento': 0.5400471489397363, 'drawdown': 0.2701769357537624, 'operaciones': 1157, 'win_rate': np.float64(0.5290345043794777), 'costos': np.float64(3640.547082719251)}
+Cartera en VA: 0.54 caída 0.2702 comprar y mantener: 0.6841 caída 0.5841
+RMSE conjunto 0.051605 cero 0.051668 dirección 0.504
+Activos que superan a pronóstico cero en RMSE: 20 de 40  con rendimiento mayor a comprar y mantener: 21
+Listo en 378 s. Versión dev-cartera-2025-09-17-40

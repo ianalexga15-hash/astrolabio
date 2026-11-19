@@ -1,0 +1,295 @@
+# Astrolabio
+
+Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas y 8 tokens que siguen acciones, divisas y oro. Revisa cada segundo sus condiciones de compra y venta y decide sin que nadie le diga qué hacer. Opera en modo **Paper**: dinero virtual y ninguna ruta de órdenes reales.
+
+En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo en NumPy, Ollama local y reglas deterministas. Corre en la laptop, así que no opera mientras esté apagada.
+
+## Estado al 2026-11-19
+
+- **Modelo de BTC:** se entrenó en una GPU Tesla T4 de Colab (682 s, sin errores) y abrió TE una sola vez. BTC opera con ese modelo, `t4-2026-11-12`.
+- **Comparación final en TE** (BTC, 60 días, simulado): regla sin LLM −0.61 %, con LLM −3.13 %, comprar y mantener −3.13 %. Corrió con la configuración de ese momento, antes de la meta de 13 % y del filtro SMA20: la configuración de hoy no tiene validación en TE, solo simulación en VA y evidencia prospectiva en Paper.
+- **Meta por operación:** cada compra pone su venta a +13 % más la comisión del par. Es un precio objetivo, no un 13 % neto asegurado: muchas operaciones cierran antes en el stop.
+- **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH y XMR salieron porque MEXC los retiró, y RUNE entró en lugar de XMR con la misma regla.
+- **Radar:** muestra las condiciones de compra de cada activo, también sin compra armada.
+- **En vivo** (observado al 2026-11-19): 526 ciclos en 13 velas, 13 operaciones cerradas (12 por stop y 1 por objetivo) y patrimonio de −0.45 % sobre 50,000 USDT virtuales.
+
+## Abrir
+
+Doble clic en **Astrolabio**, el acceso del escritorio. Arranca el servidor en segundo plano y abre el panel en su propia ventana. Cerrar la ventana no apaga el bot, para que siga vigilando: se apaga en la pestaña Sistema, con **Apagar Astrolabio**.
+
+La primera vez, o en otra computadora, usa **Iniciar Bot.cmd**: prepara lo que falte y crea `.env` con claves aleatorias. La primera clave del panel es `BOT_ADMIN_KEY`. Después puedes poner una contraseña tuya en la pestaña Sistema, sección Tu contraseña: se guarda solo su huella scrypt en la base local y la clave de `.env` sigue sirviendo para recuperar el acceso. Las sesiones duran 8 horas y sobreviven a los reinicios del bot: la base guarda solo la huella SHA-256 de cada sesión y su vencimiento, nunca la sesión misma, y cerrar sesión la borra. Para recrear el acceso:
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts\crear_acceso.ps1
+```
+
+Mientras la laptop está suspendida, Astrolabio no corre, y al despertarla no vuelve solo. Para que arranque en segundo plano, sin abrir ventana, cada vez que inicias sesión o desbloqueas la laptop:
+
+```bash
+powershell -ExecutionPolicy Bypass -File scripts\inicio_automatico.ps1
+```
+
+Crea la tarea «Astrolabio» del Programador de tareas, solo para tu usuario; si el bot ya corre, no hace nada. Para quitarla, el mismo comando con `-Quitar`.
+
+Windows suspende esta laptop tras 1 hora sin uso, y suspendida no corre el ciclo diario. Para evitarlo mientras el bot corre, agrega `BOT_SIN_SUSPENDER=1` a `.env` y vuelve a abrir Astrolabio. La pantalla sí se apaga, gasta más batería y con la tapa cerrada Windows puede suspender igual. No cambia ningún ajuste de energía: al apagar Astrolabio, Windows lo olvida.
+
+Requisitos: Python 3.13, Node 20 o posterior y [Ollama](https://ollama.com/download/windows) abierto con el modelo:
+
+```bash
+ollama pull qwen3:4b-instruct
+```
+
+Manualmente:
+
+```bash
+py -3.13 -m venv .venv
+```
+
+```bash
+.venv\Scripts\python -m pip install -r requirements.txt
+```
+
+```bash
+.venv\Scripts\python -m bot.preparar
+```
+
+```bash
+cd frontend && npm install && npm run build
+```
+
+```bash
+.venv\Scripts\python -m bot
+```
+
+El servidor registra sus mensajes en `data/servidor.log`. El panel queda en http://127.0.0.1:8770. La documentación de la API está en la pestaña Sistema, sección API documentada, y el esquema OpenAPI completo en `/api/openapi.json`; las dos piden sesión.
+
+## Conectar tu cuenta MEXC (solo lectura)
+
+1. Entra a MEXC y abre la sección de claves de API (API Management).
+2. Crea una clave con nombre `Astrolabio` y marca solo **View Account Details** y **View Order Details**. Nunca Trade, Withdraw ni Transfer.
+3. Copia la Access Key y la Secret Key en tu `.env`, en las líneas `MEXC_API_KEY=` y `MEXC_API_SECRET=`. No las pegues en el chat ni en otro archivo.
+4. Reinicia el bot. En Sistema aparece «Cuenta MEXC» con tu saldo real; el bot sigue operando en Paper y con esa clave no puede comprar, vender ni retirar.
+
+Sin IP ligada, MEXC vence la clave a los 90 días; se renueva desde la misma página.
+
+Con la clave conectada, `.venv/Scripts/python scripts/comisiones_mexc.py` guarda en `config/comisiones.json` la comisión real de cada par para tu cuenta; reinicia el bot para que la simulación la cobre. Un par sin dato usa la comisión general de Sistema.
+
+## Cómo decide
+
+Tiene dos velocidades: un cerebro lento y un reflejo rápido.
+
+**Cerebro, una vez al día por activo.** Cada 30 segundos revisa si cerró una vela diaria (00:00 UTC, 18:00 en Ciudad de México). Con cada vela nueva, una sola vez:
+
+1. Lee velas cerradas de MEXC y valida activo, orden, huecos y antigüedad.
+2. Calcula variables con la misma definición del entrenamiento y pronostica el rendimiento del día siguiente.
+3. Pide a Ollama una propuesta en JSON: comprar, mantener o vender. El LLM recibe datos y herramientas de solo lectura. Con 40 activos toma unos 5 minutos, uno a la vez.
+4. Valida la propuesta y aplica el motor de riesgo. El LLM no puede abrir posición sin señal del modelo ni cambiar límites.
+   **Máquina del tiempo** (encendida, se cambia en Sistema): antes de autorizar una compra repite 10,000 veces los próximos 60 días con las últimas 60 velas del activo y sus mismas salidas; si en promedio pierde, no la autoriza. Idea de day-trader-skill. En el replay de la cartera en VA subió el rendimiento de +2.57 % a +2.95 % y bajó la caída máxima de 4.68 % a 2.45 % (simulado).
+   **Tope de compras por día** (apagado, `max_compras_dia` = 0): la cartera no autoriza más compras nuevas por vela diaria que ese número. 0 es sin tope.
+   **Punto de equilibrio** (apagado, `proteger_atr` = 0): al ganar esa cantidad de ATR, el stop sube a la entrada más costos. En VA, a 1 ATR dio +2.78 % contra +2.95 % sin él, así que quedó apagado (simulado).
+   **Filtro técnico mínimo** (encendido desde el 2026-11-13, `filtro_minimo` = `sma20`): si la regla elegida en VA no trae filtro, como pasa con los dos modelos de hoy, la compra exige además que el precio esté sobre su SMA20. El reflejo lo revisa cada segundo y el Radar muestra el precio, la SMA20 y la distancia. Con `""` vuelve la regla tal como salió de VA.
+5. Si la aprueba, **arma** la compra para ese día. Guarda la decisión en una sola transacción de SQLite.
+
+**Reflejo, cada segundo.** Una sola consulta trae la mejor compra y venta de todos los pares. Para cada activo:
+
+- **Con posición:** revisa stop, objetivo y stop móvil. El stop y el stop móvil venden al instante; el objetivo es una venta que espera en el libro a su precio, sin comisión.
+- **Con compra armada:** revisa 5 condiciones: señal del día, filtro técnico en vivo, spread y libro, no perseguir el precio y riesgo. Con las 5 cumplidas deja una orden que espera al mejor precio de compra; se llena solo si el precio de venta baja hasta ella, y entonces paga 0 % de comisión. Si deja de cumplirse una condición, se cancela. Si a los 30 minutos no se llenó y todo sigue en orden, compra al instante al precio medio del libro visible, con la comisión real del par. Detalle en `docs/ORDEN_EN_ESPERA.md`.
+- **Sin precio fresco:** no opera.
+- **Compra autorizada que no se ejecutó:** al terminar el día queda como orden expirada con las condiciones que faltaron. Es la evidencia para ajustar las reglas en vivo.
+
+**Cartera.** 50,000 virtuales repartidos en cupos iguales: cada activo tiene su cuenta y su corrida. El fallo de un activo no detiene a los demás. La pestaña **Radar** muestra todo en vivo.
+
+Si falla MEXC u Ollama, no abre posiciones, lo registra y reintenta solo; los stops siguen protegiendo. Una clave incorrecta o un límite de caída alcanzado requieren intervención humana. Si MEXC deja de listar un par, su agente queda en pausa con ese motivo y no reintenta: sacarlo de `config/universo.json` es decisión humana. Se agregó después de que MEXC retirara DASHUSDT el 2026-11-13.
+
+**Desactivar bot**, en la cabecera de cualquier vista, bloquea toda orden nueva y conserva las posiciones; antes de hacerlo avisa cuántas quedan abiertas. **Cerrar todas** es una acción aparte, en «Acciones avanzadas». Al reiniciar se recupera el estado sin duplicar operaciones; las velas perdidas solo revisan stops con su máximo y mínimo.
+
+Supuestos del simulador, en `config/riesgo.json`: capital de 50,000, comisión real de MEXC por par para la cuenta conectada (`config/comisiones.json`: 0.05 % en 29 pares, 0.08 % en 9 y 0 % en XRP y el euro; 0.08 % si falta el dato) y 0 % para la orden que espera, precio medio de recorrer el libro visible en vivo más 5 puntos base de deslizamiento en lo que se compra o vende al instante, exposición máxima de 80% por cupo, riesgo de 2% por operación, stop a 2 ATR, objetivo de venta a +13 % más la comisión del par (la meta por operación, `objetivo_pct`; con 0 vuelve a 4 ATR), stop móvil a 2 ATR, pérdida diaria de 5%, caída máxima de 25%, dato de hasta 26 horas, spread de hasta 25 puntos base y precio de hasta 5 segundos.
+
+**Consumo de internet:** revisar cada segundo descarga unos 50 KB por segundo, alrededor de 4.3 GB al día. Con datos móviles conviene espaciarlo con `BOT_REFLEJO_S` en `.env`.
+
+## Activos y modelos
+
+`config/universo.json` guarda los 40 activos y cómo se eligieron, sin mirar resultados del modelo. Las criptomonedas se eligieron el 2026-11-05: spot contra USDT, por volumen de 24 horas, sin estables, envueltos, metales, acciones tokenizadas ni apalancados, con al menos 900 días y spread mediano de hasta 25 puntos base. Elegir por el volumen de hoy favorece a los sobrevivientes: cualquier evaluación del pasado sale optimista.
+
+```bash
+.venv\Scripts\python scripts\elegir_universo.py
+```
+
+**Pares que MEXC retiró.** DASH salió el 2026-11-13. XMR salió el 2026-11-19: desde el 17, MEXC responde «Invalid symbol» y su agente quedaba en pausa. XMR nunca operó, así que en su lugar entró la cripto de mayor volumen de 24 h que cumple la misma regla y que no estaba ni había salido: RUNEUSDT (THORChain), con 1,029 días seguidos, spread mediano de 22.5 pb y comisión de 0.05 %. La regla se fijó antes de medir. La cartera sigue en 40 activos de 1,250 USDT, así que el patrimonio total no cambia. El detalle está en «cambios» de `config/universo.json`.
+
+### Acciones, divisas y oro (desde el 2026-11-13)
+
+La cartera no es solo de criptomonedas. MEXC no vende acciones ni divisas, pero sí tokens que siguen su precio y se compran con USDT. Ocho de los 40 activos son de este tipo:
+
+| Par | Qué es | Historia en MEXC | Comisión | Spread fuera / con la bolsa abierta |
+| --- | --- | --- | --- | --- |
+| `GOLD(XAUT)USDT` | Tether Gold: sigue el precio del oro | 1,296 días, desde 2023-04-27 | 0.05 % | 0.1 / 0.0 pb |
+| `EURUSDT` | Euro contra dólar | 625 días, desde 2025-02-26 | 0 % | 0.9 / 0.9 pb |
+| `BRLUSDT` | Real brasileño contra dólar | 606 días, desde 2025-03-17 | 0.08 % | 11.4 / 5.7 pb |
+| `SPYONUSDT` | ETF SPDR S&P 500 (500 empresas grandes de EE. UU.), de Ondo | 430 días, desde 2025-09-09 | 0.08 % | 8.4 / 17.7 pb |
+| `QQQONUSDT` | ETF Invesco QQQ (índice Nasdaq-100), de Ondo | 430 días, desde 2025-09-09 | 0.08 % | 8.7 / 18.8 pb |
+| `AAPLXUSDT` | Acción de Apple, xStock de Backed | 499 días, desde 2025-07-02 | 0.08 % | 2.0 / 3.5 pb |
+| `METAXUSDT` | Acción de Meta, xStock de Backed | 498 días, desde 2025-07-03 | 0.08 % | 1.6 / 6.6 pb |
+| `MSFTONUSDT` | Acción de Microsoft, de Ondo | 431 días, desde 2025-09-08 | 0.08 % | 8.8 / 18.0 pb |
+
+Spread medido el 2026-11-13 a las 13:59 y a las 18:03 UTC, en 6 y 10 lecturas del libro. Comisión real de la cuenta conectada al comprar al instante (`config/comisiones.json`).
+
+- **xStocks (terminan en X):** los emite Backed en la red Solana. Cada token dice estar respaldado por una acción real que guarda un custodio, y los dividendos se reinvierten en el token.
+- **Ondo Global Markets (terminan en ON):** los emite Ondo Finance en Ethereum, con el mismo esquema: una acción o un ETF real detrás de cada token. Un ETF como SPY reúne 500 empresas, así que diversifica más que una sola acción.
+- **Oro:** cada token XAUT, de Tether, dice equivaler a una onza troy de oro físico guardado en Suiza.
+- **Divisas:** el euro y el real son saldos dentro de MEXC, sin contrato en blockchain. Se compran con USDT, que vale cerca de un dólar, así que su precio es el tipo de cambio.
+- **Operan las 24 horas, todos los días, aunque su mercado cierre.** La bolsa de Nueva York abre de lunes a viernes de 9:30 a 16:00 (hora de Nueva York), y las divisas y el oro casi no cotizan el fin de semana. Fuera de ese horario MEXC sigue cotizando el token con menos volumen: el precio puede separarse del real y saltar en la apertura. En los últimos 400 días, el movimiento medio de un sábado o domingo fue de 30 % a 65 % del de un día hábil (observado en el oro, el euro, el real, SPY y Apple).
+- **El bot no los trata distinto:** mismas reglas, mismo cupo y mismos controles. El spread máximo de 25 pb y la revisión del libro frenan las compras cuando hay poca liquidez, pero un stop puede activarse en fin de semana con un precio que no es el de la bolsa.
+
+**Cómo se eligieron.** La regla se fijó antes de medir con la bolsa abierta y antes del replay:
+- Pares en USDT que MEXC deja operar y que siguen acciones, ETF, divisas u oro.
+- Spread mediano de hasta 25 pb y un libro que cubre 1,000 USDT moviendo el precio 25 pb o menos, fuera y dentro del horario de la bolsa. Mil USDT es lo máximo que el bot compra con un cupo.
+- Al menos 120 velas diarias seguidas. Un token por subyacente: el de menor spread con la bolsa abierta.
+- Un oro y dos divisas por volumen de 24 h, los ETF del S&P 500 y del Nasdaq-100, y tres de las siete grandes de EE. UU. (Apple, Microsoft, Nvidia, Amazon, Alphabet, Meta y Tesla) por menor spread con la bolsa abierta. Nvidia, Amazon y Tesla pasaron con spreads mayores; Alphabet no pasó.
+- El peso mexicano no pasó: comprar 1,000 USDT movería su precio más de 1 %.
+
+**Qué salió.** Salieron ZIG, ARB, XLM, GRAM, LINK, QNT y BONK: las criptos de menor volumen de 24 h que nunca operaron en Paper. Las que tienen posición o historial se quedan, así el patrimonio total no cambia. DASH ya había salido porque MEXC lo retiró. La cartera sigue en 40 activos y cada uno en 1,250 USDT.
+
+**Sin validación propia.** El modelo de la cartera se entrenó y se validó solo con criptomonedas: nunca vio una acción, una divisa ni el oro. Los acepta sin errores porque sus variables son relativas (rendimiento, distancia a la SMA20 y volatilidad de 20 días). En su última ventana quedan a menos de 1.3 desviaciones de lo que vio, del lado de la volatilidad baja, como BTC en días tranquilos. Se operan en Paper como extensión, sin validación propia.
+
+**Casi nunca se compran.** Dos filtros los frenan:
+- **El umbral del modelo:** pide un pronóstico de +0.4 % para el día siguiente, pensado para la volatilidad de las criptos. En VA el pronóstico más alto del oro fue +0.38 %.
+- **La máquina del tiempo:** con la meta de +13 %, el euro, el real y el oro llegan al objetivo en 0 a 1 % de sus repasos de 60 días, así que no se autorizan (observado el 2026-11-13). Las acciones se mueven más: Apple, Meta y Microsoft sí pasaron el repaso ese día.
+
+Con el modelo actual funcionan casi siempre como efectivo.
+
+**En VA no hicieron ninguna operación** (simulado, solo como referencia). Es el replay de la cartera del 2024-08-02 al 2025-09-16, con la regla sin LLM, la máquina del tiempo y la meta de +13 %:
+
+| Cartera | Rendimiento | Caída máxima | Operaciones | Ganadoras |
+| --- | --- | --- | --- | --- |
+| 39 criptos (antes) | +2.57 % | 2.48 % | 915 | 54 % |
+| 32 criptos y 8 nuevos (ahora) | +1.44 % | 2.17 % | 743 | 53 % |
+
+- **Por qué no operaron:** los tokens de Ondo empezaron a cotizar después de VA, y los demás nunca pasaron el umbral.
+- **De dónde sale la diferencia:** de las 7 criptos que salieron, que en VA ganaron 547 USDT. El efectivo baja la caída, pero también el rendimiento.
+- **Qué no prueba:** no es una validación, porque hay muy pocos datos de estos activos en VA. La regla de elección se fijó antes de ver este resultado.
+
+```bash
+.venv\Scripts\python scripts\agregar_activos.py --agregar "GOLD(XAUT)USDT" EURUSDT --quitar ZIGUSDT --motivo "por qué"
+```
+
+El script descarga y audita las velas diarias de cada activo nuevo (al menos 120 seguidas, las que usa el bot), las guarda en `data/cartera/` y anota el cambio con su fecha y motivo en `config/universo.json`. Después hay que correr `scripts\comisiones_mexc.py`, reiniciar el bot y pulsar «Activar bot» en el panel: los activos nuevos arrancan detenidos.
+
+BTC usa el modelo de `models/ACTIVO.txt`, entrenado en la T4. Los otros 39 usan el modelo conjunto de `models/CARTERA.txt`, entrenado con todos los activos y evaluado por activo en validación:
+
+```bash
+.venv\Scripts\python research\entrenar_cartera.py
+```
+
+Un activo sin modelo aprobado queda fuera de la cartera y el panel lo avisa. El de BTC, `t4-2026-11-12`, se entrenó en la T4 de Colab; el de la cartera es de desarrollo, entrenado en CPU.
+
+## Entrenamiento en GPU (Colab T4)
+
+**Hecho el 2026-11-13:** el notebook corrió una sola vez en una Tesla T4 y abrió TE una sola vez (`apertura_te.json`: 1 apertura, sin contaminar). No lo vuelvas a correr: sería una segunda apertura de TE. Los pasos quedan como referencia:
+
+1. En Google Colab, *Archivo > Subir notebook* y elige `notebooks/Astrolabio_Modelo_BTC.ipynb`. Ya pide GPU T4.
+2. *Ejecutar todo*. Si no hay T4, se detiene antes de entrenar.
+3. Si Colab no puede descargar de MEXC, se detiene antes de entrenar y sin abrir TE. Sube `data/raw/BTCUSDT_1d.csv` en el panel *Archivos* con el nombre `BTCUSDT_1d.csv` y vuelve a *Ejecutar todo*. Ese archivo llega a la vela del 2026-11-04.
+4. Descarga `resultados_t4.zip`: trae `experimentos.csv`, `predicciones_TE.csv`, `prediccion_futura.csv`, `simulacion.csv`, datos, bitácora, evidencia de T4 y la carpeta del modelo.
+5. Copia la carpeta `t4-AAAA-MM-DD` a `models/` y escribe su nombre en `models/ACTIVO.txt`. Reinicia el bot: pestaña Sistema, **Apagar Astrolabio**, y ábrelo otra vez con el acceso del escritorio.
+
+**TE se abre una sola vez.** Si reejecutas y cambia algo, el notebook lo declara contaminado.
+
+`models/dev-cpu-*` se entrenó en CPU para integrar el sistema: es de desarrollo. El modelo final de BTC es `t4-2026-11-12`.
+
+Si cambias el entrenamiento, regenera el notebook con `research\construir_notebook.py`: copia los módulos de `bot/` y `research/` para que el notebook y el agente usen el mismo código. `research\probar_notebook.py` lo ejecuta completo con datos sintéticos y sin GPU, sin abrir el TE real. En esta laptop, Control de aplicaciones bloquea un binario de scikit-learn 1.9.1 y la prueba se detiene en el diagnóstico de sesgo y varianza, después de la celda de TE sintético; en Colab no pasa.
+
+## Comparación con y sin LLM
+
+Con el backend abierto, cada corrida queda en la pestaña Resumen, etiquetada como replay:
+
+```bash
+.venv\Scripts\python research\replay.py --decisor regla --dias 60
+```
+
+```bash
+.venv\Scripts\python research\replay.py --decisor llm --dias 60
+```
+
+```bash
+.venv\Scripts\python research\replay.py --decisor regla --cartera --dias 400
+```
+
+Por defecto usa validación. Para TE exige `--conjunto TE --confirmo-abrir-te`, solo con el modelo final. Esa corrida ya se hizo una vez, el 2026-11-13: no la repitas. El replay ejecuta en la apertura siguiente con velas diarias: no reproduce el reflejo por segundo, porque no hay historia de cada segundo. No cuenta como observaciones nuevas de la conexión actual.
+
+## Pruebas
+
+```bash
+.venv\Scripts\python -m pip install -r requirements-research.txt
+```
+
+```bash
+.venv\Scripts\python -m pip install torch==2.12.1+cpu --index-url https://download.pytorch.org/whl/cpu
+```
+
+```bash
+.venv\Scripts\python -m pytest -q
+```
+
+```bash
+cd frontend && npx vitest run
+```
+
+Nueve escenarios de error tienen pruebas automáticas:
+
+| Error | Prueba |
+| --- | --- |
+| API sin respuesta o con límite | `test_api_sin_respuesta_o_con_limite_pausa_registra_y_no_opera` |
+| Dato atrasado | `test_dato_atrasado_pausa_y_no_opera` |
+| Ollama detenido | `test_ollama_detenido_pausa_nuevas_decisiones_sin_operar_ni_consumir_la_vela` |
+| JSON inválido | `test_json_invalido_no_opera` |
+| Clave incorrecta | `test_clave_incorrecta_del_gateway_pausa_sin_reintento_automatico`, `test_gateway_rechaza_clave_ausente_o_incorrecta` |
+| Saldo insuficiente | `test_saldo_insuficiente_rechaza_y_registra_sin_cambiar_la_cuenta` |
+| Evento duplicado | `test_evento_duplicado_no_opera_dos_veces_la_misma_vela` |
+| Reinicio del backend | `test_reinicio_del_backend_recupera_estado_sin_duplicar` |
+| Botón de detención | `test_boton_detener_bloquea_ordenes_sin_liquidar_la_posicion` |
+
+Hay días sin señal, y entonces no se ve ninguna compra en vivo. Para ver la cadena completa con precios reales, sin tocar el bot ni su base de datos, esta prueba fuerza el umbral en memoria durante 60 segundos. No es una señal real:
+
+```bash
+.venv\Scripts\python research\prueba_cadena.py 60
+```
+
+Para exportar los registros a CSV, aun con el bot encendido:
+
+```bash
+.venv\Scripts\python scripts\exportar_registros.py
+```
+
+## Seguridad
+
+Las claves viven solo en `.env`, que git ignora; `.env.example` trae los nombres sin valores. La clave de MEXC es de solo lectura y el bot opera solo en Paper: no existe ninguna ruta de órdenes reales. El panel escucha solo en esta laptop y guarda tu contraseña como huella scrypt y cada sesión como huella SHA-256. Antes de subir cambios a GitHub, este comando revisa todo el historial sin mostrar ningún valor; `git push` lo corre solo:
+
+```bash
+.venv\Scripts\python scripts\revisar_secretos.py
+```
+
+Qué se protege, qué hacer si una clave se filtra y cómo avisar de un problema: [SECURITY.md](SECURITY.md).
+
+## Estructura
+
+| Carpeta | Contenido |
+| --- | --- |
+| `bot/` | Cartera, reflejo, agente, riesgo, simulador, cliente de MEXC, gateway del LLM y API |
+| `frontend/` | Panel en React y TypeScript |
+| `research/` | Laboratorio, entrenamientos en CPU, replay y generador del notebook |
+| `notebooks/` | Entrenamiento para Colab con T4 |
+| `models/` | Modelos versionados con su contrato de variables |
+| `data/` | Datos originales y procesados con su ficha de auditoría; `data/cartera/` tiene la historia diaria de los activos de la cartera |
+| `docs/` | Documentación técnica: orden en espera, observatorio, estrategias intradía y logos de los activos |
+
+## Límites conocidos
+
+- El rendimiento histórico no garantiza nada. El bot no promete ganancias ni da consejos de inversión.
+- La meta por operación, desde el 2026-11-13, es 13 % en los pares sin comisión y 13 % más la comisión en los demás. El bot la usa como objetivo de venta de cada operación (XRP a +13 %, la mayoría a +13.05 %, los de 0.08 % a +13.08 %). Es el precio al que se pone la venta, no una ganancia neta asegurada: muchas operaciones cierran antes en el stop, y el resultado neto depende de comisiones y deslizamiento. Tampoco garantiza que la cartera gane 13 %, y los resultados actuales quedan lejos: VA +2.64 % con la meta y +2.87 % con el objetivo anterior en ATR (simulados), TE −0.61 % con la regla sin LLM (simulado, con la configuración anterior a la meta y al filtro SMA20) y Paper en vivo −0.45 % al 19 de noviembre (observado).
+- El cerebro decide una vez al día: 20 días de decisiones en vivo tardan 20 días. Con 40 activos son 800 decisiones.
+- Las reglas de entrada en vivo (spread, no perseguir, cruce de SMA20 durante el día) no se pueden validar con historia por segundo: solo el Paper en vivo dirá cómo se comportan.
+- El modelo de BTC se entrenó y se evaluó en la T4. Los otros 39 activos usan un modelo conjunto de desarrollo, entrenado en CPU.
+- Las acciones, divisas y oro (8 de los 40, desde el 2026-11-13) se operan sin validación propia: el modelo de la cartera solo vio criptomonedas. Ver «Acciones, divisas y oro».
+- Si MEXC limita las consultas, el reflejo las espacia y lo avisa; mientras no haya precio fresco no opera.
+- Windows bloquea binarios recientes en esta laptop, así que `pandas` y `torch` quedan en versiones fijas.

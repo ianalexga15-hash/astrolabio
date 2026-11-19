@@ -1,0 +1,2 @@
+# El gancho de git es un script de sh: con finales de línea de Windows no correría.
+scripts/pre-push text eol=lf

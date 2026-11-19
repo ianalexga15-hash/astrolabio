@@ -1,0 +1,92 @@
+{
+  "version": "t4-2026-11-12",
+  "tipo": "lineal",
+  "lookback": 20,
+  "variables": [
+    "ret"
+  ],
+  "umbral": 0.0005,
+  "filtro": "ninguno",
+  "escalador": {
+    "media": [
+      0.0019341804419514507
+    ],
+    "desv": [
+      0.03518792854338667
+    ]
+  },
+  "y_media": 0.0018560615218678163,
+  "y_desv": 0.03525601113729578,
+  "miembros": [
+    [
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ]
+  ],
+  "valido_para_entrega": true,
+  "dispositivo": "Tesla T4",
+  "huella_datos": "8d70dcf720774bb11a6d73d0a0390c8457a6e13ffdf77850cf9cbf3718ca10d9",
+  "nombre": "Lineal alpha=1000",
+  "conjunto_variables": "rezagos",
+  "seleccion": {
+    "periodo_va": [
+      "2024-08-07",
+      "2025-09-23"
+    ],
+    "modelo": "Lineal alpha=1000",
+    "variables": [
+      "ret"
+    ],
+    "regla": {
+      "umbral": 0.0005,
+      "filtro": "ninguno",
+      "rendimiento": 1.133859238565135,
+      "drawdown": 0.2046992789484553,
+      "operaciones": 78,
+      "win_rate": 0.6025641025641025,
+      "costos": 24894.64808741245
+    },
+    "metricas_va": {
+      "MAE": 0.016487299472268985,
+      "RMSE": 0.023465894378631856,
+      "direccional": 0.5254237288135594,
+      "R2": 0.010247875176056187,
+      "correlacion": 0.10281663847635701,
+      "sesgo_modelo": 5.661290322580645,
+      "n": 413
+    },
+    "comprar_y_mantener_va": {
+      "rendimiento": 1.027305916587816,
+      "drawdown": 0.2809528618811723
+    },
+    "rmse_cero_va": 0.023673461121598197,
+    "particion": [
+      {
+        "conjunto": "TR",
+        "ejemplos": 1927,
+        "primera_emision": "2019-04-29",
+        "ultima_emision": "2024-08-06",
+        "primer_objetivo": "2019-04-30",
+        "ultimo_objetivo": "2024-08-07"
+      },
+      {
+        "conjunto": "VA",
+        "ejemplos": 413,
+        "primera_emision": "2024-08-07",
+        "ultima_emision": "2025-09-23",
+        "primer_objetivo": "2024-08-08",
+        "ultimo_objetivo": "2025-09-24"
+      },
+      {
+        "conjunto": "TE",
+        "ejemplos": 414,
+        "primera_emision": "2025-09-24",
+        "ultima_emision": "2026-11-11",
+        "primer_objetivo": "2025-09-25",
+        "ultimo_objetivo": "2026-11-12"
+      }
+    ]
+  }
+}

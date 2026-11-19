@@ -1,0 +1,734 @@
+{
+  "simbolos": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ENAUSDT",
+    "BNBUSDT",
+    "DOGEUSDT",
+    "INJUSDT",
+    "TRXUSDT",
+    "ZECUSDT",
+    "ADAUSDT",
+    "BCHUSDT",
+    "LTCUSDT",
+    "NEARUSDT",
+    "MXUSDT",
+    "RUNEUSDT",
+    "FILUSDT",
+    "ETHFIUSDT",
+    "PEPEUSDT",
+    "DOTUSDT",
+    "CAKEUSDT",
+    "TAOUSDT",
+    "BDXUSDT",
+    "ATOMUSDT",
+    "SUIUSDT",
+    "ZANOUSDT",
+    "PENDLEUSDT",
+    "SHIBUSDT",
+    "STRKUSDT",
+    "TIAUSDT",
+    "FETUSDT",
+    "UNIUSDT",
+    "GOLD(XAUT)USDT",
+    "EURUSDT",
+    "BRLUSDT",
+    "SPYONUSDT",
+    "QQQONUSDT",
+    "AAPLXUSDT",
+    "METAXUSDT",
+    "MSFTONUSDT"
+  ],
+  "fecha": "2026-11-05T14:53:41+00:00",
+  "regla_inicial": "Spot contra USDT, operables, por volumen de 24 h, sin estables, envueltos, metales, acciones ni apalancados, con al menos 900 días y spread mediano de hasta 25.0 puntos base.",
+  "regla_vigente": "Desde el 2026-11-13: 32 criptomonedas de la regla inicial (sin DASHUSDT ni XMRUSDT, que MEXC dejó de listar, ni las 7 de menor volumen que nunca operaron en Paper; RUNEUSDT entró el 2026-11-19 en lugar de XMRUSDT, con la misma regla) y 8 tokens en USDT que siguen oro, divisas, índices y acciones, elegidos con spread mediano de hasta 25 puntos base, libro visible que cubre 1,000 USDT con impacto de hasta 25 puntos base, al menos 120 velas diarias seguidas y un token por subyacente. Detalle en «cambios».",
+  "limite": "Elegir por volumen de hoy introduce sesgo de supervivencia en cualquier evaluación del pasado.",
+  "descartes": [
+    [
+      "LITUSDT",
+      "309 días"
+    ],
+    [
+      "PUMPUSDT",
+      "479 días"
+    ],
+    [
+      "TRUMPUSDT",
+      "spread 25 pb"
+    ],
+    [
+      "DGAIUSDT",
+      "73 días"
+    ],
+    [
+      "CHOMPUSDT",
+      "spread 293 pb"
+    ],
+    [
+      "UPCUSDT",
+      "spread 53 pb"
+    ],
+    [
+      "AEROUSDT",
+      "692 días"
+    ],
+    [
+      "CTUSDT",
+      "36 días"
+    ],
+    [
+      "CLANKERUSDT",
+      "708 días"
+    ],
+    [
+      "MBGUSDT",
+      "471 días"
+    ],
+    [
+      "MEYUSDT",
+      "569 días"
+    ],
+    [
+      "KIIUSDT",
+      "83 días"
+    ],
+    [
+      "LYNUSDT",
+      "spread 28 pb"
+    ],
+    [
+      "HYPEUSDT",
+      "591 días"
+    ],
+    [
+      "ASTERUSDT",
+      "412 días"
+    ],
+    [
+      "WXTUSDT",
+      "702 días"
+    ],
+    [
+      "HDLRUSDT",
+      "spread 231 pb"
+    ],
+    [
+      "JCTUSDT",
+      "spread 28 pb"
+    ],
+    [
+      "ZROUSDT",
+      "868 días"
+    ],
+    [
+      "ELSAUSDT",
+      "289 días"
+    ],
+    [
+      "PRSMUSDT",
+      "spread 248 pb"
+    ],
+    [
+      "RUNEUSDT",
+      "spread 41 pb"
+    ],
+    [
+      "FOXSYUSDT",
+      "spread 58 pb"
+    ],
+    [
+      "AINUSDT",
+      "488 días"
+    ],
+    [
+      "LALAUSDT",
+      "spread 161 pb"
+    ],
+    [
+      "MTOUSDT",
+      "spread 616 pb"
+    ],
+    [
+      "UMXUSDT",
+      "spread 777 pb"
+    ],
+    [
+      "AKEUSDT",
+      "441 días"
+    ],
+    [
+      "GRVTUSDT",
+      "98 días"
+    ],
+    [
+      "YVEUSDT",
+      "spread 290 pb"
+    ],
+    [
+      "AXISUSDT",
+      "spread 43 pb"
+    ],
+    [
+      "NESUSDT",
+      "spread 25 pb"
+    ],
+    [
+      "NOMAUSDT",
+      "spread 32 pb"
+    ],
+    [
+      "CCUSDT",
+      "360 días"
+    ],
+    [
+      "WLDUSDT",
+      "spread 25 pb"
+    ],
+    [
+      "BULLAUSDT",
+      "spread 35 pb"
+    ],
+    [
+      "BSBUSDT",
+      "246 días"
+    ],
+    [
+      "NXTUSDT",
+      "177 días"
+    ],
+    [
+      "BRLUSDT",
+      "598 días"
+    ],
+    [
+      "UAIUSDT",
+      "spread 30 pb"
+    ],
+    [
+      "EVAAUSDT",
+      "398 días"
+    ],
+    [
+      "WFIUSDT",
+      "30 días"
+    ],
+    [
+      "DOSUSDT",
+      "87 días"
+    ],
+    [
+      "CASHCATUSDT",
+      "120 días"
+    ]
+  ],
+  "fichas": {
+    "BTCUSDT": {
+      "volumen_24h": 422532497,
+      "spread_bps": 0.3,
+      "dias": 2786,
+      "desde": "2019-03-21",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "302 vela(s) con otro corte diario retirada(s).",
+        "209 vela(s) fuera del tramo continuo más largo (2019-03-21 a 2026-11-04)."
+      ],
+      "huella": "aac8b06f0d493b1309bb986b405434e8ccb3966e875ace351e712d27a5376be0"
+    },
+    "ETHUSDT": {
+      "volumen_24h": 322352607,
+      "spread_bps": 0.9,
+      "dias": 2793,
+      "desde": "2019-03-14",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "302 vela(s) con otro corte diario retirada(s).",
+        "202 vela(s) fuera del tramo continuo más largo (2019-03-14 a 2026-11-04)."
+      ],
+      "huella": "aae3c9e2dd9e74ad7f1eb8e424c5354cd48ae175910ccaa8ee094058b3c1dd0e"
+    },
+    "SOLUSDT": {
+      "volumen_24h": 73683804,
+      "spread_bps": 1.1,
+      "dias": 2311,
+      "desde": "2020-07-08",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "01194888058d79b46967abcc8c82e43d3a0ee8953cc5574b389f43aaa8546e43"
+    },
+    "XRPUSDT": {
+      "volumen_24h": 28504535,
+      "spread_bps": 3.1,
+      "dias": 2738,
+      "desde": "2019-05-08",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "d34ed432a14531ac66dbfad20c418dbec0e4cc042abe366b15af8c4ea9f897c0"
+    },
+    "ENAUSDT": {
+      "volumen_24h": 23431494,
+      "spread_bps": 4.6,
+      "dias": 947,
+      "desde": "2024-04-02",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "aa327b7065a2d2c1e99d09351af7962323c31f143fbb59253b12370e2b9bb0e8"
+    },
+    "BNBUSDT": {
+      "volumen_24h": 19853620,
+      "spread_bps": 2.6,
+      "dias": 2736,
+      "desde": "2019-05-10",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "63 vela(s) fuera del tramo continuo más largo (2019-05-10 a 2026-11-04)."
+      ],
+      "huella": "01a158746107f8e50059f0d3f1ee41c6cff6b2b6a2a9c63e5ac1d74ce8b83d08"
+    },
+    "DOGEUSDT": {
+      "volumen_24h": 8091710,
+      "spread_bps": 1.3,
+      "dias": 2883,
+      "desde": "2018-12-14",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "1 vela(s) fuera del tramo continuo más largo (2018-12-14 a 2026-11-04)."
+      ],
+      "huella": "319919250032f3adeef2dd5142b2439182364b22e20d9281b554046c5361c153"
+    },
+    "ZIGUSDT": {
+      "volumen_24h": 7987625,
+      "spread_bps": 13.6,
+      "dias": 1976,
+      "desde": "2021-06-08",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "04c7f6d7296d0387230a4c71a1a3c0058210b91a166925b13e70a9412d60611b"
+    },
+    "INJUSDT": {
+      "volumen_24h": 5109934,
+      "spread_bps": 13.5,
+      "dias": 1385,
+      "desde": "2023-01-20",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "2e5f95e6a29e8e83b0f7a95e9d7000ba4b31d358ad7144acc5f65fd20f8140f5"
+    },
+    "TRXUSDT": {
+      "volumen_24h": 4345712,
+      "spread_bps": 6.3,
+      "dias": 2843,
+      "desde": "2019-01-23",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "3fbd4dbc8259f74e04be5203d4dfaf011e3ad523044b46c0e0cd09392b9d4c97"
+    },
+    "ZECUSDT": {
+      "volumen_24h": 4059451,
+      "spread_bps": 3.4,
+      "dias": 2693,
+      "desde": "2019-06-22",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "28794debc5c65317d75e65444096faab5e0386b8609f105bfce8778b48530a1b"
+    },
+    "ADAUSDT": {
+      "volumen_24h": 3757563,
+      "spread_bps": 10.5,
+      "dias": 2687,
+      "desde": "2019-06-28",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "f788baf613c6e2483d7462bb641b75f90b573f31ab4c685bb0126d2d059e5560"
+    },
+    "BCHUSDT": {
+      "volumen_24h": 3462359,
+      "spread_bps": 3.5,
+      "dias": 2906,
+      "desde": "2018-11-21",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "b0e403d1e82552b514d6b6f96df0eed99570cb3bdd75929b8cfc5a66717c9248"
+    },
+    "LTCUSDT": {
+      "volumen_24h": 3449834,
+      "spread_bps": 1.8,
+      "dias": 2996,
+      "desde": "2018-08-23",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "301 vela(s) con otro corte diario retirada(s)."
+      ],
+      "huella": "dd0b5b1f6be39ac26c098cfb5e8c097d11bc8160702b633447301166fc471f77"
+    },
+    "NEARUSDT": {
+      "volumen_24h": 2881339,
+      "spread_bps": 3.3,
+      "dias": 2213,
+      "desde": "2020-10-14",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "2bed5d02e5904b9a7bd4e85a804b669cf8743fe2cfe7b70dbe034144b3a3bc72"
+    },
+    "MXUSDT": {
+      "volumen_24h": 2001297,
+      "spread_bps": 1.9,
+      "dias": 3037,
+      "desde": "2018-07-13",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "a1200366834497b90410b35772144f12acc327ab810dbd3a166560a268f20652"
+    },
+    "XMRUSDT": {
+      "volumen_24h": 2000547,
+      "spread_bps": 7.9,
+      "dias": 2521,
+      "desde": "2019-12-11",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "274d5a3304aa412a88fc4b4c2622bb58494f8e76c2cab0c2e2ab4789056b796b"
+    },
+    "FILUSDT": {
+      "volumen_24h": 1985326,
+      "spread_bps": 3.6,
+      "dias": 2212,
+      "desde": "2020-10-15",
+      "hasta": "2026-11-04",
+      "limpieza": [
+        "1 vela(s) fuera del tramo continuo más largo (2020-10-15 a 2026-11-04)."
+      ],
+      "huella": "d063fe9b5f5ccf445a0dd9ed72e94e17ba3d589881dacf85ea747ea954d2af7c"
+    },
+    "ETHFIUSDT": {
+      "volumen_24h": 1823527,
+      "spread_bps": 5.2,
+      "dias": 962,
+      "desde": "2024-03-18",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "2a5e883930266eb3658674370578296912e7c3a564cae9bbf0a3078ec2b5899a"
+    },
+    "PEPEUSDT": {
+      "volumen_24h": 1405121,
+      "spread_bps": 10.4,
+      "dias": 1296,
+      "desde": "2023-04-19",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "ba1ff0fdfd8f63217e1b08252bab1a11d9dd7b6c291af8941a784cfc7d6e75ac"
+    },
+    "DOTUSDT": {
+      "volumen_24h": 1371055,
+      "spread_bps": 6.4,
+      "dias": 2266,
+      "desde": "2020-08-22",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "8ee23bf700c83d682ec19ddad1ddb63eb5a2b92e9a652f99c197c8cdeb4b7064"
+    },
+    "CAKEUSDT": {
+      "volumen_24h": 1060490,
+      "spread_bps": 10.2,
+      "dias": 2111,
+      "desde": "2021-01-24",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "bce196c6440f8aadd54c5989869cf38e0e857dc90a62d3335495b412a5ceb564"
+    },
+    "TAOUSDT": {
+      "volumen_24h": 1008108,
+      "spread_bps": 7.5,
+      "dias": 1343,
+      "desde": "2023-03-03",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "3cdf6a24ce996a81a498d29d3a1fd36c995f32124866cf4d8afc53b132b1683d"
+    },
+    "BDXUSDT": {
+      "volumen_24h": 901760,
+      "spread_bps": 1.4,
+      "dias": 1840,
+      "desde": "2021-10-22",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "e3d740dfeed253e79ad439b155040d8f9f77281ff8a489fa77255852bd15d0e7"
+    },
+    "ATOMUSDT": {
+      "volumen_24h": 885793,
+      "spread_bps": 6.8,
+      "dias": 2753,
+      "desde": "2019-04-23",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "dbc89eb1d68121d5c2921afeb93eb98ec3840f4e6533e607d1c9b63abec28fc1"
+    },
+    "SUIUSDT": {
+      "volumen_24h": 867035,
+      "spread_bps": 6.7,
+      "dias": 1282,
+      "desde": "2023-05-03",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "3bcfb9520b2dd60e2388bc6a644075ace38b3d619c5106d2bbc29e2d637d70dc"
+    },
+    "ZANOUSDT": {
+      "volumen_24h": 790773,
+      "spread_bps": 2.1,
+      "dias": 1042,
+      "desde": "2023-12-29",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "f30ba235e2cc18b187707d54ef6dad4a71f252caf6224c2eb410fa9954b82049"
+    },
+    "GRAMUSDT": {
+      "volumen_24h": 769199,
+      "spread_bps": 8.9,
+      "dias": 1637,
+      "desde": "2022-05-13",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "ecc7a6cbf1cab4b6b7b981595f0f3401684f72c758b7e16ce78b0dc5194de839"
+    },
+    "PENDLEUSDT": {
+      "volumen_24h": 755021,
+      "spread_bps": 23.2,
+      "dias": 1906,
+      "desde": "2021-08-17",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "f67aef0dc5f37142e5a8f68254c48537e624927312904d1444280a7f7b27e9fe"
+    },
+    "SHIBUSDT": {
+      "volumen_24h": 651231,
+      "spread_bps": 8.6,
+      "dias": 2029,
+      "desde": "2021-04-16",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "cce3cff31c997ef1c7869aed493f83d822b8d2d508e96c901c0140f8ef6fd097"
+    },
+    "STRKUSDT": {
+      "volumen_24h": 604590,
+      "spread_bps": 4.7,
+      "dias": 989,
+      "desde": "2024-02-20",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "11a89a3117ece67849fe0cc2112bf0b6cb4711f66fcf34f92a4bf0c65e8edf79"
+    },
+    "TIAUSDT": {
+      "volumen_24h": 591107,
+      "spread_bps": 20.3,
+      "dias": 1101,
+      "desde": "2023-10-31",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "5b7ad65f7a4403bcb1a86b72f68c8ac7167371da4f17d1109d28a5f9bd058684"
+    },
+    "FETUSDT": {
+      "volumen_24h": 582603,
+      "spread_bps": 6.5,
+      "dias": 2808,
+      "desde": "2019-02-27",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "b391bacd2a2c2e3ba4d85ec72665a2294ce83568343a408f47f68ecef06c7e38"
+    },
+    "UNIUSDT": {
+      "volumen_24h": 576241,
+      "spread_bps": 13.9,
+      "dias": 2240,
+      "desde": "2020-09-17",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "c111ccab64947f1b76bd73dd01a3e8b02665bf1ae3710ec42b9936af01f66b1b"
+    },
+    "ARBUSDT": {
+      "volumen_24h": 560377,
+      "spread_bps": 7.5,
+      "dias": 1323,
+      "desde": "2023-03-23",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "8f0b83cf9bd5421c32b4cb3c4a1ab299a46a8ba59bcf6e7054a83083fa3809b9"
+    },
+    "LINKUSDT": {
+      "volumen_24h": 530704,
+      "spread_bps": 0.9,
+      "dias": 2701,
+      "desde": "2019-06-14",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "c0fbb451b8613408b97f68ddaa345344ea03b35c479b2563955a0c6dfc5cdad9"
+    },
+    "QNTUSDT": {
+      "volumen_24h": 527786,
+      "spread_bps": 6.5,
+      "dias": 1556,
+      "desde": "2022-08-02",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "6f9122a2fcbc233a851f3df6eb05cf7128fdcec826d912512f2c2ffb10cd3975"
+    },
+    "DASHUSDT": {
+      "volumen_24h": 479852,
+      "spread_bps": 8.4,
+      "dias": 2693,
+      "desde": "2019-06-22",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "ebec977c1c5ca4841b2e52cd94416177477db3007b89a79716afe10a2e70e69d"
+    },
+    "XLMUSDT": {
+      "volumen_24h": 475428,
+      "spread_bps": 6.2,
+      "dias": 2693,
+      "desde": "2019-06-22",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "eaf538ed5fdb4b7e8eca890085fa5992e82d8b9f4cbe0bf0250d949a3b977933"
+    },
+    "BONKUSDT": {
+      "volumen_24h": 443224,
+      "spread_bps": 10.2,
+      "dias": 1402,
+      "desde": "2023-01-03",
+      "hasta": "2026-11-04",
+      "limpieza": [],
+      "huella": "9f38a9047e1c0b7a1ecfc1370fba9cfdf9fa4cc1f78c4d994437eeeca6040338"
+    },
+    "GOLD(XAUT)USDT": {
+      "nombre": "Tether Gold",
+      "volumen_24h": 6037037,
+      "spread_bps": 0.0,
+      "dias": 1296,
+      "desde": "2023-04-27",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "53b4bb8008770983a102971d80196e56e6b2f171b4586be8284eb1ed3fd29b1c"
+    },
+    "EURUSDT": {
+      "nombre": "EUR",
+      "volumen_24h": 450073,
+      "spread_bps": 0.9,
+      "dias": 625,
+      "desde": "2025-02-26",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "1ddb23d8627172e755f43f675c94b39cf67e820af7341c94865f22f5d11e94f5"
+    },
+    "BRLUSDT": {
+      "nombre": "BRL",
+      "volumen_24h": 601385,
+      "spread_bps": 5.7,
+      "dias": 606,
+      "desde": "2025-03-17",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "b7e747efa945986edad4b9fa305345cd184d0c42bc664f0f04cec63a2bfb9530"
+    },
+    "SPYONUSDT": {
+      "nombre": "SPDR S&P 500 ETF",
+      "volumen_24h": 149949,
+      "spread_bps": 17.2,
+      "dias": 430,
+      "desde": "2025-09-09",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "6b9852def4837130e1d0269a3c1a743d69a58ed3a2519e0e3eafc9083a9a4b27"
+    },
+    "QQQONUSDT": {
+      "nombre": "Invesco QQQ (Ondo)",
+      "volumen_24h": 158248,
+      "spread_bps": 17.6,
+      "dias": 430,
+      "desde": "2025-09-09",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "525cedbd7f0ed54dcddc39bc5730438a8b1647420734f44c68da082a51f812ec"
+    },
+    "AAPLXUSDT": {
+      "nombre": "Apple xStock",
+      "volumen_24h": 55425,
+      "spread_bps": 2.5,
+      "dias": 499,
+      "desde": "2025-07-02",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "4a3842dfe5e28ac04446839f984c9afc69ee417a876cbf6b2c083ab2ca46709d"
+    },
+    "METAXUSDT": {
+      "nombre": "Meta xStock",
+      "volumen_24h": 55133,
+      "spread_bps": 6.4,
+      "dias": 498,
+      "desde": "2025-07-03",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "349c1c1ad7835c4df199356a6daa2fc6c378fad23c5e94754115c230b182206d"
+    },
+    "MSFTONUSDT": {
+      "nombre": "Microsoft (Ondo)",
+      "volumen_24h": 149433,
+      "spread_bps": 17.2,
+      "dias": 431,
+      "desde": "2025-09-08",
+      "hasta": "2026-11-12",
+      "limpieza": [],
+      "incoherentes": 0,
+      "huella": "2552bc17d45a9454a617c768bf5b70945144dc22d5ecfe1d233d48f4b915fb77"
+    },
+    "RUNEUSDT": {
+      "volumen_24h": 529926,
+      "spread_bps": 22.5,
+      "dias": 1029,
+      "desde": "2024-01-25",
+      "hasta": "2026-11-18",
+      "limpieza": [],
+      "huella": "eceed1d75717ef45ddc8623c57567d9a41f4278aa7cf8f27aaab34bd61a65fa9"
+    }
+  },
+  "cambios": [
+    {
+      "fecha": "2026-11-13T18:04:14+00:00",
+      "agregados": [
+        "GOLD(XAUT)USDT",
+        "EURUSDT",
+        "BRLUSDT",
+        "SPYONUSDT",
+        "QQQONUSDT",
+        "AAPLXUSDT",
+        "METAXUSDT",
+        "MSFTONUSDT"
+      ],
+      "quitados": [
+        "ZIGUSDT",
+        "ARBUSDT",
+        "XLMUSDT",
+        "GRAMUSDT",
+        "LINKUSDT",
+        "QNTUSDT",
+        "BONKUSDT"
+      ],
+      "motivo": "Decisión del 2026-11-13: diversificar con acciones, divisas y oro. Regla fijada antes de medir con la bolsa abierta y antes del replay: pares en USDT operables que siguen acciones o ETF (xStocks de Backed y Ondo Global Markets), divisas fiat u oro; spread mediano de hasta 25 pb y libro visible que cubre 1,000 USDT con impacto de hasta 25 pb, medidos a las 13:59 y a las 18:03 UTC (fuera y dentro del horario de la bolsa de Nueva York); al menos 120 velas diarias seguidas; un token por subyacente, el de menor spread con la bolsa abierta. Se eligen 1 oro y 2 divisas por volumen de 24 h, los ETF del S&P 500 y del Nasdaq-100, y 3 de las siete grandes de EE. UU. (Apple, Microsoft, Nvidia, Amazon, Alphabet, Meta y Tesla) por menor spread con la bolsa abierta. El peso mexicano no pasó: comprar 1,000 USDT movería su precio más de 1 %. Salen las 7 criptos de menor volumen de 24 h que nunca operaron en Paper, para seguir en 40 con el mismo cupo de 1,250 USDT."
+    },
+    {
+      "fecha": "2026-11-19T14:40:38+00:00",
+      "agregados": [
+        "RUNEUSDT"
+      ],
+      "quitados": [
+        "XMRUSDT"
+      ],
+      "motivo": "MEXC retiró XMRUSDT: desde el 2026-11-17 responde «Invalid symbol» (código -1121) y su agente quedaba en pausa pidiendo atención. Nunca operó en Paper: sin posiciones ni órdenes. Regla fijada antes de medir: entra la cripto de mayor volumen de 24 h que cumple la regla inicial y no está en la cartera ni salió antes (DASH, XMR y las 7 del 2026-11-13). Medido el 2026-11-19: RUNEUSDT, con 0.53 M USDT en 24 h, spread mediano de 22.5 pb y 1,029 días seguidos; antes se descartaron 16 de mayor volumen por historia corta o spread. La cartera sigue en 40 con el mismo cupo de 1,250 USDT y el patrimonio total no cambia. Decisión del 2026-11-19: cartera sin pares retirados."
+    }
+  ]
+}

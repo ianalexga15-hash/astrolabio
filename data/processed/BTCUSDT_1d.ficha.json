@@ -1,0 +1,47 @@
+{
+  "activo": "BTCUSDT",
+  "mercado": "Criptomonedas spot",
+  "plataforma": "MEXC",
+  "fuente": "https://api.mexc.com/api/v3/klines",
+  "frecuencia": "1d",
+  "moneda_base": "BTC",
+  "moneda_cotizada": "USDT",
+  "zona_horaria": "UTC",
+  "calendario": "Continuo, sin días inhábiles",
+  "fecha_descarga": "2026-11-05T14:15:40+00:00",
+  "ajustes": "Sin ajustes: precios tal como los reporta la plataforma; no hay dividendos ni particiones.",
+  "volumen": "Reportado por la fuente, no estimado.",
+  "periodo_crudo": [
+    "2017-10-25",
+    "2026-11-04"
+  ],
+  "periodo_limpio": [
+    "2019-03-21",
+    "2026-11-04"
+  ],
+  "filas_crudas": 3297,
+  "filas_limpias": 2786,
+  "auditoria": {
+    "filas": 3297,
+    "primera": "2017-10-25",
+    "ultima": "2026-11-04",
+    "duplicadas": 0,
+    "desordenadas": 0,
+    "invalidos": [],
+    "huecos": [
+      {
+        "desde": "2019-03-19",
+        "hasta": "2019-03-21",
+        "dias": 2.0
+      }
+    ],
+    "desalineadas": 302,
+    "incoherentes": []
+  },
+  "limpieza": [
+    "302 vela(s) con otro corte diario retirada(s).",
+    "209 vela(s) fuera del tramo continuo más largo (2019-03-21 a 2026-11-04)."
+  ],
+  "huella_crudo": "03f5a17097db328d1c0cbee36b7f30d33fb181845e0460c6a70402e6bb6933ec",
+  "huella_limpio": "aac8b06f0d493b1309bb986b405434e8ccb3966e875ace351e712d27a5376be0"
+}

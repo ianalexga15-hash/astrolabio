@@ -1,0 +1,112 @@
+{
+  "version": "dev-cpu-2026-11-04",
+  "tipo": "lstm",
+  "lookback": 20,
+  "variables": [
+    "ret"
+  ],
+  "umbral": 0.001,
+  "filtro": "ninguno",
+  "escalador": {
+    "media": [
+      0.001948464627833844
+    ],
+    "desv": [
+      0.03520704450527489
+    ]
+  },
+  "y_media": 0.001915421885328629,
+  "y_desv": 0.03523438712102617,
+  "miembros": [
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ]
+  ],
+  "valido_para_entrega": false,
+  "dispositivo": "cpu",
+  "motivo": "Modelo de desarrollo: sin evidencia de T4.",
+  "huella_datos": "aac8b06f0d493b1309bb986b405434e8ccb3966e875ace351e712d27a5376be0",
+  "nombre": "LSTM ensamble de 3 semillas, 16 neuronas",
+  "conjunto_variables": "rezagos",
+  "seleccion": {
+    "periodo_va": [
+      "2024-08-02",
+      "2025-09-16"
+    ],
+    "modelo": "LSTM ensamble de 3 semillas, 16 neuronas",
+    "variables": "rezagos",
+    "regla": {
+      "umbral": 0.001,
+      "filtro": "ninguno",
+      "rendimiento": 1.1179183701088249,
+      "drawdown": 0.27004082352125974,
+      "operaciones": 33,
+      "win_rate": 0.6666666666666666,
+      "costos": 9475.218380730297
+    },
+    "metricas_va": {
+      "MAE": 0.016929123348509965,
+      "RMSE": 0.02402557590260813,
+      "direccional": 0.5231143552311436,
+      "R2": 0.0028845371234202943,
+      "correlacion": 0.056647077406449656,
+      "sesgo_modelo": 50.375,
+      "n": 411
+    },
+    "comprar_y_mantener_va": {
+      "rendimiento": 0.8951021345388417,
+      "drawdown": 0.28095286188117213
+    },
+    "rmse_cero_va": 0.024130630421023192,
+    "particion": [
+      {
+        "conjunto": "TR",
+        "ejemplos": 1922,
+        "primera_emision": "2019-04-29",
+        "ultima_emision": "2024-08-01",
+        "primer_objetivo": "2019-04-30",
+        "ultimo_objetivo": "2024-08-02"
+      },
+      {
+        "conjunto": "VA",
+        "ejemplos": 411,
+        "primera_emision": "2024-08-02",
+        "ultima_emision": "2025-09-16",
+        "primer_objetivo": "2024-08-03",
+        "ultimo_objetivo": "2025-09-17"
+      },
+      {
+        "conjunto": "TE",
+        "ejemplos": 413,
+        "primera_emision": "2025-09-17",
+        "ultima_emision": "2026-11-03",
+        "primer_objetivo": "2025-09-18",
+        "ultimo_objetivo": "2026-11-04"
+      }
+    ]
+  }
+}

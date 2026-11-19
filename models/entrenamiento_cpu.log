@@ -1,0 +1,63 @@
+rezagos MLP ensamble de 3 semillas, 16 neuronas: RMSE_VA media=0.024267 desv=0.000155
+rezagos LSTM ensamble de 3 semillas, 16 neuronas: RMSE_VA media=0.024041 desv=0.000012
+rezagos_indicadores MLP ensamble de 3 semillas, 16 neuronas: RMSE_VA media=0.024744 desv=0.000104
+rezagos_indicadores LSTM ensamble de 3 semillas, 16 neuronas: RMSE_VA media=0.024063 desv=0.000049
+ELEGIDO rezagos LSTM ensamble de 3 semillas, 16 neuronas {'umbral': 0.001, 'filtro': 'ninguno', 'rendimiento': 1.1179183701088249, 'drawdown': 0.27004082352125974, 'operaciones': 33, 'win_rate': 0.6666666666666666, 'costos': np.float64(9475.218380730297)}
+Diagnóstico de sesgo y varianza...
+{
+  "periodo_va": [
+    "2024-08-02",
+    "2025-09-16"
+  ],
+  "modelo": "LSTM ensamble de 3 semillas, 16 neuronas",
+  "variables": "rezagos",
+  "regla": {
+    "umbral": 0.001,
+    "filtro": "ninguno",
+    "rendimiento": 1.1179183701088249,
+    "drawdown": 0.27004082352125974,
+    "operaciones": 33,
+    "win_rate": 0.6666666666666666,
+    "costos": 9475.218380730297
+  },
+  "metricas_va": {
+    "MAE": 0.016929123348509965,
+    "RMSE": 0.02402557590260813,
+    "direccional": 0.5231143552311436,
+    "R2": 0.0028845371234202943,
+    "correlacion": 0.056647077406449656,
+    "sesgo_modelo": 50.375,
+    "n": 411
+  },
+  "comprar_y_mantener_va": {
+    "rendimiento": 0.8951021345388417,
+    "drawdown": 0.28095286188117213
+  },
+  "rmse_cero_va": 0.024130630421023192,
+  "particion": [
+    {
+      "conjunto": "TR",
+      "ejemplos": 1922,
+      "primera_emision": "2019-04-29",
+      "ultima_emision": "2024-08-01",
+      "primer_objetivo": "2019-04-30",
+      "ultimo_objetivo": "2024-08-02"
+    },
+    {
+      "conjunto": "VA",
+      "ejemplos": 411,
+      "primera_emision": "2024-08-02",
+      "ultima_emision": "2025-09-16",
+      "primer_objetivo": "2024-08-03",
+      "ultimo_objetivo": "2025-09-17"
+    },
+    {
+      "conjunto": "TE",
+      "ejemplos": 413,
+      "primera_emision": "2025-09-17",
+      "ultima_emision": "2026-11-03",
+      "primer_objetivo": "2025-09-18",
+      "ultimo_objetivo": "2026-11-04"
+    }
+  ]
+}

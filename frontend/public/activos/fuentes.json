@@ -1,0 +1,390 @@
+[
+  {
+    "simbolo": "BTCUSDT",
+    "archivo": "btc.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/BTC.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "05bf0c33d41e98533619ad54179271a847f9b54ddcc93d36dff1a7cdcd963b7b",
+    "nombre": "Bitcoin"
+  },
+  {
+    "simbolo": "ETHUSDT",
+    "archivo": "eth.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ETH.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "fa56a42148bdff882712abc17813053cebe8f72a69fd2b62d776959cb3a98e9d",
+    "nombre": "Ethereum"
+  },
+  {
+    "simbolo": "SOLUSDT",
+    "archivo": "sol.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/SOL.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "821bcaa931b6d40cf279a9a56879e89aada1d29c2f888a4e8988eae8922306b8",
+    "nombre": "Solana"
+  },
+  {
+    "simbolo": "XRPUSDT",
+    "archivo": "xrp.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/XRP.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "0a1e527d9b9b522189b780b54422f11375b793870e769cc832b51d1034d69beb",
+    "nombre": "XRP"
+  },
+  {
+    "simbolo": "ENAUSDT",
+    "archivo": "ena.svg",
+    "fuente": "https://raw.githubusercontent.com/Cryptofonts/cryptoicons/f7c78904c6dbad90722e53925f57bbca88419d3f/assets/ena.svg",
+    "licencia": "GPL-3.0, Cryptofonts",
+    "sha256": "53969e7941d555c1b5f5d9dbfae129b8125a6e12c6bd3c0fa209b88275c09f8a"
+  },
+  {
+    "simbolo": "BNBUSDT",
+    "archivo": "bnb.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/BNB.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "462b19bfe0670f38686924d5f19fe4737e2169dcdeb4965551d06563cc3fedd9",
+    "nombre": "BNB"
+  },
+  {
+    "simbolo": "DOGEUSDT",
+    "archivo": "doge.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/DOGE.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "5350fe4042f2f084a6f7f536d7d15bdfdcbbf31fe6ee2e1c2cc1059d1d3975b7",
+    "nombre": "Dogecoin"
+  },
+  {
+    "simbolo": "ZIGUSDT",
+    "archivo": "zig.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ZIG.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "b0230e29d30e6b84ad5e35c8538ae855d7f6f41d2a9abb3ca83f649102226c5d",
+    "nombre": "Zignaly"
+  },
+  {
+    "simbolo": "INJUSDT",
+    "archivo": "inj.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/INJ.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "6e100efae156c97257960c5cac41b286ebecf5cbba50ba9f5edfe49eeba416ae",
+    "nombre": "Injective"
+  },
+  {
+    "simbolo": "TRXUSDT",
+    "archivo": "trx.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/TRX.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "7f7e3b0872d5b26810f6490c5dfb7cd57c4b503b76216e5f02f76906105403e7",
+    "nombre": "TRON"
+  },
+  {
+    "simbolo": "ZECUSDT",
+    "archivo": "zec.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ZEC.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "2e50ddb113d95ca7e2b038069cca98a756e3cd415179f87d48b120dafeada6e2",
+    "nombre": "Zcash"
+  },
+  {
+    "simbolo": "ADAUSDT",
+    "archivo": "ada.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ADA.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "1d8ba1050ea82210c61283df113e0859bd0a4e097e2f1cc58b98a457cb8d8d4d",
+    "nombre": "Cardano"
+  },
+  {
+    "simbolo": "BCHUSDT",
+    "archivo": "bch.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/BCH.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "9d0019235a3c62cc248deac1dfc9f673f84a0da8b4c746d794ae568863aabc01",
+    "nombre": "Bitcoin Cash"
+  },
+  {
+    "simbolo": "LTCUSDT",
+    "archivo": "ltc.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/LTC.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "52606ba002046e5fe975a674f070bd505b3ccd28fb797119db53c2821f93528c",
+    "nombre": "Litecoin"
+  },
+  {
+    "simbolo": "NEARUSDT",
+    "archivo": "near.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/NEAR.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "da3ccdcb6723e317b6349e74d52a9aa82d29de2d6c441257f327adef8c4818ff",
+    "nombre": "NEAR Protocol"
+  },
+  {
+    "simbolo": "MXUSDT",
+    "archivo": "mx.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/MX.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "ff4a9c25502b289c5e2b510879d5fe74563ed93d1fd032bb0e26725c3bb2d859",
+    "nombre": "MX"
+  },
+  {
+    "simbolo": "XMRUSDT",
+    "archivo": "xmr.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/XMR.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "f497cd30ee47fd9a3983feee35b29fee473b264fe634f806537629d2c0665b7d",
+    "nombre": "Monero"
+  },
+  {
+    "simbolo": "FILUSDT",
+    "archivo": "fil.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/FIL.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "1cff6baf090d49338334694e59b24d2f91c8e7d7f873bdfc057092d9e004b5ee",
+    "nombre": "Filecoin"
+  },
+  {
+    "simbolo": "ETHFIUSDT",
+    "archivo": "ethfi.svg",
+    "fuente": "https://cryptologo.org/icons/svg/cryptocurrency/ether-fi.svg",
+    "licencia": "Marca de ether.fi; uso identificativo, fuente Cryptologo",
+    "sha256": "707a4186dc49bfc265030dd471747605ca4b6f810ffcd917467e788578571823"
+  },
+  {
+    "simbolo": "PEPEUSDT",
+    "archivo": "pepe.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/PEPE.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "45e0b14e0a26a25ef0b777c9bff071e226a5bd1d5997fef7b604e043a8d8cc6b",
+    "nombre": "Pepe"
+  },
+  {
+    "simbolo": "DOTUSDT",
+    "archivo": "dot.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/DOT.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "c9197085e5db1087b84b48e0c0acd186837d6cacfc56d3cece89b6c31f6ac2c2",
+    "nombre": "Polkadot"
+  },
+  {
+    "simbolo": "CAKEUSDT",
+    "archivo": "cake.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/CAKE.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "63c8374d10ee481d3c17d75a6d0b4653879cf93c6a1159e88ebc67ab8eba77ed",
+    "nombre": "PancakeSwap"
+  },
+  {
+    "simbolo": "TAOUSDT",
+    "archivo": "tao.svg",
+    "fuente": "https://cryptologo.org/icons/svg/cryptocurrency/bittensor.svg",
+    "licencia": "Marca del proyecto; uso identificativo, fuente Cryptologo",
+    "sha256": "8f96a0d8bc220194bfc9756629c5c2dc4f5ed66a91d3ab5d93af16307a3d80e1",
+    "nombre": "Bittensor"
+  },
+  {
+    "simbolo": "BDXUSDT",
+    "archivo": "bdx.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/BDX.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "010c99866ca0ce34159538aa5bf564d6b2b160f5def0a79bfebecf8f947fb9bf",
+    "nombre": "Beldex"
+  },
+  {
+    "simbolo": "ATOMUSDT",
+    "archivo": "atom.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ATOM.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "4812cce1b1c1b4969c0e87e36d0de34b98307f186388cab12abe30e3fc883455",
+    "nombre": "Cosmos Hub"
+  },
+  {
+    "simbolo": "SUIUSDT",
+    "archivo": "sui.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/SUI.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "2cc05fdca1849dd76572dd79f3f7029d007e1e31d366598bbd7e866a7209d3a2",
+    "nombre": "Sui"
+  },
+  {
+    "simbolo": "ZANOUSDT",
+    "archivo": "zano.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ZANO.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "e2f5a2a92d14cce1b7fddba8b4aa71ac34862658b61af8b71fdc765e2a274b13",
+    "nombre": "Zano"
+  },
+  {
+    "simbolo": "GRAMUSDT",
+    "archivo": "gram.svg",
+    "fuente": "https://raw.githubusercontent.com/Cryptofonts/cryptoicons/f7c78904c6dbad90722e53925f57bbca88419d3f/assets/ton.svg",
+    "licencia": "GPL-3.0, Cryptofonts",
+    "sha256": "908afc97dd52f4035d1ed4f02d99d393ab63f55e999155fe25870f832da9549f"
+  },
+  {
+    "simbolo": "PENDLEUSDT",
+    "archivo": "pendle.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/PENDLE.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "7a3195e9755ef80797b7b422730312b2462bb3b38c61145724ce452abced5b4c",
+    "nombre": "Pendle"
+  },
+  {
+    "simbolo": "SHIBUSDT",
+    "archivo": "shib.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/SHIB.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "0691b8846b63149a35ef49e3f3528d2a173de155736936559f643b26a3014924",
+    "nombre": "Shiba Inu"
+  },
+  {
+    "simbolo": "STRKUSDT",
+    "archivo": "strk.svg",
+    "fuente": "https://cryptologo.org/icons/svg/cryptocurrency/starknet.svg",
+    "licencia": "Marca del proyecto; uso identificativo, fuente Cryptologo",
+    "sha256": "b5546f0e52fd37f85c55b17589e7874e7e0d62a0e0a2e8ba184aa9bed143abaa",
+    "nombre": "Starknet"
+  },
+  {
+    "simbolo": "TIAUSDT",
+    "archivo": "tia.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/TIA.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "6518522eb0d3b131c82b6db416aca47554a8be51305321503ba2b14dd323ea1d",
+    "nombre": "Celestia"
+  },
+  {
+    "simbolo": "FETUSDT",
+    "archivo": "fet.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/FET.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "97af6ff72c2a94ae71d136994385ae21136e18fbad96348c82abe908661f615b",
+    "nombre": "Fetch.ai"
+  },
+  {
+    "simbolo": "UNIUSDT",
+    "archivo": "uni.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/UNI.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "9d03d489c2a29bb40bf6d289f0b3049d439b7b2b4c0144906751f03dc4bb2084",
+    "nombre": "Uniswap"
+  },
+  {
+    "simbolo": "ARBUSDT",
+    "archivo": "arb.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/ARB.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "7028737f5e2be9988f9948fda19e563eadace8a0c66975a96498f587595c2b0f",
+    "nombre": "Arbitrum"
+  },
+  {
+    "simbolo": "LINKUSDT",
+    "archivo": "link.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/LINK.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "f12ffb51eafef62a559ea805a41a360e17f2b1d8ef72072ec376ef335c4fa087",
+    "nombre": "Chainlink"
+  },
+  {
+    "simbolo": "QNTUSDT",
+    "archivo": "qnt.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/QNT.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "97efde1e2893d2db9a69d033c7e0739ae1489c58e1bcbfa051b6a6139339ea08",
+    "nombre": "Quant"
+  },
+  {
+    "simbolo": "DASHUSDT",
+    "archivo": "dash.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/DASH.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "d42480c00a5b89a49094f35571ea907ed7daf86874390d88013844ef0b7f3560",
+    "nombre": "Dash"
+  },
+  {
+    "simbolo": "XLMUSDT",
+    "archivo": "xlm.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/XLM.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "c93607345107f9f74fb8001439277ae5fc8b18334a68e26a07bbfaea83bb045c",
+    "nombre": "Stellar"
+  },
+  {
+    "simbolo": "BONKUSDT",
+    "archivo": "bonk.svg",
+    "fuente": "https://raw.githubusercontent.com/incidunt/token-icons/b8235a200865946372b2a85cd0a8e68d32c44c2a/packages/core/src/raw-svgs/tokens/branded/BONK.svg",
+    "licencia": "MIT (declarado por el proyecto Token Icons)",
+    "sha256": "f5bdb8f01ed0d162e10f4fdc0830ae6daf68f231fe1ff6dd605165b90e9820ff"
+  },
+  {
+    "simbolo": "EURUSDT",
+    "archivo": "eur.svg",
+    "fuente": "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/1x1/eu.svg",
+    "licencia": "MIT, flag-icons",
+    "nombre": "Euro · Unión Europea",
+    "sha256": "019d50bf796fb6931926181b79222422cd06fe8c53842e577d111c1c3ebc0d8a"
+  },
+  {
+    "simbolo": "BRLUSDT",
+    "archivo": "brl.svg",
+    "fuente": "https://raw.githubusercontent.com/lipis/flag-icons/main/flags/1x1/br.svg",
+    "licencia": "MIT, flag-icons",
+    "nombre": "Real · Brasil",
+    "sha256": "575ab789b4debbcf4ba10561fd9c8a16ca037b3384914e686b4bc597bb0bc5e2"
+  },
+  {
+    "simbolo": "AAPLXUSDT",
+    "archivo": "aaplx.svg",
+    "fuente": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/apple.svg",
+    "licencia": "CC0, Simple Icons; marcas de sus titulares",
+    "nombre": "Apple · token xStocks",
+    "sha256": "6180daded295c7d5f04f4a70ad0b43949767d1eff754c378f14a2b458638950f"
+  },
+  {
+    "simbolo": "METAXUSDT",
+    "archivo": "metax.svg",
+    "fuente": "https://raw.githubusercontent.com/simple-icons/simple-icons/develop/icons/meta.svg",
+    "licencia": "CC0, Simple Icons; marcas de sus titulares",
+    "nombre": "Meta · token xStocks",
+    "sha256": "8712ce28ea54ed23b0133c49d20b1378ce2c2f4b69d8d9e5a18cab0fae6f8ad9"
+  },
+  {
+    "simbolo": "MSFTONUSDT",
+    "archivo": "msfton.svg",
+    "fuente": "Dibujo vectorial identificativo de Microsoft",
+    "licencia": "Geometría original de integración; marca Microsoft",
+    "nombre": "Microsoft · token Ondo",
+    "sha256": "605868cc51d3137a62d05fc7862657cebb15ce9bfb8a4cfc2414773ae544eaf1"
+  },
+  {
+    "simbolo": "GOLD(XAUT)USDT",
+    "archivo": "oro.svg",
+    "fuente": "Ilustración original de un lingote",
+    "licencia": "Original Astrolabio",
+    "nombre": "Oro · token XAUT",
+    "sha256": "8bbc7ef6d2badcd606ee847a6f60c1091771848ce50171918185a018f56bfd26"
+  },
+  {
+    "simbolo": "SPYONUSDT",
+    "archivo": "spyon.svg",
+    "fuente": "Pictograma original de índice; no logo oficial del emisor",
+    "licencia": "Original Astrolabio",
+    "nombre": "S&P 500 · ETF tokenizado Ondo",
+    "sha256": "c270fa14d8fcc32f09e8939a4ac5fa7753effd1f3e0c5aa4a39c89c9f0640bd1"
+  },
+  {
+    "simbolo": "QQQONUSDT",
+    "archivo": "qqqon.svg",
+    "fuente": "Pictograma original de índice; no logo oficial del emisor",
+    "licencia": "Original Astrolabio",
+    "nombre": "Nasdaq-100 · ETF tokenizado Ondo",
+    "sha256": "7dd02939ac5b550774baa7f56413e2d0c9190cc6395a1e2243b10a834e514611"
+  },
+  {
+    "simbolo": "RUNEUSDT",
+    "archivo": "rune.svg",
+    "fuente": "https://raw.githubusercontent.com/0xa3k5/web3icons/fcd2737648c6feafd7de16566360637e737e4776/raw-svgs/tokens/background/RUNE.svg",
+    "licencia": "MIT (declarado por Web3 Icons)",
+    "sha256": "c27bd4532fa44a49d9da0c137eddbf97fbd2424ad4829c345318d21d03eefa91",
+    "nombre": "THORChain"
+  }
+]

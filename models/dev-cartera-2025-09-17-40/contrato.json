@@ -1,0 +1,160 @@
+{
+  "version": "dev-cartera-2025-09-17-40",
+  "tipo": "lstm",
+  "lookback": 20,
+  "variables": [
+    "ret",
+    "dist_sma20",
+    "vol20"
+  ],
+  "umbral": 0.004,
+  "filtro": "ninguno",
+  "escalador": {
+    "media": [
+      0.0025462844982701905,
+      0.012301982718276766,
+      0.051385166598485604
+    ],
+    "desv": [
+      0.0626690771935882,
+      0.16083157569503126,
+      0.03932858555020856
+    ]
+  },
+  "y_media": 0.0024299034367250495,
+  "y_desv": 0.061346885623217225,
+  "miembros": [
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ]
+  ],
+  "valido_para_entrega": false,
+  "dispositivo": "cpu",
+  "motivo": "Modelo conjunto de desarrollo: sin evidencia de T4.",
+  "nombre": "LSTM ensamble de 3 semillas, 8 neuronas",
+  "conjunto_variables": "rezagos_indicadores",
+  "seleccion": {
+    "periodo_va": [
+      "2024-08-02",
+      "2025-09-16"
+    ],
+    "modelo": "LSTM ensamble de 3 semillas, 8 neuronas",
+    "variables": "rezagos_indicadores",
+    "regla": {
+      "umbral": 0.004,
+      "filtro": "ninguno",
+      "rendimiento": 0.5400471489397363,
+      "drawdown": 0.2701769357537624,
+      "operaciones": 1157,
+      "win_rate": 0.5290345043794777,
+      "costos": 3640.547082719251
+    },
+    "metricas_va": {
+      "MAE": 0.03576111946491373,
+      "RMSE": 0.05160532870177033,
+      "direccional": 0.5039677695031132,
+      "R2": 0.000834646929527838,
+      "correlacion": 0.046030668327225535,
+      "sesgo_modelo": 1.8943661971830985,
+      "n": 16440
+    },
+    "comprar_y_mantener_va": {
+      "rendimiento": 0.6840843854763086,
+      "drawdown": 0.5840606414381881
+    },
+    "rmse_cero_va": 0.05166813921849438,
+    "activos": 40,
+    "particion": [
+      {
+        "conjunto": "TR",
+        "ejemplos": 50076,
+        "primera_emision": "2018-08-21",
+        "ultima_emision": "2024-08-01",
+        "primer_objetivo": "2018-08-22",
+        "ultimo_objetivo": "2024-08-02"
+      },
+      {
+        "conjunto": "VA",
+        "ejemplos": 16440,
+        "primera_emision": "2024-08-02",
+        "ultima_emision": "2025-09-16",
+        "primer_objetivo": "2024-08-03",
+        "ultimo_objetivo": "2025-09-17"
+      },
+      {
+        "conjunto": "TE",
+        "ejemplos": 16520,
+        "primera_emision": "2025-09-17",
+        "ultima_emision": "2026-11-03",
+        "primer_objetivo": "2025-09-18",
+        "ultimo_objetivo": "2026-11-04"
+      }
+    ]
+  },
+  "activos": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ENAUSDT",
+    "BNBUSDT",
+    "DOGEUSDT",
+    "ZIGUSDT",
+    "INJUSDT",
+    "TRXUSDT",
+    "ZECUSDT",
+    "ADAUSDT",
+    "BCHUSDT",
+    "LTCUSDT",
+    "NEARUSDT",
+    "MXUSDT",
+    "XMRUSDT",
+    "FILUSDT",
+    "ETHFIUSDT",
+    "PEPEUSDT",
+    "DOTUSDT",
+    "CAKEUSDT",
+    "TAOUSDT",
+    "BDXUSDT",
+    "ATOMUSDT",
+    "SUIUSDT",
+    "ZANOUSDT",
+    "GRAMUSDT",
+    "PENDLEUSDT",
+    "SHIBUSDT",
+    "STRKUSDT",
+    "TIAUSDT",
+    "FETUSDT",
+    "UNIUSDT",
+    "ARBUSDT",
+    "LINKUSDT",
+    "QNTUSDT",
+    "DASHUSDT",
+    "XLMUSDT",
+    "BONKUSDT"
+  ]
+}

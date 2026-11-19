@@ -1,0 +1,3 @@
+#!/bin/sh
+# Antes de cada git push: cancela la subida si una clave o una huella del panel iría a GitHub (ver SECURITY.md).
+exec .venv/Scripts/python scripts/revisar_secretos.py

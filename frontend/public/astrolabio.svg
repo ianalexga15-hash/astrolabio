@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" role="img" aria-labelledby="titulo">
+<title id="titulo">Astrolabio — brújula de mercados</title>
+<defs>
+<radialGradient id="cielo" cx="35%" cy="22%" r="85%"><stop stop-color="#23354c"/><stop offset=".5" stop-color="#101a29"/><stop offset="1" stop-color="#04080e"/></radialGradient>
+<linearGradient id="oro" x1=".15" y1="0" x2=".85" y2="1"><stop stop-color="#fff1ca"/><stop offset=".3" stop-color="#e5be72"/><stop offset=".55" stop-color="#b58336"/><stop offset=".78" stop-color="#f4d795"/><stop offset="1" stop-color="#bc8b42"/></linearGradient>
+<linearGradient id="orbita" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#a9e7ef"/><stop offset="1" stop-color="#4b819c"/></linearGradient>
+</defs>
+<circle cx="128" cy="128" r="125" fill="#05090e"/>
+<circle cx="128" cy="128" r="120" fill="url(#cielo)" stroke="url(#oro)" stroke-width="5"/>
+<circle cx="128" cy="128" r="107" fill="none" stroke="#dec18a" stroke-opacity=".4" stroke-width="1.5"/>
+<g fill="none" stroke="url(#oro)" stroke-width="3" stroke-linecap="round"><path d="M128 15v17m0 192v17M15 128h17m192 0h17M48 48l12 12m136 136 12 12M48 208l12-12M196 60l12-12"/></g>
+<g stroke="#dac28e" stroke-width="2" opacity=".6"><path d="m83 19 4 10m82-10-4 10m72 54-10 4m10 82-10-4m-58 72-4-10m-82 10 4-10m-68-58 10-4m-10-82 10 4"/></g>
+<circle cx="128" cy="116" r="66" fill="none" stroke="url(#orbita)" stroke-width="3.5"/>
+<ellipse cx="128" cy="143" rx="44" ry="61" transform="rotate(36 128 143)" fill="none" stroke="#78bac9" stroke-opacity=".5" stroke-width="2.5"/>
+<path d="M84 180 116 117 181 74 138 139Z" fill="#03070d" stroke="#04070d" stroke-width="8" stroke-linejoin="round"/>
+<path d="m116 117 65-43-43 65Z" fill="url(#oro)"/><path d="m116 117-32 63 54-41Z" fill="#8c692f"/><path d="m128 128 53-54-43 65Z" fill="#ffe9b3"/>
+<circle cx="128" cy="128" r="12" fill="url(#oro)" stroke="#0b1420" stroke-width="3"/><circle cx="128" cy="128" r="4" fill="#101b29"/>
+<path d="m187 43 4 13 13 4-13 4-4 13-4-13-13-4 13-4Z" fill="#e9faff"/><circle cx="78" cy="91" r="3" fill="#b9e9f0"/><circle cx="176" cy="176" r="2.5" fill="#b9e9f0"/>
+</svg>

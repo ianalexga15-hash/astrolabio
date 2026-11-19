@@ -1,0 +1,68 @@
+{
+ "fuente": "MEXC GET /api/v3/klines interval=15m, datos públicos",
+ "descargado": "2026-11-09T02:20:56+00:00",
+ "desde": "2026-08-12T00:00:00+00:00",
+ "hasta": "2026-11-09T02:15:00+00:00",
+ "activos": {
+  "BTCUSDT": {
+   "archivo": "data/intradia/BTCUSDT_15m.csv",
+   "sha256": "f27827f2aa48627c6bf47382e9dd687f48f7ae83d4253b5c93f5e0a0ed36e661",
+   "velas_guardadas": 8553,
+   "auditoria_cruda": {
+    "velas": 8553,
+    "desde": 1786492800000,
+    "hasta": 1794189600000,
+    "duplicados": 0,
+    "desordenadas": 0,
+    "huecos": 0,
+    "velas_faltantes": 0,
+    "ohlc_incoherente": 0,
+    "precio_no_positivo": 0,
+    "volumen_negativo": 0,
+    "volumen_cero": 0,
+    "no_finitos": 0,
+    "abiertas": 0
+   }
+  },
+  "ETHUSDT": {
+   "archivo": "data/intradia/ETHUSDT_15m.csv",
+   "sha256": "1d53cf2877ca709f0038f636c029221597a2f1a52664e2116893e6f79fde24e2",
+   "velas_guardadas": 8553,
+   "auditoria_cruda": {
+    "velas": 8553,
+    "desde": 1786492800000,
+    "hasta": 1794189600000,
+    "duplicados": 0,
+    "desordenadas": 0,
+    "huecos": 0,
+    "velas_faltantes": 0,
+    "ohlc_incoherente": 0,
+    "precio_no_positivo": 0,
+    "volumen_negativo": 0,
+    "volumen_cero": 0,
+    "no_finitos": 0,
+    "abiertas": 0
+   }
+  },
+  "SOLUSDT": {
+   "archivo": "data/intradia/SOLUSDT_15m.csv",
+   "sha256": "9a80941f5a7b9265fd1e7f111b5320e9d92b7a8935f7fa5ba478f218a055f6a7",
+   "velas_guardadas": 8553,
+   "auditoria_cruda": {
+    "velas": 8553,
+    "desde": 1786492800000,
+    "hasta": 1794189600000,
+    "duplicados": 0,
+    "desordenadas": 0,
+    "huecos": 0,
+    "velas_faltantes": 0,
+    "ohlc_incoherente": 0,
+    "precio_no_positivo": 0,
+    "volumen_negativo": 0,
+    "volumen_cero": 0,
+    "no_finitos": 0,
+    "abiertas": 0
+   }
+  }
+ }
+}

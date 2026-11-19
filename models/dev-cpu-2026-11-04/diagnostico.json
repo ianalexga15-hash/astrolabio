@@ -1,0 +1,119 @@
+[
+  {
+    "modelo": "Base: regresión lineal",
+    "estrategia": "Referencia",
+    "mse": 0.0005851875141004779,
+    "varianza": 8.321649751105989e-06,
+    "sesgo2_mas_ruido": 0.000576865864349372,
+    "mse_promedio": 0.000576865864349372,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Agregar más datos (referencia con solo 50% de TR)",
+    "estrategia": "Agregar más datos",
+    "mse": 0.000603747673046718,
+    "varianza": 1.309574970478274e-05,
+    "sesgo2_mas_ruido": 0.0005906519233419353,
+    "mse_promedio": 0.0005906519233419352,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Ridge L2 alpha=100",
+    "estrategia": "Regularización",
+    "mse": 0.0005839764003225157,
+    "varianza": 7.662213606340648e-06,
+    "sesgo2_mas_ruido": 0.000576314186716175,
+    "mse_promedio": 0.0005763141867161752,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Ridge L2 alpha=1000",
+    "estrategia": "Regularización",
+    "mse": 0.0005788833242352245,
+    "varianza": 4.438859889332542e-06,
+    "sesgo2_mas_ruido": 0.0005744444643458919,
+    "mse_promedio": 0.0005744444643458918,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Lasso L1",
+    "estrategia": "Regularización",
+    "mse": 0.000579271393961435,
+    "varianza": 4.148953575153506e-06,
+    "sesgo2_mas_ruido": 0.0005751224403862814,
+    "mse_promedio": 0.0005751224403862817,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "PCA 5 componentes + lineal",
+    "estrategia": "Selección de características (PCA)",
+    "mse": 0.0005791999501344987,
+    "varianza": 4.3721311454478134e-06,
+    "sesgo2_mas_ruido": 0.0005748278189890509,
+    "mse_promedio": 0.0005748278189890509,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Bagging: Random Forest",
+    "estrategia": "Bagging",
+    "mse": 0.0005792488814540771,
+    "varianza": 2.552874974861235e-06,
+    "sesgo2_mas_ruido": 0.000576696006479216,
+    "mse_promedio": 0.000576696006479216,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "Boosting: gradiente",
+    "estrategia": "Boosting",
+    "mse": 0.0005874639229518802,
+    "varianza": 6.943177555464351e-06,
+    "sesgo2_mas_ruido": 0.0005805207453964158,
+    "mse_promedio": 0.0005805207453964159,
+    "reentrenamientos": 12
+  },
+  {
+    "modelo": "MLP pequeña",
+    "estrategia": "Referencia de red",
+    "mse": 0.0005901137958357587,
+    "varianza": 1.0045791817589406e-05,
+    "sesgo2_mas_ruido": 0.0005800680040181693,
+    "mse_promedio": 0.0005800680040181694,
+    "reentrenamientos": 3
+  },
+  {
+    "modelo": "MLP grande (más capas y neuronas)",
+    "estrategia": "Aumentar complejidad",
+    "mse": 0.0005842789396159584,
+    "varianza": 6.810550841552905e-06,
+    "sesgo2_mas_ruido": 0.0005774683887744055,
+    "mse_promedio": 0.0005774683887744054,
+    "reentrenamientos": 3
+  },
+  {
+    "modelo": "MLP grande + Dropout 0.3",
+    "estrategia": "Regularización",
+    "mse": 0.0005776146141643918,
+    "varianza": 1.8883625401901496e-06,
+    "sesgo2_mas_ruido": 0.0005757262516242017,
+    "mse_promedio": 0.0005757262516242017,
+    "reentrenamientos": 3
+  },
+  {
+    "modelo": "MLP grande + L2",
+    "estrategia": "Regularización",
+    "mse": 0.0005886866929003547,
+    "varianza": 7.1811254872389035e-06,
+    "sesgo2_mas_ruido": 0.0005815055674131158,
+    "mse_promedio": 0.0005815055674131157,
+    "reentrenamientos": 3
+  },
+  {
+    "modelo": "LSTM",
+    "estrategia": "Red recurrente",
+    "mse": 0.0005779510314106324,
+    "varianza": 7.227343220545276e-07,
+    "sesgo2_mas_ruido": 0.0005772282970885779,
+    "mse_promedio": 0.0005772282970885779,
+    "reentrenamientos": 3
+  }
+]

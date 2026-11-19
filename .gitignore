@@ -1,0 +1,33 @@
+# Temporales y texto extraído del libro: no se versionan ni se publican
+tmp/
+
+# Secretos: claves en .env, llaves y almacenes de contraseñas en cualquier carpeta
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.kdbx
+id_rsa*
+
+# Herramientas locales: skills de terceros y permisos personales de Claude Code
+.claude/skills/
+.claude/settings.local.json
+
+# Entornos y compilados
+.venv/
+__pycache__/
+.pytest_cache/
+node_modules/
+frontend/dist/
+
+# Bases del bot en cualquier carpeta: guardan la huella de la contraseña, las sesiones y las operaciones (se exporta con scripts/exportar_registros.py)
+*.sqlite3*
+*.db
+data/*.log
+output/registros/
+
+# Salida de Playwright (capturas y registros de pruebas manuales)
+.playwright-mcp/
