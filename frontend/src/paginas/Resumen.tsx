@@ -70,13 +70,13 @@ export function Resumen({ estado }: { estado: Estado | null }) {
 
       <section>
         <h2>Comparación de corridas</h2>
-        <p className="explicacion">Mismo periodo y costos dentro de cada replay. El rendimiento pasado no predice el futuro: sirve para saber si el LLM aporta algo frente a la regla sola.</p>
+        <p className="explicacion">Mismo periodo y costos dentro de cada replay. El rendimiento pasado no predice el futuro: sirve para saber si el LLM aporta algo frente a la regla sola. Sharpe y Sortino se anualizan con 365 días y una tasa libre de riesgo de 0 %; VaR y CVaR son históricos, a un día y al 95 %, expresados como pérdida.</p>
         {errorCorridas && <p className="aviso-error" role="alert">No se pudieron leer las corridas: {errorCorridas}</p>}
         {!corridas && !errorCorridas && <p className="vacio">Leyendo las corridas…</p>}
         <div className="tabla-scroll">
           <table className="tabla-corridas">
             <thead>
-              <tr><th>Corrida</th><th>Periodo</th><th>Activos</th><th>Decisiones</th><th>Rendimiento neto</th><th>Comprar y mantener</th><th>Caída máx.</th><th>Operaciones</th><th>Ganadoras</th><th>Rechazadas</th><th>Latencia media</th></tr>
+              <tr><th>Corrida</th><th>Periodo</th><th>Activos</th><th>Decisiones</th><th>Rendimiento neto</th><th>Comprar y mantener</th><th>Caída máx.</th><th>Sharpe</th><th>Sortino</th><th>VaR 95 %</th><th>CVaR 95 %</th><th>Operaciones</th><th>Ganadoras</th><th>Rechazadas</th><th>Latencia media</th></tr>
             </thead>
             <tbody>
               {(corridas ?? []).map((r) => (
@@ -88,6 +88,10 @@ export function Resumen({ estado }: { estado: Estado | null }) {
                   <td>{pctSigno(r.rendimiento)}</td>
                   <td>{pctSigno(r.comprar_y_mantener)}</td>
                   <td>{pct(r.drawdown)}</td>
+                  <td>{r.sharpe == null ? 'sin dato' : r.sharpe.toFixed(2)}</td>
+                  <td>{r.sortino == null ? 'sin dato' : r.sortino.toFixed(2)}</td>
+                  <td>{r.var == null ? 'sin dato' : pct(r.var)}</td>
+                  <td>{r.cvar == null ? 'sin dato' : pct(r.cvar)}</td>
                   <td>{r.operaciones}</td>
                   <td>{r.win_rate == null ? 'no definido' : pct(r.win_rate, 0)}</td>
                   <td>{r.acciones_rechazadas}</td>

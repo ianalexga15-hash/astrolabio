@@ -37,6 +37,28 @@ def test_rsi_sin_perdidas_vale_100_y_sin_movimiento_vale_50():
     assert features.add_indicators(frame([100.0] * 40)).rsi14.iloc[-1] == pytest.approx(50)
 
 
+def test_rsi_arranca_con_la_media_de_los_primeros_14_cambios_y_sigue_con_wilder():
+    closes = [100.0, 101, 100, 102, 101, 103, 102, 104, 103, 105, 104, 106, 105, 107, 106, 108]
+    rsi = features.add_indicators(frame(closes)).rsi14
+    cambios = np.diff(closes)
+    g, p = np.clip(cambios[:14], 0, None).mean(), np.clip(-cambios[:14], 0, None).mean()
+    assert rsi.iloc[:14].isna().all()
+    assert rsi.iloc[14] == pytest.approx(100 * g / (g + p))
+    g2, p2 = (13 * g + max(cambios[14], 0)) / 14, (13 * p + max(-cambios[14], 0)) / 14
+    assert rsi.iloc[15] == pytest.approx(100 * g2 / (g2 + p2))
+
+
+def test_bollinger_usa_la_desviacion_poblacional_y_la_ema20_sale_de_la_recursion():
+    closes = random_walk(60, seed=4)
+    df = features.add_indicators(frame(closes))
+    ventana = np.array(closes[-20:])
+    assert df.bb_pos.iloc[-1] == pytest.approx((closes[-1] - ventana.mean()) / (2 * ventana.std(ddof=0)))
+    ema = closes[0]
+    for c in closes[1:]:
+        ema += 2 / 21 * (c - ema)
+    assert df.dist_ema20.iloc[-1] == pytest.approx(closes[-1] / ema - 1)
+
+
 def test_macd_normalizado_usa_12_26_9():
     closes = random_walk(120, seed=3)
     df = features.add_indicators(frame(closes))

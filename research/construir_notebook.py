@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 
 RAIZ = Path(__file__).resolve().parent.parent
-MODULOS = ['bot/data.py', 'bot/features.py', 'bot/model.py', 'bot/mexc.py', 'research/lab.py']
+MODULOS = ['bot/data.py', 'bot/features.py', 'bot/metricas_riesgo.py', 'bot/model.py', 'bot/mexc.py', 'research/lab.py']
 
 
 def md(texto):

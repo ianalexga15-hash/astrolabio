@@ -183,6 +183,17 @@ BTC usa el modelo de `models/ACTIVO.txt`, entrenado en la T4. Los otros 39 usan 
 
 Un activo sin modelo aprobado queda fuera de la cartera y el panel lo avisa. El de BTC, `t4-2026-11-12`, se entrenó en la T4 de Colab; el de la cartera es de desarrollo, entrenado en CPU.
 
+**Indicadores** (`bot/features.py`, los mismos al entrenar y en vivo; cada uno usa solo historia hasta el cierre):
+- Distancias del cierre a su SMA20 y a su EMA20.
+- Posición en las bandas de Bollinger, con dos desviaciones poblacionales (ddof = 0) de 20 cierres.
+- RSI de Wilder, que arranca con la media de los primeros 14 cambios.
+- Histograma del MACD 12/26/9 dividido entre el cierre, para comparar activos con precios distintos.
+- ATR14, volatilidad de 20 rendimientos y volumen relativo.
+
+El modelo de BTC usa solo rendimientos. El de la cartera usa rendimientos, distancia a la SMA20 y volatilidad. Los demás indicadores alimentan al LLM, al Radar y a los modelos de investigación.
+
+**Métricas de riesgo** (`bot/metricas_riesgo.py`): volatilidad anual, Sharpe y Sortino se anualizan con 365 días, porque MEXC cotiza todos los días, y usan una tasa libre de riesgo y una meta de 0 %. VaR y CVaR son históricos, a un día y al 95 %. El CVaR promedia la cola con peso fraccionario en la última observación. Aparecen en la tabla de corridas de la pestaña Resumen y en cada simulación del laboratorio.
+
 ## Entrenamiento en GPU (Colab T4)
 
 **Hecho el 2026-11-13:** el notebook corrió una sola vez en una Tesla T4 y abrió TE una sola vez (`apertura_te.json`: 1 apertura, sin contaminar). No lo vuelvas a correr: sería una segunda apertura de TE. Los pasos quedan como referencia:
@@ -198,6 +209,46 @@ Un activo sin modelo aprobado queda fuera de la cartera y el panel lo avisa. El 
 `models/dev-cpu-*` se entrenó en CPU para integrar el sistema: es de desarrollo. El modelo final de BTC es `t4-2026-11-12`.
 
 Si cambias el entrenamiento, regenera el notebook con `research\construir_notebook.py`: copia los módulos de `bot/` y `research/` para que el notebook y el agente usen el mismo código. `research\probar_notebook.py` lo ejecuta completo con datos sintéticos y sin GPU, sin abrir el TE real. En esta laptop, Control de aplicaciones bloquea un binario de scikit-learn 1.9.1 y la prueba se detiene en el diagnóstico de sesgo y varianza, después de la celda de TE sintético; en Colab no pasa.
+
+## Modelos de investigación (CPU)
+
+`research/modelos_avanzados.py` entrena en CPU, con PyTorch, cuatro familias de modelos sobre BTC diario con las mismas 9 variables: el rendimiento y los ocho indicadores.
+- **TE nunca se usa:** la tabla se corta en el último objetivo de VA.
+- **VA se parte en dos:** del 2024-08-07 al 2025-02-28 se eligen épocas, arquitecturas y el mejor punto de control; del 2025-03-01 al 2025-09-23, 207 días, solo se mide.
+- **Dónde ver los resultados:** en `models/avanzados/resultados.json` y en la pestaña Estrategia.
+- **No deciden operaciones:** son simulaciones; el bot sigue con el modelo entrenado en T4.
+
+```bash
+.venv\Scripts\python research\modelos_avanzados.py
+```
+
+**Pronóstico del rendimiento del día siguiente.** Cada modelo se mide en la mitad que solo mide (simulado). La regla compra si el pronóstico supera 0.05 %, con 0.10 % de costo por lado. Comprar y mantener dio +31.5 % en ese periodo.
+
+| Modelo | RMSE | Dirección | Regla | Caída | Sharpe |
+| --- | --- | --- | --- | --- | --- |
+| Pronóstico cero | 0.02191 | sin dato | sin operaciones | 0 % | sin dato |
+| Ridge α=1000, solo rezagos | 0.02168 | 54.6 % | +59.4 % | 14.4 % | 2.65 |
+| Ridge α=1000, 9 variables | 0.02173 | 52.2 % | +44.0 % | 9.5 % | 2.45 |
+| LSTM | 0.02196 | 48.8 % | +24.2 % | 12.7 % | 1.69 |
+| GRU | 0.02211 | 49.3 % | +18.3 % | 18.7 % | 1.01 |
+| LSTM bidireccional (la elegida por validación) | 0.02209 | 51.7 % | +14.2 % | 13.2 % | 0.86 |
+| MLP con Swish, AdamW y ReduceLROnPlateau | 0.02184 | 52.7 % | +17.1 % | 9.1 % | 1.13 |
+
+Ninguna red recurrente supera al pronóstico cero en RMSE, y la MLP lo supera apenas. Ridge con solo rezagos es la configuración del modelo en producción. Se eligió con todo VA, esta mitad incluida, así que su cifra aquí no es independiente.
+
+**Autoencoders.** Comprimen las 9 variables del día en 3 factores. El autoencoder con ruido (σ = 0.1), elegido por validación, reconstruye mejor que PCA: error de 0.057 contra 0.089. Sus factores no pronostican mejor: Ridge sobre ellos da un RMSE de 0.02190, igual que el pronóstico cero.
+
+**Escenarios generados.** Un VAE y una GAN condicionales generan 16 días de rendimientos según la volatilidad de las 20 sesiones previas. La GAN se acerca más a las colas reales: CVaR al 95 % a 16 días de 10.1 % contra 8.9 % real. El VAE las subestima (2.4 %) y casi no reacciona a la volatilidad. Remuestrear días de entrenamiento las exagera (25.2 %), porque esos años fueron más volátiles.
+
+**Agente Double DQN.** Decide al cierre entre efectivo y comprado; cada cambio paga 0.10 % en la apertura siguiente. No vende en corto, porque MEXC spot no lo permite.
+
+| Política | Rendimiento | Caída | Sharpe | Días comprado |
+| --- | --- | --- | --- | --- |
+| Double DQN | +27.9 % | 12.2 % | 1.48 | 77 % |
+| Siempre comprado | +31.5 % | 19.0 % | 1.36 | 100 % |
+| Q-learning tabular | 0 % | 0 % | sin dato | 0 % |
+
+La validación eligió el episodio 3 de 40, todavía con mucha exploración: su política se parece a quedarse comprado, y saliendo algunos días cae menos. El Q-learning tabular aprendió a no comprar nunca.
 
 ## Comparación con y sin LLM
 

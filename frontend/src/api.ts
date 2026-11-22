@@ -241,4 +241,8 @@ export interface Corrida {
   acciones_rechazadas: number;
   latencia_media_ms: number | null;
   patrimonio_final: number | null;
+  sharpe?: number | null;
+  sortino?: number | null;
+  var?: number | null;
+  cvar?: number | null;
 }

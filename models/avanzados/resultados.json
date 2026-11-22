@@ -1,0 +1,505 @@
+{
+ "generado": "2026-11-21 20:20:29",
+ "dispositivo": "cpu",
+ "semilla": 11,
+ "activo": "BTCUSDT",
+ "variables": [
+  "ret",
+  "dist_sma20",
+  "dist_ema20",
+  "vol20",
+  "rsi14",
+  "macd_hist",
+  "bb_pos",
+  "atr14",
+  "vol_rel"
+ ],
+ "lookback": 20,
+ "costo_por_lado": 0.001,
+ "umbral_regla": 0.0005,
+ "particion": {
+  "fin_tr": "2024-08-06",
+  "fin_va": "2025-09-23",
+  "ultimo_objetivo_va": "2025-09-24"
+ },
+ "conjuntos": {
+  "TR": {
+   "ejemplos": 1914,
+   "desde": "2019-05-12",
+   "hasta": "2024-08-06"
+  },
+  "SEL": {
+   "ejemplos": 206,
+   "desde": "2024-08-07",
+   "hasta": "2025-02-28"
+  },
+  "EVAL": {
+   "ejemplos": 207,
+   "desde": "2025-03-01",
+   "hasta": "2025-09-23"
+  }
+ },
+ "estado": "Simulado en VA; TE no se usó",
+ "recurrentes": {
+  "filas": [
+   {
+    "modelo": "Pronóstico cero",
+    "seleccion": {
+     "MAE": 0.0181465,
+     "RMSE": 0.02531987,
+     "direccional": null,
+     "R2": -0.00966494,
+     "correlacion": null,
+     "sesgo_modelo": null,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01496518,
+     "RMSE": 0.02191254,
+     "direccional": null,
+     "R2": -0.00513563,
+     "correlacion": null,
+     "sesgo_modelo": null,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 100000.0,
+     "rendimiento": 0.0,
+     "drawdown": 0.0,
+     "operaciones": 0,
+     "win_rate": null,
+     "costos": 0.0,
+     "observaciones": 207,
+     "volatilidad_anual": 0.0,
+     "sharpe": null,
+     "sortino": null,
+     "var": -0.0,
+     "cvar": 0.0
+    }
+   },
+   {
+    "modelo": "Ridge α=1000, solo rezagos",
+    "seleccion": {
+     "MAE": 0.01810716,
+     "RMSE": 0.02513815,
+     "direccional": 0.50485437,
+     "R2": 0.00477632,
+     "correlacion": 0.07609099,
+     "sesgo_modelo": 4.28205128,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01484612,
+     "RMSE": 0.02167829,
+     "direccional": 0.54589372,
+     "R2": 0.01623975,
+     "correlacion": 0.13634111,
+     "sesgo_modelo": 5.67741935,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 159444.21372769,
+     "rendimiento": 0.59444214,
+     "drawdown": 0.14407483,
+     "operaciones": 42,
+     "win_rate": 0.61904762,
+     "costos": 11913.61328728,
+     "observaciones": 207,
+     "volatilidad_anual": 0.33051861,
+     "sharpe": 2.65386292,
+     "sortino": 5.00127439,
+     "var": 0.02091478,
+     "cvar": 0.03112719
+    }
+   },
+   {
+    "modelo": "Ridge α=1000, 9 variables",
+    "seleccion": {
+     "MAE": 0.01825733,
+     "RMSE": 0.02524019,
+     "direccional": 0.5776699,
+     "R2": -0.00331956,
+     "correlacion": 0.05351489,
+     "sesgo_modelo": 2.55172414,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01492082,
+     "RMSE": 0.02172807,
+     "direccional": 0.52173913,
+     "R2": 0.01171574,
+     "correlacion": 0.11280782,
+     "sesgo_modelo": 1.7972973,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 144025.57265582,
+     "rendimiento": 0.44025573,
+     "drawdown": 0.09455011,
+     "operaciones": 35,
+     "win_rate": 0.6,
+     "costos": 8856.59603795,
+     "observaciones": 207,
+     "volatilidad_anual": 0.27819067,
+     "sharpe": 2.45016972,
+     "sortino": 5.02649514,
+     "var": 0.01647047,
+     "cvar": 0.02575895
+    }
+   },
+   {
+    "modelo": "LSTM",
+    "parametros": 5537,
+    "mejor_epoca": 4,
+    "epocas": 16,
+    "segundos": 8.9,
+    "seleccion": {
+     "MAE": 0.01819203,
+     "RMSE": 0.02524193,
+     "direccional": 0.50485437,
+     "R2": -0.00345861,
+     "correlacion": 0.02943298,
+     "sesgo_modelo": 1.98550725,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01508363,
+     "RMSE": 0.02196297,
+     "direccional": 0.48792271,
+     "R2": -0.00976819,
+     "correlacion": -0.0166569,
+     "sesgo_modelo": 1.76,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 124215.5688823,
+     "rendimiento": 0.24215569,
+     "drawdown": 0.12722648,
+     "operaciones": 13,
+     "win_rate": 0.46153846,
+     "costos": 2947.11664135,
+     "observaciones": 207,
+     "volatilidad_anual": 0.24441341,
+     "sharpe": 1.68508006,
+     "sortino": 3.15567601,
+     "var": 0.01519343,
+     "cvar": 0.02475737
+    }
+   },
+   {
+    "modelo": "GRU",
+    "parametros": 4161,
+    "mejor_epoca": 31,
+    "epocas": 43,
+    "segundos": 16.5,
+    "seleccion": {
+     "MAE": 0.01799255,
+     "RMSE": 0.02500356,
+     "direccional": 0.58737864,
+     "R2": 0.01540441,
+     "correlacion": 0.12559675,
+     "sesgo_modelo": 3.29166667,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01543524,
+     "RMSE": 0.02211379,
+     "direccional": 0.49275362,
+     "R2": -0.0236839,
+     "correlacion": -0.01036605,
+     "sesgo_modelo": 4.175,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 118265.77308103,
+     "rendimiento": 0.18265773,
+     "drawdown": 0.18679619,
+     "operaciones": 19,
+     "win_rate": 0.57894737,
+     "costos": 4208.74025161,
+     "observaciones": 207,
+     "volatilidad_anual": 0.3535366,
+     "sharpe": 1.01188411,
+     "sortino": 1.59814497,
+     "var": 0.02751721,
+     "cvar": 0.04206183
+    }
+   },
+   {
+    "modelo": "LSTM bidireccional",
+    "parametros": 11073,
+    "mejor_epoca": 12,
+    "epocas": 24,
+    "segundos": 11.1,
+    "seleccion": {
+     "MAE": 0.01814487,
+     "RMSE": 0.02497336,
+     "direccional": 0.5631068,
+     "R2": 0.01778138,
+     "correlacion": 0.13706503,
+     "sesgo_modelo": 4.02439024,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.01538836,
+     "RMSE": 0.0220853,
+     "direccional": 0.51690821,
+     "R2": -0.02104726,
+     "correlacion": 0.00417863,
+     "sesgo_modelo": 6.13793103,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 114219.29714102,
+     "rendimiento": 0.14219297,
+     "drawdown": 0.13238615,
+     "operaciones": 15,
+     "win_rate": 0.53333333,
+     "costos": 3087.68437358,
+     "observaciones": 207,
+     "volatilidad_anual": 0.34039705,
+     "sharpe": 0.85849411,
+     "sortino": 1.27227756,
+     "var": 0.02736791,
+     "cvar": 0.04139582
+    }
+   },
+   {
+    "modelo": "MLP Swish con AdamW y ReduceLROnPlateau",
+    "parametros": 31489,
+    "mejor_epoca": 2,
+    "epocas": 14,
+    "segundos": 1.0,
+    "seleccion": {
+     "MAE": 0.01812179,
+     "RMSE": 0.02513838,
+     "direccional": 0.55825243,
+     "R2": 0.00475817,
+     "correlacion": 0.08845963,
+     "sesgo_modelo": 2.21875,
+     "n": 206
+    },
+    "medicion": {
+     "MAE": 0.0149219,
+     "RMSE": 0.02184048,
+     "direccional": 0.52657005,
+     "R2": 0.00146381,
+     "correlacion": 0.05768985,
+     "sesgo_modelo": 2.0,
+     "n": 207
+    },
+    "regla": {
+     "patrimonio_final": 117103.31939958,
+     "rendimiento": 0.17103319,
+     "drawdown": 0.09120748,
+     "operaciones": 31,
+     "win_rate": 0.58064516,
+     "costos": 6994.13358015,
+     "observaciones": 207,
+     "volatilidad_anual": 0.28125609,
+     "sharpe": 1.1298376,
+     "sortino": 1.76534695,
+     "var": 0.01780711,
+     "cvar": 0.03312402
+    }
+   }
+  ],
+  "elegida_por_validacion": "LSTM bidireccional"
+ },
+ "autoencoders": {
+  "filas": [
+   {
+    "modelo": "PCA (3 componentes)",
+    "mse_reconstruccion_seleccion": 0.09746715,
+    "mse_reconstruccion_medicion": 0.08863599,
+    "ridge_sobre_factores": {
+     "MAE": 0.01499534,
+     "RMSE": 0.02183354,
+     "direccional": 0.46859903,
+     "R2": 0.00209881,
+     "correlacion": 0.06411314,
+     "sesgo_modelo": 1.83561644,
+     "n": 207
+    }
+   },
+   {
+    "modelo": "Autoencoder",
+    "mse_reconstruccion_seleccion": 0.06810923,
+    "mse_reconstruccion_medicion": 0.05745628,
+    "ridge_sobre_factores": {
+     "MAE": 0.0150701,
+     "RMSE": 0.02195251,
+     "direccional": 0.46376812,
+     "R2": -0.00880585,
+     "correlacion": 0.0196386,
+     "sesgo_modelo": 2.13636364,
+     "n": 207
+    },
+    "mejor_epoca": 181,
+    "mse_seleccion": 0.06810924
+   },
+   {
+    "modelo": "Autoencoder con ruido (σ = 0.1)",
+    "mse_reconstruccion_seleccion": 0.06394396,
+    "mse_reconstruccion_medicion": 0.05656132,
+    "ridge_sobre_factores": {
+     "MAE": 0.01503538,
+     "RMSE": 0.02189924,
+     "direccional": 0.48309179,
+     "R2": -0.00391636,
+     "correlacion": 0.02882165,
+     "sesgo_modelo": 2.98076923,
+     "n": 207
+    },
+    "mejor_epoca": 266,
+    "mse_seleccion": 0.06394395
+   }
+  ],
+  "referencia": {
+   "ridge_9_variables": {
+    "MAE": 0.01521364,
+    "RMSE": 0.02198054,
+    "direccional": 0.51690821,
+    "R2": -0.01138435,
+    "correlacion": 0.04753318,
+    "sesgo_modelo": 1.68831169,
+    "n": 207
+   },
+   "cero": {
+    "MAE": 0.01496518,
+    "RMSE": 0.02191254,
+    "direccional": null,
+    "R2": -0.00513563,
+    "correlacion": null,
+    "sesgo_modelo": null,
+    "n": 207
+   }
+  },
+  "elegido_por_validacion": "Autoencoder con ruido (σ = 0.1)"
+ },
+ "generativos": {
+  "filas": [
+   {
+    "fuente": "Ventanas reales de VA",
+    "desviacion_diaria": 0.02026138,
+    "var95_diario": 0.03064467,
+    "cvar95_diario": 0.04096758,
+    "media_16_dias": 0.02700823,
+    "desviacion_16_dias": 0.06462191,
+    "var95_16_dias": 0.06736082,
+    "cvar95_16_dias": 0.08887532,
+    "escenarios": 192,
+    "respuesta_a_la_volatilidad": 0.45224183
+   },
+   {
+    "fuente": "VAE condicional",
+    "desviacion_diaria": 0.01352202,
+    "var95_diario": 0.0201394,
+    "cvar95_diario": 0.02674661,
+    "media_16_dias": 0.03002936,
+    "desviacion_16_dias": 0.02637983,
+    "var95_16_dias": 0.01325366,
+    "cvar95_16_dias": 0.02435833,
+    "escenarios": 3840,
+    "respuesta_a_la_volatilidad": 0.07098923
+   },
+   {
+    "fuente": "GAN condicional",
+    "desviacion_diaria": 0.02449677,
+    "var95_diario": 0.03876452,
+    "cvar95_diario": 0.05249748,
+    "media_16_dias": 0.00019669,
+    "desviacion_16_dias": 0.04283171,
+    "var95_16_dias": 0.07750174,
+    "cvar95_16_dias": 0.1010339,
+    "escenarios": 3840,
+    "respuesta_a_la_volatilidad": 0.18949163
+   },
+   {
+    "fuente": "Remuestreo de días de TR",
+    "desviacion_diaria": 0.03487405,
+    "var95_diario": 0.05246046,
+    "cvar95_diario": 0.07881717,
+    "media_16_dias": 0.02970755,
+    "desviacion_16_dias": 0.14343377,
+    "var95_16_dias": 0.17734817,
+    "cvar95_16_dias": 0.25190132,
+    "escenarios": 3840,
+    "respuesta_a_la_volatilidad": null
+   }
+  ],
+  "ventanas": {
+   "TR": 1930,
+   "SEL": 191,
+   "EVAL": 192
+  },
+  "vae": {
+   "mejor_epoca": 6,
+   "perdida_seleccion": 0.40853429
+  },
+  "gan": {
+   "mejor_epoca": 400,
+   "error_colas_seleccion": 0.00635389
+  }
+ },
+ "agente": {
+  "filas": [
+   {
+    "politica": "Double DQN",
+    "rendimiento": 0.27852235,
+    "drawdown": 0.12204844,
+    "rotacion": 0.06280193,
+    "dias_comprado": 0.76811594,
+    "volatilidad_anual": 0.32958329,
+    "sharpe": 1.47834382,
+    "sortino": 2.35565309,
+    "var": 0.02240282,
+    "cvar": 0.03813991
+   },
+   {
+    "politica": "Q-learning tabular",
+    "rendimiento": 0.0,
+    "drawdown": 0.0,
+    "rotacion": 0.0,
+    "dias_comprado": 0.0,
+    "volatilidad_anual": 0.0,
+    "sharpe": null,
+    "sortino": null,
+    "var": -0.0,
+    "cvar": 0.0
+   },
+   {
+    "politica": "Siempre comprado",
+    "rendimiento": 0.31509427,
+    "drawdown": 0.19038487,
+    "rotacion": 0.00483092,
+    "dias_comprado": 1.0,
+    "volatilidad_anual": 0.41814733,
+    "sharpe": 1.36260824,
+    "sortino": 2.14337746,
+    "var": 0.03098032,
+    "cvar": 0.04611925
+   },
+   {
+    "politica": "Siempre en efectivo",
+    "rendimiento": 0.0,
+    "drawdown": 0.0,
+    "rotacion": 0.0,
+    "dias_comprado": 0.0,
+    "volatilidad_anual": 0.0,
+    "sharpe": null,
+    "sortino": null,
+    "var": -0.0,
+    "cvar": 0.0
+   }
+  ],
+  "entrenamiento": {
+   "episodios": 40,
+   "mejor_episodio": 3,
+   "rendimiento_seleccion": 0.80348166,
+   "actualizaciones": 19099,
+   "segundos": 72.4
+  }
+ },
+ "segundos": 259
+}

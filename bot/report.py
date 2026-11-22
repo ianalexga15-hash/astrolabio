@@ -6,6 +6,8 @@ from pathlib import Path
 
 import numpy as np
 
+from bot.metricas_riesgo import metricas_riesgo
+
 TABLAS_EVIDENCIA = ('runs', 'decisiones', 'ordenes', 'patrimonio', 'errores', 'procesadas', 'estado', 'configuracion')  # nunca 'acceso'
 
 
@@ -22,14 +24,14 @@ def resumen_run(store, run, capital, comision):
         comprar_y_mantener=None, operaciones=len(cerradas), win_rate=float(np.mean([o['resultado'] > 0 for o in cerradas])) if cerradas else None,
         costos=float(sum(o['comision'] for o in ejecutadas)), ordenes_rechazadas=sum(o['estado'] == 'rechazada' for o in ordenes),
         acciones_rechazadas=sum(not d['aprobada'] for d in decisiones), latencia_media_ms=float(np.mean(latencias)) if latencias else None,
-        patrimonio_final=None)
+        patrimonio_final=None, **metricas_riesgo([]))
     if marcas:
         serie = np.array([m['patrimonio'] for m in marcas], dtype=float)
         picos = np.maximum.accumulate(np.concatenate([[capital], serie]))[1:]
         p0, p1 = marcas[0]['precio'], marcas[-1]['precio']
         resumen |= dict(periodo=[marcas[0]['fecha'], marcas[-1]['fecha']], rendimiento=float(serie[-1] / capital - 1), patrimonio_final=float(serie[-1]),
                         drawdown=float(((picos - serie) / picos).max()),
-                        comprar_y_mantener=float(p1 / p0 * (1 - comision) / (1 + comision) - 1))
+                        comprar_y_mantener=float(p1 / p0 * (1 - comision) / (1 + comision) - 1), **metricas_riesgo(np.r_[capital, serie]))
     return resumen
 
 
@@ -77,12 +79,12 @@ def resumen_grupo(store, prefijo, capital, comision, etiqueta, tipo, runs=None):
     resumen = dict(run=prefijo, tipo=tipo, etiqueta=etiqueta, activos=len(runs), ciclos=len(decisiones), periodo=None, rendimiento=None, drawdown=None, comprar_y_mantener=None, operaciones=len(cerradas),
                    win_rate=float(np.mean([o['resultado'] > 0 for o in cerradas])) if cerradas else None, costos=float(sum(o['comision'] for o in ejecutadas)),
                    ordenes_rechazadas=sum(o['estado'] == 'rechazada' for o in filas), acciones_rechazadas=sum(not d['aprobada'] for d in decisiones),
-                   latencia_media_ms=float(np.mean(latencias)) if latencias else None, patrimonio_final=None)
+                   latencia_media_ms=float(np.mean(latencias)) if latencias else None, patrimonio_final=None, **metricas_riesgo([]))
     if serie:
         valores = np.array([m['patrimonio'] for m in serie], dtype=float)
         picos = np.maximum.accumulate(np.concatenate([[capital], valores]))[1:]
         resumen |= dict(periodo=[serie[0]['fecha'], serie[-1]['fecha']], rendimiento=float(valores[-1] / capital - 1), patrimonio_final=float(valores[-1]), drawdown=float(((picos - valores) / picos).max()),
-                        comprar_y_mantener=float(serie[-1]['precio'] / 100 * (1 - comision) / (1 + comision) - 1))
+                        comprar_y_mantener=float(serie[-1]['precio'] / 100 * (1 - comision) / (1 + comision) - 1), **metricas_riesgo(np.r_[capital, valores]))
     return resumen
 
 

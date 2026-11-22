@@ -14,10 +14,11 @@ Ventanas = namedtuple('Ventanas', 'X y inicio emision objetivo')
 # Qué mide cada indicador y su fórmula; el notebook y el panel muestran esta tabla.
 INDICADORES = {
     'dist_sma20': 'Distancia al promedio de 20 cierres: cierre / SMA20 - 1',
+    'dist_ema20': 'Distancia a la media exponencial de 20 cierres: cierre / EMA20 - 1',
     'vol20': 'Desviación muestral de 20 rendimientos diarios, sin anualizar',
-    'rsi14': 'RSI de 14 con suavizado de Wilder; 100 sin pérdidas, 50 sin movimiento',
+    'rsi14': 'RSI de 14 con suavizado de Wilder, que arranca con la media de los primeros 14 cambios; 100 sin pérdidas, 50 sin movimiento',
     'macd_hist': 'MACD (EMA12 - EMA26) menos su señal EMA9, dividido entre el cierre',
-    'bb_pos': 'Posición en bandas de Bollinger: (cierre - SMA20) / (2 desviaciones de 20 cierres)',
+    'bb_pos': 'Posición en bandas de Bollinger: (cierre - SMA20) / (2 desviaciones poblacionales de 20 cierres)',
     'atr14': 'ATR de 14 con suavizado de Wilder, dividido entre el cierre',
     'vol_rel': 'Logaritmo del volumen entre su promedio de 20 días',
 }
@@ -27,21 +28,29 @@ def _wilder(serie, periodo):
     return serie.ewm(alpha=1 / periodo, adjust=False, min_periods=periodo).mean()
 
 
+def _wilder_desde_media(serie, periodo):
+    """Suavizado de Wilder del RSI: el primer valor es la media de los primeros `periodo` datos y después pesa 1/periodo."""
+    x = serie.dropna()
+    if len(x) < periodo:
+        return pd.Series(np.nan, index=serie.index)
+    semilla = pd.Series([x.iloc[:periodo].mean()], index=x.index[periodo - 1:periodo])
+    return pd.concat([semilla, x.iloc[periodo:]]).ewm(alpha=1 / periodo, adjust=False).mean().reindex(serie.index)
+
+
 def add_indicators(df):
     s = df.copy()
     cierre = s.close
     s['ret'] = cierre.pct_change(fill_method=None)
     s['sma20'] = cierre.rolling(20).mean()
-    desv20 = cierre.rolling(20).std(ddof=1)
+    desv20 = cierre.rolling(20).std(ddof=0)  # las bandas de Bollinger usan la desviación poblacional de los 20 cierres
     s['dist_sma20'] = cierre / s.sma20 - 1
+    s['dist_ema20'] = cierre / cierre.ewm(span=20, adjust=False, min_periods=20).mean() - 1
     s['vol20'] = s.ret.rolling(20).std(ddof=1)
 
     delta = cierre.diff()
-    ganancia = _wilder(delta.clip(lower=0), 14)
-    perdida = _wilder(-delta.clip(upper=0), 14)
-    rsi = 100 - 100 / (1 + ganancia / perdida)
-    rsi = rsi.where(perdida != 0, 100.0).where((ganancia != 0) | (perdida != 0), 50.0)
-    s['rsi14'] = rsi.where(ganancia.notna())
+    ganancia = _wilder_desde_media(delta.clip(lower=0), 14)
+    perdida = _wilder_desde_media((-delta).clip(lower=0), 14)
+    s['rsi14'] = (100 * ganancia / (ganancia + perdida)).mask((ganancia + perdida) == 0, 50.0)
 
     macd = cierre.ewm(span=12, adjust=False, min_periods=12).mean() - cierre.ewm(span=26, adjust=False, min_periods=26).mean()
     s['macd_hist'] = (macd - macd.ewm(span=9, adjust=False, min_periods=9).mean()) / cierre

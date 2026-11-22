@@ -10,7 +10,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from bot import data, features, model
+from bot import data, features, metricas_riesgo, model
 
 UMBRALES = (0.0005, 0.001, 0.002, 0.004, 0.008)  # definidos antes de mirar VA; positivos y distintos del costo
 FILTROS = ('ninguno', 'sma20')
@@ -93,7 +93,7 @@ def simular(velas, senales, comision, capital=100_000.0):
     final = float(tabla.patrimonio.iloc[-1])
     return dict(patrimonio_final=final, rendimiento=final / capital - 1, drawdown=max_drawdown(tabla.patrimonio),
                 operaciones=len(resultados), win_rate=float(np.mean([r > 0 for r in resultados])) if resultados else None,
-                costos=costos, tabla=tabla)
+                costos=costos, **metricas_riesgo.metricas_riesgo(np.r_[capital, tabla.patrimonio.to_numpy()]), tabla=tabla)
 
 
 def comprar_y_mantener(velas, comision, capital=100_000.0):

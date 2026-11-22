@@ -121,7 +121,7 @@ class Contexto:
             return model.ModeloInvalido(str(e))
 
     def _cargar_modelos(self):
-        """BTC usa el modelo de la práctica. Los demás, el modelo conjunto evaluado en VA; sin él quedan fuera."""
+        """BTC usa el modelo entrenado en T4. Los demás, el modelo conjunto evaluado en VA; sin él quedan fuera."""
         principal, conjunto = self._cargar('ACTIVO.txt'), self._cargar('CARTERA.txt')
         return {s: (principal or conjunto) if s == self.limites.simbolo else conjunto for s in self.simbolos}
 
@@ -536,9 +536,11 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
         principal = ctx.modelos.get(ctx.limites.simbolo)
         conjunto_carpeta = _leer_activo(aj.raiz, 'CARTERA.txt')
         conjunto = next((m for s, m in ctx.modelos.items() if s != ctx.limites.simbolo and m), None)
+        avanzados = Path(aj.raiz) / 'models' / 'avanzados' / 'resultados.json'  # investigación en VA: no decide operaciones
         return dict(modelo=info_modelo(), **_archivos_modelo(_leer_activo(aj.raiz, 'ACTIVO.txt'), principal),
                     conjunto=dict(version=conjunto.version, nombre=conjunto.contrato.get('nombre'), umbral=conjunto.umbral, filtro=conjunto.filtro, valido_para_entrega=conjunto.contrato.get('valido_para_entrega'),
-                                  **_archivos_modelo(conjunto_carpeta, conjunto)) if conjunto else None)
+                                  **_archivos_modelo(conjunto_carpeta, conjunto)) if conjunto else None,
+                    avanzados=json.loads(avanzados.read_text(encoding='utf-8')) if avanzados.exists() else None)
 
     # Notas del desarrollo
     @app.get('/api/modelos/versiones', dependencies=[Depends(sesion)])

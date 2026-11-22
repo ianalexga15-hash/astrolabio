@@ -4,6 +4,7 @@ import { Lineas } from '../graficos/Lineas';
 import { num, pct, pctSigno } from '../logica';
 import { Observatorio } from '../componentes/Observatorio';
 import { VersionModelo } from '../componentes/VersionModelo';
+import { type Avanzados, ModelosInvestigacion } from '../componentes/ModelosInvestigacion';
 
 interface Lab {
   modelo: { version: string; nombre?: string; tipo: string; umbral: number; filtro: string; variables: string[]; valido_para_entrega?: boolean } | null;
@@ -28,6 +29,7 @@ interface Lab {
     seleccion: Lab['seleccion'] & { activos?: number };
     por_activo: Record<string, string>[];
   } | null;
+  avanzados?: Avanzados | null;
 }
 
 const n = (v: string | undefined) => (v === undefined || v === '' ? null : Number(v));
@@ -115,7 +117,7 @@ export function Estrategia() {
         {lab.diagnostico.length === 0 ? <p className="vacio">Sin diagnóstico en este modelo.</p> : (
           <div className="tabla-scroll">
             <table>
-              <thead><tr><th>Táctica de la clase</th><th>Modelo</th><th>Error total frente a la base</th><th>Varianza</th><th>Sesgo² + ruido</th><th>Reentrenos</th></tr></thead>
+              <thead><tr><th>Táctica</th><th>Modelo</th><th>Error total frente a la base</th><th>Varianza</th><th>Sesgo² + ruido</th><th>Reentrenos</th></tr></thead>
               <tbody>
                 {lab.diagnostico.map((d) => (
                   <tr key={d.modelo}>
@@ -136,16 +138,18 @@ export function Estrategia() {
         )}
       </section>
 
+      {lab.avanzados && <ModelosInvestigacion datos={lab.avanzados} />}
+
       <section>
         <h2>Experimentos</h2>
         <p className="explicacion">De menor a mayor error en validación. Pronóstico cero y regresión lineal son las referencias que el modelo profundo tendría que superar.</p>
         <div className="tabla-scroll tabla-alta">
           <table>
-            <thead><tr><th>Cap.</th><th>Variables</th><th>Modelo</th><th>Configuración</th><th>Semilla</th><th>RMSE TR</th><th>RMSE VA</th><th>MAE VA</th><th>Dirección VA</th><th>Dispositivo</th></tr></thead>
+            <thead><tr><th>Etapa</th><th>Variables</th><th>Modelo</th><th>Configuración</th><th>Semilla</th><th>RMSE TR</th><th>RMSE VA</th><th>MAE VA</th><th>Dirección VA</th><th>Dispositivo</th></tr></thead>
             <tbody>
               {experimentos.map((e, i) => (
                 <tr key={i}>
-                  <td>{e.capitulo}</td><td>{e.variables}</td><td>{e.modelo}</td><td className="celda-config">{e.configuracion}</td><td>{e.semilla ? Math.round(Number(e.semilla)) : 'no aplica'}</td>
+                  <td>{e.capitulo ? Number(e.capitulo) - 6 : ''}</td><td>{e.variables}</td><td>{e.modelo}</td><td className="celda-config">{e.configuracion}</td><td>{e.semilla ? Math.round(Number(e.semilla)) : 'no aplica'}</td>
                   <td>{n(e.RMSE_TR)?.toFixed(6) ?? 'sin dato'}</td><td>{n(e.RMSE_VA)?.toFixed(6) ?? 'sin dato'}</td><td>{n(e.MAE_VA)?.toFixed(6) ?? 'sin dato'}</td>
                   <td>{e.direccional_VA ? pct(Number(e.direccional_VA), 1) : 'no definido'}</td><td>{e.dispositivo}</td>
                 </tr>

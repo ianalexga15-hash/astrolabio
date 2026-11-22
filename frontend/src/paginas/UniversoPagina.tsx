@@ -53,7 +53,7 @@ export function UniversoPagina() {
     <>
       <section className="universo-encabezado">
         <h2>Universo del desarrollo</h2>
-        <p>Cada estrella es una nota de cómo se construyó este bot y de lo aprendido en el libro y en clase. Las galaxias agrupan por tema, el color dice quién la hizo y las conexiones salen de enlaces escritos en cada nota. Es memoria del proyecto, no neuronas del modelo.</p>
+        <p>Cada estrella es una nota de cómo se construyó este bot y de lo que se aprendió al hacerlo. Las galaxias agrupan por tema, el color dice quién la hizo y las conexiones salen de enlaces escritos en cada nota. Es memoria del proyecto, no neuronas del modelo.</p>
       </section>
 
       <div className="fila-control">
