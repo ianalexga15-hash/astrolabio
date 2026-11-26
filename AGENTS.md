@@ -19,7 +19,7 @@ Corre `.venv/Scripts/python -m pytest -q` y, si tocaste el panel, `npm run build
 
 ## Reglas fijas
 
-- Etapa actual: MEXC en modo Paper. Desde el 2026-11-06, por decisión de Alex, el bot también lee su cuenta real con una clave de solo ver (etapa 3, `bot/cuenta_mexc.py`). No crear rutas de órdenes reales: la etapa 4 necesita otra decisión explícita de Alex.
+- Etapa actual: MEXC en modo Paper más la cartera Real (etapa 4, decisión de Alex del 2026-11-26). La Real repite en la cuenta Spot lo que Paper ejecuta, desde `bot/real.py`, arranca apagada y solo Alex la enciende desde el panel escribiendo la confirmación. Las órdenes reales solo salen de `bot/real.py`; no agregues otras rutas de órdenes, ni rutas para mandar órdenes a mano, ni retiros o transferencias.
 - Las claves y otros secretos no van en el repositorio, los logs ni el chat.
 - El bot en ejecución no llama a Claude ni a Codex. Su único LLM es Ollama local.
 - El LLM propone; los controles de riesgo deterministas deciden si se ejecuta.

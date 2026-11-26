@@ -136,6 +136,17 @@ summary:hover { color: var(--luz); }
 .insignias > * { display: inline-flex; align-items: center; gap: 6px; padding: 0 11px; white-space: nowrap; }
 .insignias > * + * { border-left: 1px solid var(--polvo-suave); }
 .paper-insignia { font-size: 11px; font-weight: 700; letter-spacing: .08em; color: #a6e9f2; }
+.insignias > .selector-cartera { gap: 2px; padding: 0 3px; }
+.selector-cartera button { display: inline-flex; align-items: center; gap: 6px; min-height: 24px; padding: 0 10px; border: 0; border-radius: 99px; background: transparent;
+  font-size: 11px; font-weight: 700; letter-spacing: .08em; color: var(--tenue); cursor: pointer; }
+.selector-cartera button:hover { color: var(--luz); }
+.selector-cartera button[aria-pressed="true"] { background: var(--superficie-alta); color: #a6e9f2; }
+.punto-real { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--reposo); }
+.punto-real.real-sombra { background: var(--ambar); }
+.punto-real.real-real { background: var(--positivo); }
+.pestanas.en-real .pestanas-linea { opacity: 0; }
+.confirmar-real { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; margin-top: 10px; }
+.confirmar-real label { display: grid; gap: 6px; font-size: var(--t-aux); color: var(--ceniza); }
 .punto-paper { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--cian); }
 .mercado-insignia { font-size: 11px; font-weight: 700; letter-spacing: .06em; }
 .mercado-insignia i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--reposo); }

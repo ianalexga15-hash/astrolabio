@@ -162,7 +162,7 @@ class Mexc:
             if str(s.get('status')) != '1':
                 raise MexcError(f'{simbolo} no está disponible para operar (estado {s.get("status")}).')
             paso = float(s['baseSizePrecision']) or 10.0 ** -int(s['baseAssetPrecision'])  # MEXC manda '0' en algunos pares
-            return {'paso_cantidad': paso, 'minimo_quote': float(s['quoteAmountPrecision']),
+            return {'paso_cantidad': paso, 'minimo_quote': float(s['quoteAmountPrecision']), 'base': s.get('baseAsset'),
                     'maker': float(s.get('makerCommission', 0)), 'taker': float(s.get('takerCommission', 0))}
         except (KeyError, IndexError, TypeError, ValueError) as e:
             raise MexcError(f'Respuesta inesperada de exchangeInfo para {simbolo}.') from e

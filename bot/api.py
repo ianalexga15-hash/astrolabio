@@ -24,7 +24,7 @@ from bot.security import SENUELO, LimiteIntentos, ProteccionPanel, RespuestaSegu
 from bot import data, llm, mexc, model, notes, paper
 from bot.cartera import Cartera
 from bot.config import MODELOS_PERMITIDOS, cargar_limites, cargar_universo, limites_a_dict, limites_desde
-from bot import cuenta_mexc, historial
+from bot import cuenta_mexc, historial, real
 from bot.events import Eventos
 from bot.report import resumen_grupo, resumen_run, serie_grupo
 from bot.store import Store
@@ -149,7 +149,7 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
     @asynccontextmanager
     async def ciclo_de_vida(_):
         if hilos:
-            for objetivo in (bucle_reflejo, bucle_agente, bucle_velas, observatorio.bucle):
+            for objetivo in (bucle_reflejo, bucle_agente, bucle_velas, bucle_espejos, observatorio.bucle):
                 threading.Thread(target=objetivo, daemon=True).start()
         yield
         ctx.parar.set()
@@ -181,6 +181,9 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
     # Cuenta MEXC de solo lectura e historial de operaciones: módulos aparte, enchufados aquí con la misma sesión.
     cuenta_mexc.registrar(app, cuenta_mexc.CuentaMexc(aj.mexc_clave, aj.mexc_secreto), sesion)
     historial.registrar(app, ctx.store, sesion)
+    # Cartera Real (etapa 4): repite en MEXC lo que Paper ejecuta; arranca apagada y la enciende Alex desde el panel
+    ctx.real = real.CarteraReal(ctx.store, real.ClienteOrdenes(aj.mexc_clave, aj.mexc_secreto), ctx.mercado, real.cargar_topes(aj.raiz))
+    real.registrar(app, ctx.real, sesion)
 
     def cartera_o_409():
         if ctx.cartera is None:
@@ -678,6 +681,17 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
         while not ctx.parar.wait(aj.espera_tick_s):
             if ctx.cartera is not None:
                 ctx.cartera.ciclo()
+
+    def bucle_espejos():
+        """Cartera Real: repite en MEXC lo que Paper ejecuta. Un fallo se registra y se espera un minuto, sin tumbar al bot."""
+        pausa = 2
+        while not ctx.parar.wait(pausa):
+            try:
+                ctx.real.paso()
+                pausa = 2
+            except Exception as error:
+                ctx.store.registrar_error('real', str(error), type(error).__name__, 'Reintentar en un minuto; las órdenes sin respuesta se consultan antes.', '')
+                pausa = 60
 
     def bucle_velas():
         if ctx.cartera is None:

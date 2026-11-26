@@ -113,10 +113,10 @@ def test_vela_que_termina_exactamente_ahora_ya_cuenta_como_cerrada():
 
 
 def test_filtros_del_par_salen_de_exchange_info():
-    respuesta = {'symbols': [{'symbol': 'BTCUSDT', 'status': '1', 'baseSizePrecision': '0.000001',
+    respuesta = {'symbols': [{'symbol': 'BTCUSDT', 'status': '1', 'baseAsset': 'BTC', 'baseSizePrecision': '0.000001',
                               'quoteAmountPrecision': '1', 'makerCommission': '0', 'takerCommission': '0.0005'}]}
     f = cliente(lambda req: httpx.Response(200, json=respuesta)).filters('BTCUSDT')
-    assert f == {'paso_cantidad': 0.000001, 'minimo_quote': 1.0, 'maker': 0.0, 'taker': 0.0005}
+    assert f == {'paso_cantidad': 0.000001, 'minimo_quote': 1.0, 'base': 'BTC', 'maker': 0.0, 'taker': 0.0005}
 
 
 @pytest.mark.parametrize('decimales, paso', [(2, 0.01), (0, 1.0)])

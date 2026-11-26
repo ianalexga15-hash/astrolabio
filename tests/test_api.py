@@ -275,10 +275,28 @@ def test_estado_incluye_lo_que_necesita_la_ui(cliente):
     assert e['modelo']['valido_para_entrega'] is False
 
 
-def test_no_existe_ninguna_ruta_de_ordenes_reales(raiz):
+def test_ninguna_ruta_del_panel_envia_ordenes_ni_retira(raiz):
+    """Etapa 4: la cartera Real solo repite lo que Paper ejecuta; el panel no manda órdenes a mano ni retira."""
     _, app = app_cliente(raiz)
     rutas = [r.path.lower() for r in app.routes]
-    assert not [r for r in rutas if 'order' in r or 'real' in r or 'wallet' in r or 'withdraw' in r]
+    assert not [r for r in rutas if 'order' in r or 'wallet' in r or 'withdraw' in r]
+    assert sorted(r for r in rutas if 'real' in r) == ['/api/real', '/api/real/modo', '/api/real/verificar']
+
+
+def test_la_cartera_real_arranca_apagada_y_encenderla_pide_confirmacion(raiz):
+    c, _ = app_cliente(raiz, mexc_clave='clave', mexc_secreto='secreto')
+    assert c.get('/api/real').status_code == 401
+    entrar(c)
+    assert c.get('/api/real').json()['modo'] == 'apagada'
+    assert c.post('/api/real/modo', json={'modo': 'real'}).status_code == 403
+    assert c.post('/api/real/modo', json={'modo': 'real', 'confirmacion': 'ACTIVAR REAL'}).json()['modo'] == 'real'
+    assert c.post('/api/real/modo', json={'modo': 'apagada'}).json()['modo'] == 'apagada'
+
+
+def test_sin_clave_de_mexc_la_cartera_real_no_se_enciende(cliente):
+    entrar(cliente)
+    r = cliente.post('/api/real/modo', json={'modo': 'sombra'})
+    assert r.status_code == 403 and 'clave' in r.json()['detail']
 
 
 # Gateway privado del LLM

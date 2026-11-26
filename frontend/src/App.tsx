@@ -1,9 +1,10 @@
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
-import { enviar, type Estado, type Radar as DatosRadar, useDatos } from './api';
+import { enviar, type Estado, type EstadoReal, type Radar as DatosRadar, useDatos } from './api';
 import { avisoDetener, avisoDetenido, estadoMexc, interruptor, NOMBRE_BOT } from './logica';
 import { useCambio } from './movimiento';
 import { Asistente } from './paginas/Asistente';
 import { Auditoria } from './paginas/Auditoria';
+import { CarteraReal } from './paginas/CarteraReal';
 import { Cerebro } from './paginas/Cerebro';
 import { Estrategia } from './paginas/Estrategia';
 import { Mercado } from './paginas/Mercado';
@@ -137,13 +138,16 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
   const inicial = (location.hash.slice(1) as Pagina) || 'radar';
   const [pagina, setPagina] = useState<Pagina>(PAGINAS.some(([k]) => k === inicial) ? inicial : 'radar');
   const [simbolo, setSimbolo] = useState('BTCUSDT');
+  const [cartera, setCartera] = useState<'paper' | 'real'>(location.hash === '#real' ? 'real' : 'paper');
   const { datos: estado, error, recargar } = useDatos<Estado>(`/api/estado?simbolo=${simbolo}`, 2000);
   const { datos: radar, error: errorRadar } = useDatos<DatosRadar>('/api/radar', 3000);
+  const { datos: real } = useDatos<EstadoReal>('/api/real', 10_000);
   const mexc = estadoMexc(radar ?? null, errorRadar);
+  const abrir = (k: Pagina) => { setCartera('paper'); setPagina(k); };
 
   useEffect(() => {
-    history.replaceState(null, '', `#${pagina}`);
-  }, [pagina]);
+    history.replaceState(null, '', `#${cartera === 'real' ? 'real' : pagina}`);
+  }, [pagina, cartera]);
 
   const estadoBot = estado?.bot.estado;
   const atencion = estadoBot === 'pausado' || estadoBot === 'bloqueado';
@@ -169,7 +173,7 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
     moverLinea(animarLinea.current);
     animarLinea.current = true;
     nav.current?.querySelector('[aria-current="page"]')?.scrollIntoView({ block: 'nearest', inline: 'nearest' });
-  }, [pagina]);
+  }, [pagina, cartera]);
 
   useEffect(() => {
     const observador = new ResizeObserver(() => moverLinea(false));
@@ -188,7 +192,12 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
           </div>
           <div className="cabecera-derecha">
             <div className="insignias">
-              <span className="paper-insignia" title="Datos reales de MEXC, capital virtual"><span className="punto-paper" />PAPER</span>
+              <div className="selector-cartera" role="group" aria-label="Cartera">
+                <button aria-pressed={cartera === 'paper'} onClick={() => setCartera('paper')} title="Datos reales de MEXC, capital virtual"><span className="punto-paper" />PAPER</button>
+                <button aria-pressed={cartera === 'real'} onClick={() => setCartera('real')} title={`Tu cuenta Spot de MEXC con dinero real · ${real?.modo ?? 'sin dato'}`}>
+                  <span className={`punto-real real-${real?.modo ?? 'apagada'}`} />REAL
+                </button>
+              </div>
               <span className={`mercado-insignia mexc-${mexc.tono}`} title={`MEXC Spot. ${mexc.detalle}`} role="status"><i aria-hidden="true" />MEXC <span>{mexc.texto}</span></span>
               {estado?.modelo && estado.modelo.valido_para_entrega === false && (
                 <span className="aviso-modelo" title="Modelo entrenado en CPU, sin la evidencia de entrenamiento en T4.">Modelo de desarrollo</span>
@@ -199,10 +208,10 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
           </div>
         </div>
         <div className="pestanas-fila">
-          <nav className="pestanas" aria-label="Secciones" ref={nav}>
+          <nav className={`pestanas${cartera === 'real' ? ' en-real' : ''}`} aria-label="Secciones" ref={nav}>
             <span className="pestanas-linea" ref={linea} aria-hidden="true" />
             {PAGINAS.map(([k, nombre]) => (
-              <button key={k} className={pagina === k ? 'activa' : ''} aria-current={pagina === k ? 'page' : undefined} onClick={() => setPagina(k)}>
+              <button key={k} className={cartera === 'paper' && pagina === k ? 'activa' : ''} aria-current={cartera === 'paper' && pagina === k ? 'page' : undefined} onClick={() => abrir(k)}>
                 <Icono nombre={k} /><span>{nombre}</span>
                 {k === 'sistema' && atencion && <i className="punto-aviso" title="Requiere atención" />}
               </button>
@@ -216,7 +225,9 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
       {estado?.bot.motivo && estado.bot.estado !== 'detenido' && <p className="aviso-atencion" role="alert">{estado.bot.motivo}</p>}
       {sinVigilar && <p className="aviso-atencion">{sinVigilar}</p>}
 
-      <main key={pagina} className={`contenido vista-${pagina}`} id="contenido" tabIndex={-1}>
+      <main key={cartera === 'real' ? 'real' : pagina} className={`contenido vista-${cartera === 'real' ? 'real' : pagina}`} id="contenido" tabIndex={-1}>
+        {cartera === 'real' && <CarteraReal />}
+        {cartera === 'paper' && <>
         {pagina === 'radar' && <Radar estado={estado} recargar={recargar} alElegir={(s) => { setSimbolo(s); setPagina('mercado'); }} />}
         {pagina === 'mercado' && <Mercado estado={estado} recargar={recargar} simbolo={simbolo} alElegir={setSimbolo} />}
         {pagina === 'resumen' && <Resumen estado={estado} />}
@@ -226,6 +237,7 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
         {pagina === 'auditoria' && <Auditoria />}
         {pagina === 'sistema' && <Sistema estadoBot={estadoBot} />}
         {pagina === 'universo' && <UniversoPagina />}
+        </>}
       </main>
       </div>
     </div>

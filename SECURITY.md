@@ -16,8 +16,8 @@ Astrolabio es un proyecto personal que opera en modo **Paper**, con dinero virtu
 
 ## Cómo está protegido
 
-- **Solo Paper.** No existe ninguna ruta que envíe órdenes reales a MEXC. Crearla sería la etapa 4 y necesita una decisión explícita de Alex.
-- **MEXC en solo lectura.** La clave se crea solo con *View Account Details* y *View Order Details*: con ella no se puede comprar, vender ni retirar. El cliente firmado, `bot/cuenta_mexc.py`, solo lee la cuenta y las comisiones.
+- **Cartera Real detrás de un interruptor.** Las órdenes reales solo salen de `bot/real.py` y repiten lo que Paper ejecuta, dentro de topes en USDT. La cartera Real arranca apagada y encenderla pide escribir `ACTIVAR REAL`; el panel no tiene ruta para mandar una orden a mano. Una prueba falla si otro archivo de `bot/` llama a la ruta de órdenes de MEXC.
+- **Clave de MEXC sin retiros.** La clave lleva *View Account Details*, *View Order Details* y *Trade* de Spot, nunca *Withdraw* ni *Transfer*. El cliente de órdenes solo conoce `/api/v3/order` y `/api/v3/order/test`; el de la cuenta, `bot/cuenta_mexc.py`, solo lee la cuenta y las comisiones.
 - **Panel solo en esta laptop.** El servidor escucha en `127.0.0.1` y rechaza otros nombres de host.
 - **Contraseña guardada como huella scrypt.** La base guarda la huella con sal, nunca la contraseña. `BOT_ADMIN_KEY` de `.env` sirve para recuperar el acceso.
 - **Límite de intentos.** Tras 5 claves fallidas seguidas desde una misma IP, esa IP queda bloqueada 30 segundos. El aviso dice cuántos segundos faltan, también en la cabecera `Retry-After`, y nunca dice si la clave existe. Cada intento cuenta antes de comprobar la clave, así que mandar muchos a la vez no se salta el límite. Una clave mala tarda lo mismo con o sin contraseña personal. Cambiar la contraseña en Sistema comparte este límite. El servidor no cree en la cabecera `X-Forwarded-For`, así que cambiarla no cambia la IP.
@@ -68,7 +68,7 @@ Resultado del 2026-11-14:
 ## Si una clave se filtra
 
 1. **Rótala primero**, antes de limpiar nada:
-   - MEXC: borra la clave en *API Management*, crea otra de solo lectura y pégala en `.env`.
+   - MEXC: apaga la cartera Real, borra la clave en *API Management*, crea otra sin retiros y pégala en `.env`.
    - Panel: cambia `BOT_ADMIN_KEY` en `.env` y tu contraseña en Sistema → Tu contraseña; eso cierra las demás sesiones.
    - Gateway del LLM: cambia `BOT_LLM_KEY` en `.env`.
    - Reinicia el bot.

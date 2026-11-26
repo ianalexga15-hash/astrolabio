@@ -7,7 +7,7 @@ interface Acceso {
   desde: string | null;
 }
 
-interface CuentaMexc {
+export interface CuentaMexc {
   conectada: boolean;
   saldos: SaldoMexc[];
   motivo?: string;
@@ -86,7 +86,7 @@ export function Sistema({ estadoBot }: { estadoBot?: string }) {
           <li className="etapa-actual"><span>01</span><strong>Funcionamiento Paper</strong><small>Etapa actual · capital virtual</small></li>
           <li className={acceso?.personal ? 'etapa-activa' : undefined}><span>02</span><strong>Tu contraseña</strong><small>{acceso?.personal ? 'Activa · la clave de .env queda de respaldo' : 'Lista para configurar abajo'}</small></li>
           <li className={cuenta?.conectada ? 'etapa-activa' : undefined}><span>03</span><strong>Cuenta MEXC</strong><small>{!cuenta ? 'sin dato' : cuenta.conectada ? 'Conectada · solo lectura' : 'Sin conectar'}</small></li>
-          <li className="etapa-futura"><span>04</span><strong>Ejecución real</strong><small>Fase futura · aún no disponible</small></li>
+          <li className="etapa-activa"><span>04</span><strong>Cartera Real</strong><small>Lista · se enciende en la vista Real</small></li>
         </ol>
       </section>
 
@@ -207,15 +207,15 @@ export function Sistema({ estadoBot }: { estadoBot?: string }) {
   );
 }
 
-/** Saldo real de MEXC en solo lectura: con esta conexión el bot no puede comprar, vender ni retirar. */
-function CuentaReal({ cuenta, error }: { cuenta: CuentaMexc | null; error: string | null }) {
+/** Saldo real de la cuenta Spot de MEXC. El bot solo opera ahí con la cartera Real encendida, y nunca retira. */
+export function CuentaReal({ cuenta, error }: { cuenta: CuentaMexc | null; error: string | null }) {
   const { datos: radar } = useDatos<Radar>('/api/radar', 15_000);
   const precios = Object.fromEntries((radar?.filas ?? []).filter((f) => f.bid != null).map((f) => [f.simbolo, f.bid as number]));
   const valor = valorCuenta(cuenta?.saldos ?? [], precios);
   return (
     <section>
       <h2>Cuenta MEXC</h2>
-      <p className="explicacion">Solo lectura: el bot ve tu saldo real, pero con esta conexión no puede comprar, vender ni retirar. Las operaciones siguen en Paper.</p>
+      <p className="explicacion">Saldo de tu cuenta Spot. El bot solo compra y vende aquí con la cartera Real encendida, dentro de sus topes; nunca retira.</p>
       {error && <p className="aviso-error" role="alert">No se pudo leer la cuenta: {error}</p>}
       {cuenta && !cuenta.conectada && <p className="aviso-atencion">{cuenta.error ?? cuenta.motivo}</p>}
       {cuenta?.conectada && (cuenta.saldos.length === 0 ? (

@@ -229,6 +229,34 @@ export interface Estado {
   llm: { modelo: string; decisor: string; ultimo: { modelo: string; latencia_ms: number; ts: number } | null };
 }
 
+export interface OrdenReal {
+  id: number;
+  creado: string;
+  simbolo: string;
+  lado: string;
+  modo: string;
+  estado: string;
+  monto_usdt: number | null;
+  ejecutado: number | null;
+  cotizado: number | null;
+  resultado: number | null;
+  motivo: string | null;
+}
+
+export interface EstadoReal {
+  modo: 'apagada' | 'sombra' | 'real';
+  compras_bloqueadas: boolean;
+  motivo: string;
+  verificacion: { ok: boolean; mensaje: string; fecha: string } | null;
+  topes: { tope_total_usdt: number; max_orden_usdt: number; perdida_diaria_usdt: number };
+  clave_configurada: boolean;
+  confirmacion: string;
+  posiciones: { simbolo: string; cantidad: number; costo: number }[];
+  ordenes: OrdenReal[];
+  expuesto: number;
+  resultado_hoy: number;
+}
+
 export interface Corrida {
   run: string;
   tipo: string;

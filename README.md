@@ -1,17 +1,46 @@
 # Astrolabio
 
-Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas y 8 tokens que siguen acciones, divisas y oro. Revisa cada segundo sus condiciones de compra y venta y decide sin que nadie le diga qué hacer. Opera en modo **Paper**: dinero virtual y ninguna ruta de órdenes reales.
+Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas y 8 tokens que siguen acciones, divisas y oro. Revisa cada segundo sus condiciones de compra y venta y decide sin que nadie le diga qué hacer. Tiene dos carteras: **Paper**, con 50,000 USDT virtuales y precios reales de MEXC, y **Real**, que repite en tu cuenta Spot de MEXC lo que Paper ejecuta, dentro de topes en USDT. La Real arranca apagada y solo se enciende escribiendo la confirmación en el panel.
 
 En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo en NumPy, Ollama local y reglas deterministas. Corre en la laptop, así que no opera mientras esté apagada.
 
-## Estado al 2026-11-19
+## Estado al 2026-11-26
 
 - **Modelo de BTC:** se entrenó en una GPU Tesla T4 de Colab (682 s, sin errores) y abrió TE una sola vez. BTC opera con ese modelo, `t4-2026-11-12`.
 - **Comparación final en TE** (BTC, 60 días, simulado): regla sin LLM −0.61 %, con LLM −3.13 %, comprar y mantener −3.13 %. Corrió con la configuración de ese momento, antes de la meta de 13 % y del filtro SMA20: la configuración de hoy no tiene validación en TE, solo simulación en VA y evidencia prospectiva en Paper.
 - **Meta por operación:** cada compra pone su venta a +13 % más la comisión del par. Es un precio objetivo, no un 13 % neto asegurado: muchas operaciones cierran antes en el stop.
 - **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH, XMR y BDX salieron porque MEXC los retiró; RUNE entró en lugar de XMR y WLD en lugar de BDX, con la misma regla.
-- **Radar:** muestra las condiciones de compra de cada activo, también sin compra armada.
-- **En vivo** (observado al 2026-11-19): 526 ciclos en 13 velas, 13 operaciones cerradas (12 por stop y 1 por objetivo) y patrimonio de −0.45 % sobre 50,000 USDT virtuales.
+- **Paper en vivo** (observado, vela del 2026-11-25): 763 ciclos en 19 velas diarias; 28 órdenes ejecutadas y 6 compras que vencieron sin precio; 14 operaciones cerradas, 1 con ganancia, con resultado neto de −248.26 USDT; patrimonio de los 40 activos actuales en 49,765.88 USDT (−0.47 %), mientras la canasta de esos activos cayó 16.9 %.
+- **Cartera Real:** lista desde el 2026-11-26. La clave de la cuenta pasó la prueba de MEXC para operar Spot con una orden de prueba que nunca se ejecuta. Arranca apagada: todavía no ha enviado ninguna orden real.
+
+## Versiones y avances
+
+| Versión | Fecha | Avances |
+| --- | --- | --- |
+| 1.0 | 2026-11-26 | Cartera Real: repite en la cuenta Spot de MEXC lo que Paper ejecuta, con topes en USDT, modo sombra y confirmación escrita. Selector Paper / Real en la cabecera. |
+| 0.9 | 2026-11-26 | Despertador antes del cierre diario. WLD entra en lugar de BDX. Auditoría de diseño: un control por dimensión en Mercado, fechas ISO, horas en 24 h y errores en español. |
+| 0.8 | 2026-11-21 | Métricas de riesgo (Sharpe, Sortino, VaR y CVaR), RSI y Bollinger alineados con su definición, y modelos de investigación en CPU: redes recurrentes, autoencoders, generativos y Double DQN. |
+| 0.7 | 2026-11-19 | RUNE entra en lugar de XMR. Repositorio público con historial limpio y escaneo de secretos antes de cada `git push`. |
+| 0.6 | 2026-11-13 | Modelo entrenado en GPU Tesla T4 activo para BTC. Acciones, divisas y oro en la cartera. Meta de +13 % más la comisión del par. Filtro SMA20 mínimo. Par retirado por MEXC: pausa sin reintentos. |
+| 0.5 | 2026-11-12 | Rediseño del panel como terminal financiera. Máquina del tiempo antes de comprar. Todas las salidas recorren el libro de órdenes. |
+| 0.4 | 2026-11-08 | Métricas de operaciones cerradas, historial de compras en alta o en baja y horas locales en el panel. |
+| 0.3 | 2026-11-06 | Cuenta MEXC en solo lectura, comisión real por par en la simulación y orden que espera en el libro. |
+| 0.2 | 2026-11-05 | Cartera de 40 activos con cupos iguales, reflejo cada segundo, observatorio de calidad, contraseña del panel y arranque automático. |
+| 0.1 | 2026-11-04 | Agente Paper de BTCUSDT: ingesta pública de MEXC con auditoría, modelo en NumPy igual a Keras, motor de riesgo determinista, Ollama local con gateway privado y panel en React. |
+
+Tecnologías y versiones:
+
+| Pieza | Versión |
+| --- | --- |
+| Python | 3.13.15 |
+| FastAPI y Uvicorn | 0.162.0 y 0.54.0 |
+| NumPy, pandas y httpx | 2.5.4, 2.3.3 y 0.28.1 |
+| PyTorch, Keras y scikit-learn (investigación) | 2.12.1+cpu, 3.15.1 y 1.9.1 |
+| TensorFlow y Keras en Colab T4 (modelo de BTC) | 2.21.0 y 3.13.2 |
+| Ollama y modelo local | 0.40.16, `qwen3:4b-instruct` |
+| React, TypeScript y Vite | 19.3.1, 5.9.3 y 7.3.7 |
+| Node | 24.21.0 |
+| Pruebas | pytest 9.2.0 y Vitest 4.1.12 |
 
 ## Abrir
 
@@ -63,12 +92,26 @@ cd frontend && npm install && npm run build
 
 El servidor registra sus mensajes en `data/servidor.log`. El panel queda en http://127.0.0.1:8770. La documentación de la API está en la pestaña Sistema, sección API documentada, y el esquema OpenAPI completo en `/api/openapi.json`; las dos piden sesión.
 
-## Conectar tu cuenta MEXC (solo lectura)
+## Cartera Real: tu cuenta Spot de MEXC
 
-1. Entra a MEXC y abre la sección de claves de API (API Management).
-2. Crea una clave con nombre `Astrolabio` y marca solo **View Account Details** y **View Order Details**. Nunca Trade, Withdraw ni Transfer.
-3. Copia la Access Key y la Secret Key en tu `.env`, en las líneas `MEXC_API_KEY=` y `MEXC_API_SECRET=`. No las pegues en el chat ni en otro archivo.
-4. Reinicia el bot. En Sistema aparece «Cuenta MEXC» con tu saldo real; el bot sigue operando en Paper y con esa clave no puede comprar, vender ni retirar.
+La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera.
+
+1. En MEXC, en API Management, crea una clave con **View Account Details**, **View Order Details** y **Trade** de Spot. Nunca Withdraw ni Transfer. Si puedes, lígala a tu IP.
+2. Copia la Access Key y la Secret Key en `.env`, en `MEXC_API_KEY=` y `MEXC_API_SECRET=`. No las pegues en el chat ni en otro archivo.
+3. Reinicia el bot y abre **REAL**. **Probar la clave** pide a MEXC validar una orden de prueba que nunca se ejecuta.
+4. Pon USDT en tu cuenta **Spot**. El bot solo usa ese saldo y nunca retira.
+5. Elige un modo:
+    - **Apagada:** no envía nada.
+    - **Sombra:** arma cada orden y MEXC la valida con `/api/v3/order/test`, sin ejecutarla.
+    - **Real:** envía las órdenes. Pide escribir `ACTIVAR REAL`.
+
+Al encenderla solo repite lo que Paper ejecute desde ese momento. Cada compra va a mercado por hasta `max_orden_usdt`, mientras lo invertido no pase de `tope_total_usdt`; si el resultado del día llega a `−perdida_diaria_usdt`, no compra más ese día. Los topes por omisión son 50, 10 y 5 USDT; se cambian en `config/real.json`:
+
+```json
+{"tope_total_usdt": 50, "max_orden_usdt": 10, "perdida_diaria_usdt": 5}
+```
+
+Cada orden lleva un id de cliente `astro<id de la orden Paper>`. Si se pierde la respuesta de MEXC, el bot la consulta por ese id antes de hacer nada más, así no la duplica. Si MEXC rechaza una orden, las compras quedan en pausa y las ventas siguen. Todo queda en la tabla de órdenes reales del panel.
 
 Sin IP ligada, MEXC vence la clave a los 90 días; se renueva desde la misma página.
 
@@ -314,7 +357,7 @@ Para exportar los registros a CSV, aun con el bot encendido:
 
 ## Seguridad
 
-Las claves viven solo en `.env`, que git ignora; `.env.example` trae los nombres sin valores. La clave de MEXC es de solo lectura y el bot opera solo en Paper: no existe ninguna ruta de órdenes reales. El panel escucha solo en esta laptop y guarda tu contraseña como huella scrypt y cada sesión como huella SHA-256. Antes de subir cambios a GitHub, este comando revisa todo el historial sin mostrar ningún valor; `git push` lo corre solo:
+Las claves viven solo en `.env`, que git ignora; `.env.example` trae los nombres sin valores. La clave de MEXC lee la cuenta y opera Spot, nunca retira. Las órdenes reales solo salen de `bot/real.py`, detrás de la cartera Real, que arranca apagada y pide escribir la confirmación; el panel no tiene ruta para mandar una orden a mano ni para retirar. El panel escucha solo en esta laptop y guarda tu contraseña como huella scrypt y cada sesión como huella SHA-256. Antes de subir cambios a GitHub, este comando revisa todo el historial sin mostrar ningún valor; `git push` lo corre solo:
 
 ```bash
 .venv\Scripts\python scripts\revisar_secretos.py
@@ -326,7 +369,7 @@ Qué se protege, qué hacer si una clave se filtra y cómo avisar de un problema
 
 | Carpeta | Contenido |
 | --- | --- |
-| `bot/` | Cartera, reflejo, agente, riesgo, simulador, cliente de MEXC, gateway del LLM y API |
+| `bot/` | Cartera, reflejo, agente, riesgo, simulador, cartera Real, cliente de MEXC, gateway del LLM y API |
 | `frontend/` | Panel en React y TypeScript |
 | `research/` | Laboratorio, entrenamientos en CPU, replay y generador del notebook |
 | `notebooks/` | Entrenamiento para Colab con T4 |
@@ -337,6 +380,8 @@ Qué se protege, qué hacer si una clave se filtra y cómo avisar de un problema
 ## Límites conocidos
 
 - El rendimiento histórico no garantiza nada. El bot no promete ganancias ni da consejos de inversión.
+- La cartera Real repite una estrategia que en Paper cerró 14 operaciones con 1 ganadora y −248.26 USDT: espera resultados parecidos y usa topes que puedas perder completos.
+- La cartera Real no deja órdenes stop en MEXC: su stop es el de Paper y lo vigila el bot cada segundo. Con la laptop suspendida o apagada, una posición real queda sin stop.
 - La meta por operación, desde el 2026-11-13, es 13 % en los pares sin comisión y 13 % más la comisión en los demás. El bot la usa como objetivo de venta de cada operación (XRP a +13 %, la mayoría a +13.05 %, los de 0.08 % a +13.08 %). Es el precio al que se pone la venta, no una ganancia neta asegurada: muchas operaciones cierran antes en el stop, y el resultado neto depende de comisiones y deslizamiento. Tampoco garantiza que la cartera gane 13 %, y los resultados actuales quedan lejos: VA +2.64 % con la meta y +2.87 % con el objetivo anterior en ATR (simulados), TE −0.61 % con la regla sin LLM (simulado, con la configuración anterior a la meta y al filtro SMA20) y Paper en vivo −0.45 % al 19 de noviembre (observado).
 - El cerebro decide una vez al día: 20 días de decisiones en vivo tardan 20 días. Con 40 activos son 800 decisiones.
 - Las reglas de entrada en vivo (spread, no perseguir, cruce de SMA20 durante el día) no se pueden validar con historia por segundo: solo el Paper en vivo dirá cómo se comportan.
