@@ -23,13 +23,13 @@ La primera vez, o en otra computadora, usa **Iniciar Bot.cmd**: prepara lo que f
 powershell -ExecutionPolicy Bypass -File scripts\crear_acceso.ps1
 ```
 
-Mientras la laptop está suspendida, Astrolabio no corre, y al despertarla no vuelve solo. Para que arranque en segundo plano, sin abrir ventana, cada vez que inicias sesión o desbloqueas la laptop:
+Mientras la laptop está suspendida, Astrolabio no corre, y al despertarla no vuelve solo. Para que arranque en segundo plano, sin abrir ventana, cada vez que inicias sesión o desbloqueas la laptop, y para que Windows la despierte a las 23:50 UTC, diez minutos antes del cierre de la vela diaria, si está suspendida y conectada a la corriente:
 
 ```bash
 powershell -ExecutionPolicy Bypass -File scripts\inicio_automatico.ps1
 ```
 
-Crea la tarea «Astrolabio» del Programador de tareas, solo para tu usuario; si el bot ya corre, no hace nada. Para quitarla, el mismo comando con `-Quitar`.
+Crea la tarea «Astrolabio» del Programador de tareas, solo para tu usuario; si el bot ya corre, no hace nada. Con batería Windows no despierta el equipo, y apagado del todo nada puede correr: para no perder el ciclo, déjala suspendida y conectada, no apagada. Para quitar la tarea, el mismo comando con `-Quitar`.
 
 Windows suspende esta laptop tras 1 hora sin uso, y suspendida no corre el ciclo diario. Para evitarlo mientras el bot corre, agrega `BOT_SIN_SUSPENDER=1` a `.env` y vuelve a abrir Astrolabio. La pantalla sí se apaga, gasta más batería y con la tapa cerrada Windows puede suspender igual. No cambia ningún ajuste de energía: al apagar Astrolabio, Windows lo olvida.
 
