@@ -52,7 +52,7 @@ export function Velas({ datos, simbolo, intervalo = '1d' }: { datos: VelaOHLC[];
     </div>
     <p className="leyenda"><span className="positivo">↑ Cierre ≥ apertura</span> · <span className="negativo">↓ Cierre &lt; apertura</span> · Mecha: mínimo–máximo</p>
     {validas.length !== recientes.length && <p role="status">Hay velas inválidas; se muestran huecos, sin inventar precios.</p>}
-    <details><summary>Ver apertura, máximo, mínimo y cierre</summary><div className="tabla-scroll"><table><thead><tr><th>{intradia ? 'Hora local' : 'Fecha UTC'}</th><th>Apertura</th><th>Máximo</th><th>Mínimo</th><th>Cierre</th></tr></thead><tbody>
+    <details><summary>Ver como tabla</summary><div className="tabla-scroll"><table><thead><tr><th>{intradia ? 'Hora local' : 'Fecha UTC'}</th><th>Apertura</th><th>Máximo</th><th>Mínimo</th><th>Cierre</th></tr></thead><tbody>
       {validas.map(v => <tr key={v.open_time}><td>{fecha(v)}</td>{[v.open, v.high, v.low, v.close].map((n, i) => <td key={i}>{precio(n)}</td>)}</tr>)}
     </tbody></table></div></details>
   </figure>;

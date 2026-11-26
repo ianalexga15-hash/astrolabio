@@ -8,7 +8,12 @@ export class ErrorApi extends Error {
 }
 
 export async function pedir<T>(ruta: string, opciones: RequestInit = {}): Promise<T> {
-  const r = await fetch(ruta, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  let r: Response;
+  try {
+    r = await fetch(ruta, { credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, ...opciones });
+  } catch {
+    throw new ErrorApi(0, 'Sin conexión con Astrolabio: revisa que siga encendido. El panel vuelve a intentarlo solo.');
+  }
   if (r.status === 401 && ruta !== '/api/login') window.dispatchEvent(new Event('sesion-perdida'));
   if (!r.ok) {
     const cuerpo = await r.json().catch(() => ({}));
@@ -245,4 +250,6 @@ export interface Corrida {
   sortino?: number | null;
   var?: number | null;
   cvar?: number | null;
+  /** Solo en vivo: activos que salieron de la cartera con operaciones cerradas; ya no suman al patrimonio. */
+  salidos?: { simbolo: string; operaciones: number; resultado: number }[];
 }

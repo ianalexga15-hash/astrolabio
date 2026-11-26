@@ -2,12 +2,13 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { type Decision, enviar, type Estado, type Orden, type Radar, useDatos } from '../api';
 import { type Marca, Lineas } from '../graficos/Lineas';
 import { Velas, type VelaOHLC } from '../graficos/Velas';
-import { cuentaAtras, fechaHora, num, pct, pctSigno, precio as fmtPrecio, type PuntoSegundo, sma, sumarSegundo } from '../logica';
+import { cuentaAtras, fechaHora, NOMBRE_ACCION, num, pct, pctSigno, precio as fmtPrecio, type PuntoSegundo, sma, sumarSegundo } from '../logica';
 import { CifraViva, useCambio } from '../movimiento';
 
 const DIA_MS = 86_400_000;
-const NOMBRE_ACCION: Record<string, string> = { comprar: 'Comprar', vender: 'Vender', mantener: 'Mantener' };
-const VISTAS = [['velas', 'Velas · 1 día'], ['linea', 'Línea · SMA20 · operaciones'], ['1s', '1 s'], ['5m', '5 min'], ['60m', '1 h']] as const;
+// Un control por dimensión: primero el intervalo; solo el diario elige entre velas y línea (la línea suma SMA20 y operaciones).
+const INTERVALOS = [['1s', '1 s'], ['5m', '5 min'], ['60m', '1 h'], ['1d', '1 día']] as const;
+const TIPOS_DIARIOS = [['velas', 'Velas'], ['linea', 'Línea']] as const;
 
 /** Velas de 5 min o de 1 h que el servidor lee de MEXC y repite durante 30 s. */
 function VelasIntradia({ simbolo, intervalo }: { simbolo: string; intervalo: '5m' | '60m' }) {
@@ -168,7 +169,9 @@ function PanelDecision({ d, estado }: { d: Decision | null; estado: Estado | nul
 
 export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estado | null; recargar: () => void; simbolo: string; alElegir: (s: string) => void }) {
   const { datos: velas, error: errorVelas } = useDatos<VelaOHLC[]>(`/api/velas?limite=240&simbolo=${simbolo}`, 60_000);
-  const [vistaPrecio, setVistaPrecio] = useState<(typeof VISTAS)[number][0]>('velas');
+  const [intervalo, setIntervalo] = useState<(typeof INTERVALOS)[number][0]>('1d');
+  const [tipoDiario, setTipoDiario] = useState<(typeof TIPOS_DIARIOS)[number][0]>('velas');
+  const vistaPrecio = intervalo === '1d' ? tipoDiario : intervalo;
   const { datos: ordenes } = useDatos<Orden[]>(`/api/ordenes?simbolo=${simbolo}`, 30_000);
   const { datos: decisiones } = useDatos<Decision[]>(`/api/decisiones?simbolo=${simbolo}`, 30_000);
   const [ahora, setAhora] = useState(Date.now());
@@ -240,8 +243,15 @@ export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estad
 
       <div className="dos-columnas">
         <div className="columna-principal">
-          <div className="selector-grafica" role="group" aria-label="Vista del precio">
-            {VISTAS.map(([v, nombre]) => <button key={v} aria-pressed={vistaPrecio === v} onClick={() => setVistaPrecio(v)}>{nombre}</button>)}
+          <div className="selector-grafica">
+            <div role="group" aria-label="Intervalo del precio">
+              {INTERVALOS.map(([v, nombre]) => <button key={v} aria-pressed={intervalo === v} onClick={() => setIntervalo(v)}>{nombre}</button>)}
+            </div>
+            {intervalo === '1d' && (
+              <div role="group" aria-label="Tipo de gráfica diaria">
+                {TIPOS_DIARIOS.map(([v, nombre]) => <button key={v} aria-pressed={tipoDiario === v} onClick={() => setTipoDiario(v)}>{nombre}</button>)}
+              </div>
+            )}
           </div>
           {(vistaPrecio === 'velas' || vistaPrecio === 'linea') && errorVelas && <p className="aviso-error" role="alert">No se pudieron leer las velas diarias: {errorVelas}</p>}
           {vistaPrecio === 'velas' && (velas ? <Velas datos={velas} simbolo={simbolo} /> : !errorVelas && <p className="vacio">Leyendo las velas diarias…</p>)}

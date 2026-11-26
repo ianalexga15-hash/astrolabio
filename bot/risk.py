@@ -163,7 +163,7 @@ def evaluar(propuesta, ctx, limites):
         return _rechazo('Máquina del tiempo: sin un repaso válido de esta compra (falta historia o el resultado no es un número); no se autoriza.')
     if limites.maquina_tiempo and m is not None and m['r_medio'] <= 0:
         return _rechazo(f'Máquina del tiempo: repitiendo los próximos días con sus últimas velas, esta compra llega primero al objetivo '
-                        f'{m["objetivo"]:.0%} de las veces y al stop {m["stop"]:.0%}; en promedio deja {m["r_medio"]:+.2f} R.')
+                        f'{m["objetivo"] * 100:.0f} % de las veces y al stop {m["stop"] * 100:.0f} %; en promedio deja {m["r_medio"]:+.2f} R.')
     distancia = limites.stop_atr * ctx.atr_abs
     stop = ctx.precio - distancia
     objetivo = limites.precio_objetivo(ctx.precio, ctx.atr_abs)

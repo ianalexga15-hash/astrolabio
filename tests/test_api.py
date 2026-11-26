@@ -543,3 +543,17 @@ def test_en_vivo_cuadra_con_la_cartera_aunque_un_activo_haya_salido(raiz):
     patrimonio = c.get('/api/estado').json()['cartera']['patrimonio']
     assert vivo['activos'] == 1 and vivo['patrimonio_final'] == pytest.approx(patrimonio)
     assert c.get('/api/patrimonio').json()[-1]['patrimonio'] == pytest.approx(patrimonio)
+
+
+def test_en_vivo_dice_que_activo_salio_con_operaciones_cerradas(raiz):
+    """Un activo que salió ya no suma al patrimonio; el resumen lo nombra para que Resumen y Operaciones cuadren."""
+    from bot.store import Store
+    viejo = Store(raiz / 'data' / 'bot.sqlite3')
+    viejo.abrir_run('live:VIEJOUSDT', 'live', 'VIEJOUSDT')
+    viejo.guardar_orden('live:VIEJOUSDT', None, 1, 'comprar', 'ejecutada', 'senal', 1.0, 10.0, 0.01)
+    viejo.guardar_orden('live:VIEJOUSDT', None, 2, 'vender', 'ejecutada', 'stop', 1.0, 9.0, 0.01, -1.02)
+    c, _ = app_cliente(raiz)
+    entrar(c)
+    c.post('/api/control/iniciar')
+    vivo = next(r for r in c.get('/api/comparacion').json() if r['run'] == 'live')
+    assert vivo['salidos'] == [dict(simbolo='VIEJOUSDT', operaciones=1, resultado=pytest.approx(-1.02))]

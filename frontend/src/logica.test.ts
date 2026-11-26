@@ -17,7 +17,7 @@ describe('aviso de bot detenido', () => {
 
 describe('eje de fechas', () => {
   it('pone la fecha ISO como dd/mm/aa y deja igual el resto', () => {
-    expect(ejeX('2026-11-04')).toBe('04/11/26');
+    expect(ejeX('2026-11-04')).toBe('2026-11-04');
     expect(ejeX('  14:05:09')).toBe('14:05:09'); // la serie de 1 s antepone dos espacios
     expect(ejeX('  12')).toBe('12');
   });

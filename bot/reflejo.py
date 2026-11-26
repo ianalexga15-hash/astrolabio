@@ -17,6 +17,14 @@ MAX_LIBROS_POR_BARRIDO = 3  # cada libro es una consulta de unos 230 ms: con 3 e
 ESPERA_LIBRO_MS = 5_000  # si el libro no alcanza, se vuelve a pedir a los 5 s: cuarenta activos no deben ser cuarenta consultas por segundo
 
 
+def precio_legible(v):
+    """Precio como lo muestra el panel: miles separados, sin notación científica y los decimales que pide su magnitud."""
+    a = abs(v)
+    decimales = 2 if a >= 1000 else 4 if a >= 1 else 5 if a >= 0.01 else 8
+    entero, _, fraccion = f'{v:,.{decimales}f}'.partition('.')
+    return f'{entero}.{fraccion.rstrip("0").ljust(2, "0")}'
+
+
 class Reflejo:
     def __init__(self, agentes, eventos=NULO):
         self.agentes = agentes
@@ -71,13 +79,14 @@ class Reflejo:
 
     @staticmethod
     def _condiciones_precio(lim, ref, bid, ask):
+        # Los detalles se leen en el panel: precios y porcentajes con el mismo formato que sus cifras.
         """Filtro técnico, spread y sin perseguir con el precio en vivo. `ref` es la compra armada o la última vela decidida."""
         spread = (ask - bid) / ask * 10_000
         extension = (ask - ref['cierre']) / ref['atr_abs'] if ref['atr_abs'] else float('inf')
         sma20 = model.filtro_efectivo(ref.get('filtro'), lim.filtro_minimo) == 'sma20'  # también con una compra o decisión de antes del filtro mínimo
         return [
             dict(id='filtro', nombre='Filtro técnico', cumple=not sma20 or ask > ref['sma20'],
-                 detalle=f'Precio {ask:g} contra SMA20 {ref["sma20"]:g} ({ask / ref["sma20"] - 1:+.2%})' if sma20 else 'Sin filtro'),
+                 detalle=f'Precio {precio_legible(ask)} contra SMA20 {precio_legible(ref["sma20"])} ({(ask / ref["sma20"] - 1) * 100:+.2f} %)' if sma20 else 'Sin filtro'),
             dict(id='spread', nombre='Spread y libro', cumple=spread <= lim.spread_max_bps, detalle=f'{spread:.1f} de {lim.spread_max_bps:g} puntos base'),
             dict(id='extension', nombre='Sin perseguir', cumple=extension <= lim.extension_max_atr, detalle=f'{extension:+.2f} ATR desde el cierre; máximo {lim.extension_max_atr:g}'),
         ]
@@ -87,12 +96,12 @@ class Reflejo:
         v = a.contexto_vela
         if v is None:
             return {}
-        condiciones = [dict(id='senal', nombre='Señal del día', cumple=v['senal'], detalle=f'Pronóstico {v["pronostico"]:+.3%} contra el umbral {v["umbral"]:+.3%}'),
+        condiciones = [dict(id='senal', nombre='Señal del día', cumple=v['senal'], detalle=f'Pronóstico {v["pronostico"] * 100:+.3f} % contra el umbral {v["umbral"] * 100:+.3f} %'),
                        *self._condiciones_precio(a.limites, v, bid, ask)]
         m = v['maquina']
         if m is not None:  # el repaso solo se corre cuando hay señal y la propuesta es comprar
             condiciones.append(dict(id='maquina', nombre='Máquina del tiempo', cumple=m['r_medio'] > 0,
-                                    detalle=f'Llega primero al objetivo {m["objetivo"]:.0%} de las veces y al stop {m["stop"]:.0%}; en promedio deja {m["r_medio"]:+.2f} R'
+                                    detalle=f'Llega primero al objetivo {m["objetivo"] * 100:.0f} % de las veces y al stop {m["stop"] * 100:.0f} %; en promedio deja {m["r_medio"]:+.2f} R'
                                     if math.isfinite(m['r_medio']) else 'Sin un repaso válido: falta historia o el resultado no es un número'))
         motivo = ' '.join(v['motivos']) or f'la propuesta fue «{v["propuesta"]}».'
         razon = 'autorizó una compra que ya se usó o venció; decide otra vez al cerrar la próxima vela.' if v['accion'] == 'comprar' else f'no la armó: {motivo}'

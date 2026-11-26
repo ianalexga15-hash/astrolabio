@@ -100,7 +100,7 @@ export function Cerebro() {
                     <td>{n.grupo}</td>
                     <td><span className={`etiqueta-estado e-${n.estado}`}>{NOMBRE_ESTADO[n.estado]}</span></td>
                     <td>{n.eventos}</td>
-                    <td>{n.ultimo ? new Date(n.ultimo * 1000).toLocaleTimeString('es-MX') : 'sin eventos'}</td>
+                    <td>{n.ultimo ? new Date(n.ultimo * 1000).toLocaleTimeString('es-MX', { hourCycle: 'h23' }) : 'sin eventos'}</td>
                   </tr>
                 ))}
               </tbody>
@@ -113,7 +113,7 @@ export function Cerebro() {
           <ol>
             {feed.filter((e) => !seleccion || e.origen === seleccion || e.destino === seleccion).slice(0, 18).map((e) => (
               <li key={e.id} className={nuevosFeed.has(e.id) ? 'evento-nuevo' : undefined}>
-                <time>{new Date(e.ts * 1000).toLocaleTimeString('es-MX')}</time>
+                <time>{new Date(e.ts * 1000).toLocaleTimeString('es-MX', { hourCycle: 'h23' })}</time>
                 <span>{nombre(e.origen)} a {nombre(e.destino)}</span>
                 <small><i className={`punto-flujo f-${e.tipo}`} aria-hidden="true" />{NOMBRE_TIPO[e.tipo] ?? e.tipo}{e.detalle ? `: ${e.detalle}` : ''}</small>
               </li>

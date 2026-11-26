@@ -35,6 +35,11 @@ export function Resumen({ estado }: { estado: Estado | null }) {
           <h2>Patrimonio simulado de la cartera</h2>
           <p className="cifra-mayor">{usd(c?.patrimonio)}</p>
           <p className="cifra-nota">{pctSigno(c?.rendimiento)} desde {usd(c?.capital_inicial)} de capital virtual</p>
+          {vivo?.salidos?.length ? (
+            <p className="cifra-nota">
+              No incluye {vivo.salidos.map((s) => `${s.simbolo.replace(/USDT$/, '')} (${s.operaciones} ${s.operaciones === 1 ? 'operación' : 'operaciones'}, ${usd(s.resultado)})`).join(', ')}: {vivo.salidos.length === 1 ? 'salió' : 'salieron'} de la cartera y su historial sigue en Operaciones.
+            </p>
+          ) : null}
         </div>
         <dl className="lecturas">
           <div><dt>Caída desde el máximo</dt><dd>{pct(c?.caida)}</dd></div>

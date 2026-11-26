@@ -102,7 +102,7 @@ export function Sistema({ estadoBot }: { estadoBot?: string }) {
           <div><dt>Última respuesta</dt><dd>{info?.ultimo_llm ? `${(info.ultimo_llm.latencia_ms / 1000).toFixed(1)} s` : 'sin consultas'}</dd></div>
         </dl>
         {info?.ollama.error && <p className="aviso-error" role="alert">{info.ollama.error}</p>}
-        <p className="explicacion">La inferencia ocurre en esta laptop: el backend solo acepta una dirección local de Ollama y rechaza modelos en la nube. El LLM no recibe claves y solo tiene herramientas de lectura. {info?.hardware.procesador}.</p>
+        <p className="explicacion">La inferencia ocurre en esta laptop: el backend solo acepta una dirección local de Ollama y rechaza modelos en la nube. El LLM no recibe claves y solo tiene herramientas de lectura.{info?.hardware.procesador ? ` Procesador: ${info.hardware.procesador}.` : ''}</p>
         <button onClick={recargar}>Revisar otra vez</button>
       </section>
 

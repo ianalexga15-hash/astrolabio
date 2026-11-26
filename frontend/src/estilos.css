@@ -626,7 +626,9 @@ blockquote { margin: 0 0 10px; padding-left: 12px; border-left: 2px solid var(--
 }
 
 /* Paleta de bolsa: mantiene estructura y semántica operativa. */
-.selector-grafica { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.selector-grafica { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; margin-bottom: 10px; }
+.selector-grafica > [role="group"] { display: flex; flex-wrap: wrap; gap: 6px; }
+.selector-grafica > [role="group"] + [role="group"] { padding-left: 14px; border-left: 1px solid rgb(255 255 255 / 0.14); }
 .selector-grafica button { font-size: 12px; color: var(--ceniza); background: var(--nebulosa); }
 .selector-grafica button[aria-pressed="true"] { color: var(--luz); border-color: var(--ambar); background: #242019; }
 .velas-terminal { background: #050607; }

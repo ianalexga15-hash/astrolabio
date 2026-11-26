@@ -1,5 +1,5 @@
 import { type Decision, useDatos } from '../api';
-import { horaLocal, pct, pctSigno, precio } from '../logica';
+import { horaLocal, NOMBRE_ACCION, pct, pctSigno, precio } from '../logica';
 
 interface ErrorBot {
   id: number;
@@ -36,7 +36,7 @@ export function Auditoria() {
                     <tr key={d.id} className={d.aprobada ? '' : 'fila-rechazada'}>
                       <td>{d.fecha_vela}</td>
                       <td>{d.simbolo?.replace('USDT', '')}</td>
-                      <td><span className={`tag accion-${d.accion_final}`}>{d.accion_final}</span></td>
+                      <td><span className={`tag accion-${d.accion_final}`}>{NOMBRE_ACCION[d.accion_final] ?? d.accion_final}</span></td>
                       <td><span className={`tag ${d.aprobada ? 'tag-bien' : 'tag-mal'}`}>{d.aprobada ? 'Aprobó' : 'Rechazó'}</span></td>
                       {/* Dos líneas a la vista; un clic despliega el texto completo, que nunca se recorta en el documento */}
                       <td className="celda-texto"><details className="texto-largo"><summary>{motivos.length ? motivos.join(' ') : d.justificacion}</summary></details></td>
@@ -44,7 +44,7 @@ export function Auditoria() {
                       <td>{pctSigno(d.pronostico, 3)}</td>
                       <td>{pct(d.umbral, 3)}</td>
                       <td>{d.senal ? 'Sí' : 'No'}</td>
-                      <td>{d.accion_propuesta}</td>
+                      <td>{NOMBRE_ACCION[d.accion_propuesta] ?? d.accion_propuesta}</td>
                       <td>{d.origen === 'llm' ? d.llm_modelo : 'regla'}</td>
                     </tr>
                   );

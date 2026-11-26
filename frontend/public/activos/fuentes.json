@@ -386,5 +386,13 @@
     "licencia": "MIT (declarado por Web3 Icons)",
     "sha256": "c27bd4532fa44a49d9da0c137eddbf97fbd2424ad4829c345318d21d03eefa91",
     "nombre": "THORChain"
+  },
+  {
+    "simbolo": "WLDUSDT",
+    "archivo": "wld.svg",
+    "fuente": "https://raw.githubusercontent.com/Cryptofonts/cryptoicons/f7c78904c6dbad90722e53925f57bbca88419d3f/assets/wld.svg",
+    "licencia": "GPL-3.0, Cryptofonts",
+    "sha256": "ebe25574205b8a989938453e706d2e1bb233b20986f745d4aaa1323ca01ad618",
+    "nombre": "Worldcoin"
   }
 ]

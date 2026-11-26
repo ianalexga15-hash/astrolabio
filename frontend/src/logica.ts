@@ -39,10 +39,13 @@ export function precio(v: number | null | undefined): string {
   return v.toLocaleString('es-MX', { minimumFractionDigits: Math.min(decimales, 2), maximumFractionDigits: decimales });
 }
 
-export const fechaHora = (ms: number) => new Date(ms).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short' });
+// Las horas van en 24 h en todo el panel, como en las gráficas y las operaciones.
+export const fechaHora = (ms: number) => new Date(ms).toLocaleString('es-MX', { dateStyle: 'medium', timeStyle: 'short', hourCycle: 'h23' });
 
-/** Rótulo del eje de Lineas: una fecha ISO va como dd/mm/aa (mismo ancho que antes); lo demás pierde sus dos primeros caracteres. */
-export const ejeX = (t: string) => (/^\d{4}-\d{2}-\d{2}$/.test(t) ? `${t.slice(8, 10)}/${t.slice(5, 7)}/${t.slice(2, 4)}` : t.slice(2));
+/** Rótulo del eje de Lineas: una fecha ISO queda igual, como en las velas y las tablas; lo demás pierde sus dos primeros caracteres. */
+export const ejeX = (t: string) => (/^\d{4}-\d{2}-\d{2}$/.test(t) ? t : t.slice(2));
+
+export const NOMBRE_ACCION: Record<string, string> = { comprar: 'Comprar', vender: 'Vender', mantener: 'Mantener' };
 
 /** Tiempo restante en formato HH:MM:SS. Nunca negativo. */
 export function cuentaAtras(ms: number): string {

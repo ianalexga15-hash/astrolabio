@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDatos } from '../api';
+import { fechaHora } from '../logica';
 import '../observatorio.css';
 
 type Ficha = { id: number; run: string; creado: string; modelo_version: string; pronostico: number; umbral: number; accion_propuesta: string; accion_final: string; motivos: string; ordenes: Orden[] };
@@ -16,7 +17,7 @@ interface Datos {
   fichas: { decisiones: Ficha[]; ordenes_sin_enlace: Orden[] };
 }
 const cifra = (v: number | null | undefined, dec = 4) => v == null ? '—' : v.toLocaleString('es-MX', { maximumFractionDigits: dec });
-const fecha = (v: number | null) => v == null ? '—' : new Date(v).toLocaleString('es-MX');
+const fecha = (v: number | null) => v == null ? '—' : fechaHora(v);
 
 export function Observatorio() {
   const { datos, error } = useDatos<Datos>('/api/observatorio', 15000);

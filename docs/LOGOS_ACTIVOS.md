@@ -2,15 +2,15 @@
 
 Incremento visual, 13 de noviembre de 2026. La primera revisión cubrió 40 criptomonedas. Claude diversificó después el universo: actualmente hay 32 criptomonedas y ocho tokens de MEXC ligados a oro, monedas, índices y empresas. Esta revisión amplía la identidad a esos ocho instrumentos; no incorpora instrumentos ni modifica el motor de trading.
 
-**Actualización (2026-11-19):** la cartera tiene 32 criptomonedas y 8 tokens de acciones, divisas y oro, todos con logo; RUNE entró en lugar de XMR. Los logos de las criptos que salieron (ZIG, ARB, XLM, GRAM, LINK, QNT, BONK, DASH y XMR) se conservan: el historial de Operaciones las sigue mostrando.
+**Actualización (2026-11-26):** la cartera tiene 32 criptomonedas y 8 tokens de acciones, divisas y oro, todos con logo; RUNE entró en lugar de XMR y WLD en lugar de BDX. Los logos de las criptos que salieron (ZIG, ARB, XLM, GRAM, LINK, QNT, BONK, DASH, XMR y BDX) se conservan: el historial de Operaciones las sigue mostrando.
 
-Las 40 identidades activas se sirven desde `frontend/public/activos/`, sin solicitudes a terceros al abrir el panel. Se conservan nueve imágenes de instrumentos anteriores para el historial. El registro explícito está en `frontend/src/identidadActivos.ts`. El componente conserva círculos, ticker y botones, y muestra iniciales si un archivo falla o un símbolo nuevo no tiene imagen. Los iconos son decorativos para accesibilidad: el ticker continúa siendo el nombre accesible.
+Las 40 identidades activas se sirven desde `frontend/public/activos/`, sin solicitudes a terceros al abrir el panel. Se conservan diez imágenes de instrumentos anteriores para el historial. El registro explícito está en `frontend/src/identidadActivos.ts`. El componente conserva círculos, ticker y botones, y muestra iniciales si un archivo falla o un símbolo nuevo no tiene imagen. Los iconos son decorativos para accesibilidad: el ticker continúa siendo el nombre accesible.
 
 Procedencia y huella SHA-256 individual en `frontend/public/activos/fuentes.json`. Fuentes:
 
 - [Web3 Icons](https://github.com/0xa3k5/web3icons), variantes circulares; licencia MIT declarada en su README, conservado junto a los recursos. El nombre en metadatos no basta: TAO y STRK tenían una representación incorrecta y se sustituyeron.
 - [Token Icons](https://github.com/incidunt/token-icons), BONK; README con licencia MIT conservado.
-- [Cryptofonts](https://github.com/Cryptofonts/cryptoicons), ENA y TON usado como identidad de GRAM; licencia GPL-3.0 íntegra conservada. Los SVG se distribuyen como archivos independientes sin modificar. La marca sigue perteneciendo a su titular.
+- [Cryptofonts](https://github.com/Cryptofonts/cryptoicons), ENA, WLD (Worldcoin, que no está en Web3 Icons) y TON usado como identidad de GRAM; licencia GPL-3.0 íntegra conservada. Los SVG se distribuyen como archivos independientes sin modificar. La marca sigue perteneciendo a su titular.
 - [Cryptologo](https://cryptologo.org/): ETHFI/ether.fi, TAO/Bittensor y STRK/Starknet. Uso identificativo de las respectivas marcas, sin insinuar afiliación. Conservar procedencia al redistribuir.
 
 GRAM se identifica con TON conforme a la página de [MEXC GRAM/USDT](https://www.mexc.fm/exchange/GRAM_USDT), que lo describe como GRAM(prev.Toncoin). No se usa el logo del otro token Gram que cambió a GRM.

@@ -9,7 +9,7 @@ En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo
 - **Modelo de BTC:** se entrenó en una GPU Tesla T4 de Colab (682 s, sin errores) y abrió TE una sola vez. BTC opera con ese modelo, `t4-2026-11-12`.
 - **Comparación final en TE** (BTC, 60 días, simulado): regla sin LLM −0.61 %, con LLM −3.13 %, comprar y mantener −3.13 %. Corrió con la configuración de ese momento, antes de la meta de 13 % y del filtro SMA20: la configuración de hoy no tiene validación en TE, solo simulación en VA y evidencia prospectiva en Paper.
 - **Meta por operación:** cada compra pone su venta a +13 % más la comisión del par. Es un precio objetivo, no un 13 % neto asegurado: muchas operaciones cierran antes en el stop.
-- **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH y XMR salieron porque MEXC los retiró, y RUNE entró en lugar de XMR con la misma regla.
+- **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH, XMR y BDX salieron porque MEXC los retiró; RUNE entró en lugar de XMR y WLD en lugar de BDX, con la misma regla.
 - **Radar:** muestra las condiciones de compra de cada activo, también sin compra armada.
 - **En vivo** (observado al 2026-11-19): 526 ciclos en 13 velas, 13 operaciones cerradas (12 por stop y 1 por objetivo) y patrimonio de −0.45 % sobre 50,000 USDT virtuales.
 
@@ -115,7 +115,7 @@ Supuestos del simulador, en `config/riesgo.json`: capital de 50,000, comisión r
 .venv\Scripts\python scripts\elegir_universo.py
 ```
 
-**Pares que MEXC retiró.** DASH salió el 2026-11-13. XMR salió el 2026-11-19: desde el 17, MEXC responde «Invalid symbol» y su agente quedaba en pausa. XMR nunca operó, así que en su lugar entró la cripto de mayor volumen de 24 h que cumple la misma regla y que no estaba ni había salido: RUNEUSDT (THORChain), con 1,029 días seguidos, spread mediano de 22.5 pb y comisión de 0.05 %. La regla se fijó antes de medir. La cartera sigue en 40 activos de 1,250 USDT, así que el patrimonio total no cambia. El detalle está en «cambios» de `config/universo.json`.
+**Pares que MEXC retiró.** DASH salió el 2026-11-13. XMR salió el 2026-11-19: desde el 17, MEXC responde «Invalid symbol» y su agente quedaba en pausa. XMR nunca operó, así que en su lugar entró la cripto de mayor volumen de 24 h que cumple la misma regla y que no estaba ni había salido: RUNEUSDT (THORChain), con 1,029 días seguidos, spread mediano de 22.5 pb y comisión de 0.05 %. BDX salió el 2026-11-26 (UTC): desde el 23, MEXC también responde «Invalid symbol». Tampoco operó nunca, y con la misma regla entró WLDUSDT (Worldcoin), con 1,221 días seguidos, spread mediano de 4.1 pb y comisión de 0.05 %. La regla se fijó antes de medir. La cartera sigue en 40 activos de 1,250 USDT, así que el patrimonio total no cambia. El detalle está en «cambios» de `config/universo.json`.
 
 ### Acciones, divisas y oro (desde el 2026-11-13)
 

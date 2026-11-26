@@ -22,7 +22,7 @@
     "DOTUSDT",
     "CAKEUSDT",
     "TAOUSDT",
-    "BDXUSDT",
+    "WLDUSDT",
     "ATOMUSDT",
     "SUIUSDT",
     "ZANOUSDT",
@@ -43,7 +43,7 @@
   ],
   "fecha": "2026-11-05T14:53:41+00:00",
   "regla_inicial": "Spot contra USDT, operables, por volumen de 24 h, sin estables, envueltos, metales, acciones ni apalancados, con al menos 900 días y spread mediano de hasta 25.0 puntos base.",
-  "regla_vigente": "Desde el 2026-11-13: 32 criptomonedas de la regla inicial (sin DASHUSDT ni XMRUSDT, que MEXC dejó de listar, ni las 7 de menor volumen que nunca operaron en Paper; RUNEUSDT entró el 2026-11-19 en lugar de XMRUSDT, con la misma regla) y 8 tokens en USDT que siguen oro, divisas, índices y acciones, elegidos con spread mediano de hasta 25 puntos base, libro visible que cubre 1,000 USDT con impacto de hasta 25 puntos base, al menos 120 velas diarias seguidas y un token por subyacente. Detalle en «cambios».",
+  "regla_vigente": "Desde el 2026-11-13: 32 criptomonedas de la regla inicial (sin DASHUSDT, XMRUSDT ni BDXUSDT, que MEXC dejó de listar, ni las 7 de menor volumen que nunca operaron en Paper; RUNEUSDT entró el 2026-11-19 en lugar de XMRUSDT y WLDUSDT el 2026-11-26 en lugar de BDXUSDT, con la misma regla) y 8 tokens en USDT que siguen oro, divisas, índices y acciones, elegidos con spread mediano de hasta 25 puntos base, libro visible que cubre 1,000 USDT con impacto de hasta 25 puntos base, al menos 120 velas diarias seguidas y un token por subyacente. Detalle en «cambios».",
   "limite": "Elegir por volumen de hoy introduce sesgo de supervivencia en cualquier evaluación del pasado.",
   "descartes": [
     [
@@ -694,6 +694,15 @@
       "hasta": "2026-11-18",
       "limpieza": [],
       "huella": "eceed1d75717ef45ddc8623c57567d9a41f4278aa7cf8f27aaab34bd61a65fa9"
+    },
+    "WLDUSDT": {
+      "volumen_24h": 5532153,
+      "spread_bps": 4.1,
+      "dias": 1221,
+      "desde": "2023-07-24",
+      "hasta": "2026-11-25",
+      "limpieza": [],
+      "huella": "acbc1f51d8a35b620ca8937b41b76d39b663aec890998d1636b1eea5938317f0"
     }
   },
   "cambios": [
@@ -729,6 +738,16 @@
         "XMRUSDT"
       ],
       "motivo": "MEXC retiró XMRUSDT: desde el 2026-11-17 responde «Invalid symbol» (código -1121) y su agente quedaba en pausa pidiendo atención. Nunca operó en Paper: sin posiciones ni órdenes. Regla fijada antes de medir: entra la cripto de mayor volumen de 24 h que cumple la regla inicial y no está en la cartera ni salió antes (DASH, XMR y las 7 del 2026-11-13). Medido el 2026-11-19: RUNEUSDT, con 0.53 M USDT en 24 h, spread mediano de 22.5 pb y 1,029 días seguidos; antes se descartaron 16 de mayor volumen por historia corta o spread. La cartera sigue en 40 con el mismo cupo de 1,250 USDT y el patrimonio total no cambia. Decisión del 2026-11-19: cartera sin pares retirados."
+    },
+    {
+      "fecha": "2026-11-26T05:47:43+00:00",
+      "agregados": [
+        "WLDUSDT"
+      ],
+      "quitados": [
+        "BDXUSDT"
+      ],
+      "motivo": "MEXC retiró BDXUSDT: desde el 2026-11-23 responde «Invalid symbol» (código -1121) y su agente quedaba en pausa pidiendo atención. Nunca operó en Paper: sin posiciones ni órdenes. Regla fijada antes de medir, la misma del 2026-11-19: entra la cripto de mayor volumen de 24 h que cumple la regla inicial y no está en la cartera ni salió antes (DASH, XMR, BDX y las 7 del 2026-11-13). Medido el 2026-11-26: WLDUSDT (Worldcoin), con 5.53 M USDT en 24 h, spread mediano de 4.1 pb y 1,221 días seguidos; antes se descartaron HYPEUSDT (612 días), PUMPUSDT (500 días) por historia corta. La cartera sigue en 40 con el mismo cupo de 1,250 USDT y el patrimonio total no cambia. Decisión del 2026-11-19: cartera sin pares retirados."
     }
   ]
 }

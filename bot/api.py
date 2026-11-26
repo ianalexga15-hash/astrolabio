@@ -436,7 +436,16 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
     def comparacion():
         """Compara la corrida en vivo y los replays con y sin LLM frente a comprar y mantener."""
         capital, comision = ctx.limites.capital_inicial, ctx.limites.comision
-        filas = [resumen_grupo(ctx.store, GRUPO_VIVO, capital, comision, 'En vivo, toda la cartera', 'live', corridas_vivas())]
+        vivas = corridas_vivas()
+        filas = [resumen_grupo(ctx.store, GRUPO_VIVO, capital, comision, 'En vivo, toda la cartera', 'live', vivas)]
+        if vivas is not None:  # lo que salió de la cartera ya no suma al patrimonio: se nombra para que cuadre con Operaciones
+            salidos = {}
+            for o in ctx.store.grupo('ordenes', GRUPO_VIVO, limite=100_000):
+                if o['run'] not in vivas and o['estado'] == 'ejecutada' and o['lado'] == 'vender':
+                    s = salidos.setdefault(o['run'].split(':')[-1], dict(operaciones=0, resultado=0.0))
+                    s['operaciones'] += 1
+                    s['resultado'] += o['resultado'] or 0.0
+            filas[0]['salidos'] = [dict(simbolo=k, **v) for k, v in sorted(salidos.items())]
         grupos = {}
         for r in ctx.store.runs():
             if r['tipo'] != 'replay':

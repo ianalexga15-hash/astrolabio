@@ -49,4 +49,5 @@ export const IDENTIDAD_ACTIVOS: Record<string, { archivo: string; nombre: string
   "SPYON": { archivo: "spyon.svg", nombre: "S&P 500 · ETF tokenizado Ondo" },
   "QQQON": { archivo: "qqqon.svg", nombre: "Nasdaq-100 · ETF tokenizado Ondo" },
   "RUNE": { archivo: "rune.svg", nombre: "THORChain" },
+  "WLD": { archivo: "wld.svg", nombre: "Worldcoin" },
 };

@@ -6,7 +6,7 @@ import pytest
 from bot import mexc
 from bot.agent import Agente
 from bot.paper import Cuenta
-from bot.reflejo import Reflejo
+from bot.reflejo import Reflejo, precio_legible
 from bot.risk import Limites
 from bot.store import Store
 from tests.helpers import rows
@@ -529,7 +529,7 @@ def test_sin_senal_del_modelo_la_condicion_dice_el_pronostico_y_el_umbral(store)
     m, a, r = preparar(store, modelo=Modelo(valor=-0.002, senal=False), proponente=Proponente('mantener'))
     r.barrer(libro(cierre_del_dia(store), m=m), m.ahora())
     senal = next(c for c in r.radar[SYM]['condiciones'] if c['id'] == 'senal')
-    assert not senal['cumple'] and '-0.200%' in senal['detalle'] and '+0.100%' in senal['detalle']
+    assert not senal['cumple'] and '-0.200 %' in senal['detalle'] and '+0.100 %' in senal['detalle']
 
 
 def test_las_condiciones_informativas_muestran_el_filtro_minimo_con_su_valor(store):
@@ -538,7 +538,15 @@ def test_las_condiciones_informativas_muestran_el_filtro_minimo_con_su_valor(sto
     cierre, sma20 = cierre_del_dia(store), a.contexto_vela['sma20']
     r.barrer(libro(cierre, m=m), m.ahora())
     filtro = next(c for c in r.radar[SYM]['condiciones'] if c['id'] == 'filtro')
-    assert f'Precio {cierre:g} contra SMA20 {sma20:g}' in filtro['detalle'] and filtro['cumple'] == (cierre > sma20)
+    assert f'Precio {precio_legible(cierre)} contra SMA20 {precio_legible(sma20)}' in filtro['detalle'] and filtro['cumple'] == (cierre > sma20)
+
+
+def test_precio_legible_como_en_el_panel():
+    """Miles separados, sin notación científica y los decimales que pide la magnitud, como `precio` del panel."""
+    assert precio_legible(60672.1) == '60,672.10'
+    assert precio_legible(1.237) == '1.237'
+    assert precio_legible(0.2436) == '0.2436'
+    assert precio_legible(0.00000355) == '0.00000355'
 
 
 def test_las_condiciones_informativas_no_arman_ni_compran_ni_leen_el_libro(store):
