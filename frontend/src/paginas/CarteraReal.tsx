@@ -113,7 +113,8 @@ export function CarteraReal() {
                   const bot = delBot.get(f.activo);
                   return (
                     <tr key={f.activo} className={bot ? 'fila-en_posicion' : undefined}>
-                      <td><span className="activo-enlace"><IdentidadActivo simbolo={f.activo} /><span><strong>{f.activo}</strong>{f.activo !== 'USDT' && <small>USDT</small>}</span></span></td>
+                      {/* IdentidadActivo quita el sufijo USDT del par: con el activo solo, USDT quedaría sin nombre */}
+                      <td><span className="activo-enlace"><IdentidadActivo simbolo={`${f.activo}USDT`} /><span><strong>{f.activo}</strong>{f.activo !== 'USDT' && <small>USDT</small>}</span></span></td>
                       <td>{num(f.libre)}</td>
                       <td className={f.bloqueado ? undefined : 'tenue'}>{num(f.bloqueado)}</td>
                       <td>{f.activo === 'USDT' ? '1' : precio(precios[`${f.activo}USDT`])}</td>
@@ -132,7 +133,7 @@ export function CarteraReal() {
           </p>
         )}
         <div className="tabla-pie">
-          <span>{filas.length} activos en tu cuenta</span>
+          <span>{filas.length} {filas.length === 1 ? 'activo' : 'activos'} en tu cuenta</span>
           <span>Saldos de MEXC Spot cada 30 s · Precio de compra del radar · El bot nunca retira ni transfiere</span>
         </div>
       </section>
