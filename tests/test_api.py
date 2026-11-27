@@ -8,7 +8,7 @@ import pytest
 from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
-from bot import llm, mexc, model, real
+from bot import llm, mexc, model
 from bot.api import crear_app
 from bot.config import Ajustes
 from bot.events import Eventos
@@ -287,8 +287,7 @@ def test_ninguna_ruta_del_panel_envia_ordenes_ni_retira(raiz):
     assert sorted(r for r in rutas if 'real' in r) == ['/api/real', '/api/real/modo', '/api/real/verificar']
 
 
-def test_la_cartera_real_arranca_apagada_y_encenderla_pide_confirmacion(raiz, monkeypatch):
-    monkeypatch.setattr(real, 'SOLO_PAPER', False)  # la lógica con el bloqueo levantado; la entrega lo deja puesto (test_solo_paper.py)
+def test_la_cartera_real_arranca_apagada_y_encenderla_pide_confirmacion(raiz):
     c, _ = app_cliente(raiz, mexc_clave='clave', mexc_secreto='secreto')
     assert c.get('/api/real').status_code == 401
     entrar(c)

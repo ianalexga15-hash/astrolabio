@@ -251,7 +251,6 @@ export interface EstadoReal {
   topes: { tope_total_usdt: number; max_orden_usdt: number; perdida_diaria_usdt: number };
   clave_configurada: boolean;
   confirmacion: string;
-  solo_paper?: boolean;  // la entrega rechaza el endpoint real: solo Apagada y Sombra
   posiciones: { simbolo: string; cantidad: number; costo: number }[];
   ordenes: OrdenReal[];
   expuesto: number;

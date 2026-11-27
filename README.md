@@ -1,6 +1,6 @@
 # Astrolabio
 
-Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas y 8 tokens que siguen acciones, divisas y oro. Revisa cada segundo sus condiciones de compra y venta y decide sin que nadie le diga qué hacer. Tiene dos carteras: **Paper**, con 50,000 USDT virtuales y precios reales de MEXC, y **Real**, que arma en tu cuenta Spot de MEXC lo que Paper ejecuta, dentro de topes en USDT. **Esta entrega solo opera en Paper:** la Real funciona en modo Sombra, donde MEXC valida cada orden sin ejecutarla, y el envío real está bloqueado y probado (`SOLO_PAPER` en `bot/real.py`, `tests/test_solo_paper.py`).
+Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas y 8 tokens que siguen acciones, divisas y oro. Revisa cada segundo sus condiciones de compra y venta y decide sin que nadie le diga qué hacer. Tiene dos carteras: **Paper**, con 50,000 USDT virtuales y precios reales de MEXC, y **Real**, que repite en tu cuenta Spot de MEXC lo que Paper ejecuta, con dinero real y dentro de topes en USDT. La Real arranca apagada y solo se enciende escribiendo la confirmación en el panel.
 
 En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo en NumPy, Ollama local y reglas deterministas. Corre en la laptop, así que no opera mientras esté apagada.
 
@@ -23,7 +23,7 @@ flowchart LR
     B --> C["LLM local con Ollama: propone"]
     C --> D{"Motor de riesgo y máquina del tiempo: deciden"}
     D -- "aprueba" --> E["Paper: el reflejo ejecuta cada segundo"]
-    E -- "arma la misma orden" --> F["Sombra: MEXC la valida sin ejecutarla; envío real bloqueado"]
+    E -- "repite con topes" --> F["Real: tu cuenta Spot de MEXC"]
     D -- "rechaza" --> G["Registro con su porqué"]
 ```
 
@@ -59,7 +59,7 @@ flowchart LR
 - **Meta por operación:** cada compra pone su venta a +13 % más la comisión del par. Es un precio objetivo, no un 13 % neto asegurado: muchas operaciones cierran antes en el stop.
 - **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH, XMR y BDX salieron porque MEXC los retiró; RUNE entró en lugar de XMR y WLD en lugar de BDX, con la misma regla.
 - **Paper en vivo** (observado, del 4 al 26 de noviembre): 28 órdenes ejecutadas y 6 compras que vencieron sin precio; 14 operaciones cerradas, 1 con ganancia, con resultado neto de −248.26 USDT; patrimonio de los 40 activos actuales en 49,765.88 USDT (−0.47 %), mientras la canasta de esos activos cayó 15.1 %.
-- **Cartera Real:** lista desde el 2026-11-26, con saldo en la cuenta Spot. La clave pasó la prueba de MEXC para operar Spot con una orden de prueba que nunca se ejecuta. El 2026-11-27 se encendió unos minutos para capturar la vista y se apagó; no envió ninguna orden real porque Paper no tenía compras armadas. Desde la versión 1.2 el envío real está bloqueado: solo Apagada y Sombra.
+- **Cartera Real:** lista desde el 2026-11-26, con saldo en la cuenta Spot. La clave pasó la prueba de MEXC para operar Spot con una orden de prueba que nunca se ejecuta. El 2026-11-27 se encendió unos minutos para capturar la vista y se apagó; no envió ninguna orden real porque Paper no tenía compras armadas.
 - **Mercado:** velas diarias desde que el activo cotiza en MEXC (BTC desde 2019-03-21), con bandas de Bollinger, SMA 20 y EMA 20 sobre el precio y RSI, MACD, ATR y volatilidad debajo; una cruz que sigue al puntero con la fecha y los valores; rangos de 1 mes, 6 meses, 1 año y todo; y la vela en curso al precio de cada segundo, también en 5 min y 1 h.
 
 ## Cómo cumple la rúbrica
@@ -68,19 +68,19 @@ Dónde ver cada criterio de la rúbrica del proyecto (2026-11-26). Lo marcado co
 
 | Criterio | Evidencia en el proyecto |
 | --- | --- |
-| 1. App: FrontEnd y BackEnd | Panel React y TypeScript (`frontend/`), API FastAPI en 127.0.0.1 (`bot/api.py`) y MEXC solo detrás del servidor (`bot/mexc.py`, `bot/real.py`): el navegador nunca habla con el broker. Diagrama arriba. Mercado con velas e indicadores, estados de carga y error, y vista para celular. API documentada en Sistema y en `/api/openapi.json`. Claves solo en `.env`; **solo Paper, con el endpoint real rechazado y probado** (`tests/test_solo_paper.py`). Decisiones y órdenes en SQLite, exportables a CSV. CI en `.github/workflows/ci.yml`. El tiempo real es un sondeo de 1 s, sin WebSocket. |
+| 1. App: FrontEnd y BackEnd | Panel React y TypeScript (`frontend/`), API FastAPI en 127.0.0.1 (`bot/api.py`) y MEXC solo detrás del servidor (`bot/mexc.py`, `bot/real.py`): el navegador nunca habla con el broker. Diagrama arriba. Mercado con velas e indicadores, estados de carga y error, y vista para celular. API documentada en Sistema y en `/api/openapi.json`. Claves solo en `.env`, nunca en el navegador ni en Git. Además de Paper, **opera con dinero real**: la cartera Real arranca apagada, se enciende solo escribiendo `ACTIVAR REAL` y opera dentro de topes en USDT. Decisiones y órdenes en SQLite, exportables a CSV. CI en `.github/workflows/ci.yml`. El tiempo real es un sondeo de 1 s, sin WebSocket. |
 | 2. Consideraciones financieras | Decide solo con velas cerradas. Indicadores probados contra la referencia de `bot/features.py` (RSI de Wilder, MACD, Bollinger, EMA, ATR y volatilidad en `frontend/src/logica.test.ts`). Métricas: acierto, factor de beneficio, caída máxima, Sharpe, Sortino, VaR y CVaR. Comisión real de cada par y deslizamiento en Paper y en los replays. Stop a 2 ATR y objetivo de +13 % más la comisión, fijados antes de entrar; tamaño por riesgo fijo con topes. Límites deterministas: pérdida diaria, caída máxima, compras por vela, pausa tras pérdida y botón para detener. |
 | 3. Aprendizaje (ML / DL) | Objetivo: el rendimiento del día siguiente, que la regla convierte en señal con un umbral elegido en VA. Variables solo del pasado, escaladas con el entrenamiento. Partición por fecha (TR, VA y TE) y TE abierta una sola vez. Línea base: pronóstico cero, comprar y mantener y la regla sin LLM. Lineal y Ridge contra MLP y LSTM entrenadas en una GPU T4; ganó Ridge por error en VA. Replays con comisiones (`research/replay.py`). |
 | 4. IA como cerebro | Ollama local propone en JSON; un JSON inválido no opera. El motor de riesgo decide con reglas fijas y su veto manda: 62 propuestas rechazadas en vivo. La IA no envía órdenes ni cambia límites. Si Ollama falla, no abre posiciones y lo registra. Cada decisión guarda indicadores, propuesta, motivos y resultado (pestañas Mercado y Auditoría). |
 | 5. Trading | Tesis de tendencia: compra cuando el modelo espera subida y el precio está arriba de la SMA 20. Entrada con condiciones medibles (spread, sin perseguir más de 1.5 ATR); salidas por stop, objetivo y stop móvil. Solo long, porque MEXC Spot no permite cortos. El replay corre el mismo agente y las mismas reglas con velas diarias; no reproduce el reflejo por segundo. |
 
-Lista de verificación de la rúbrica: las claves no están en el repositorio ni en el navegador (escaneo de secretos antes de cada `git push`); la app rechaza el endpoint real (`tests/test_solo_paper.py`); ninguna decisión usa la vela en curso (el panel la muestra solo como lectura); toda compra lleva stop, objetivo y tamaño calculados antes de entrar (`bot/risk.py`); las métricas incluyen comisiones y deslizamiento; Ridge supera al pronóstico cero en VA; la IA no puede enviar órdenes ni saltar el riesgo; cada decisión se reconstruye desde la bitácora (`scripts/exportar_registros.py`).
+Lista de verificación de la rúbrica: las claves no están en el repositorio ni en el navegador (escaneo de secretos antes de cada `git push`); el endpoint real de órdenes solo se usa con la cartera Real encendida a mano y dentro de sus topes, y ninguna ruta del panel manda órdenes a mano ni retira; ninguna decisión usa la vela en curso (el panel la muestra solo como lectura); toda compra lleva stop, objetivo y tamaño calculados antes de entrar (`bot/risk.py`); las métricas incluyen comisiones y deslizamiento; Ridge supera al pronóstico cero en VA; la IA no puede enviar órdenes ni saltar el riesgo; cada decisión se reconstruye desde la bitácora (`scripts/exportar_registros.py`).
 
 ## Versiones y avances
 
 | Versión | Fecha | Avances |
 | --- | --- | --- |
-| 1.2 | 2026-11-27 | Mercado como terminal: velas con bandas de Bollinger, cierres atípicos, SMA 20 y EMA 20; paneles de RSI, MACD, ATR y volatilidad con su nombre; cruz con fecha y valores en cada vela; rangos de 1 mes a todo el historial (desde 2019 en BTC); vela en curso al precio en vivo en 1 día, 5 min y 1 h; franja con los indicadores que usa el bot. Envío real bloqueado y probado: solo Paper y Sombra. CI en GitHub. |
+| 1.2 | 2026-11-27 | Mercado como terminal: velas con bandas de Bollinger, cierres atípicos, SMA 20 y EMA 20; paneles de RSI, MACD, ATR y volatilidad con su nombre; cruz con fecha y valores en cada vela; rangos de 1 mes a todo el historial (desde 2019 en BTC); vela en curso al precio en vivo en 1 día, 5 min y 1 h; franja con los indicadores que usa el bot. CI en GitHub. |
 | 1.1 | 2026-11-27 | Modelo de la cartera entrenado en una GPU Tesla T4 con su propio notebook; queda como evidencia porque su replay en VA fue mixto. Vista Real con el circuito de la orden (Paper → topes → MEXC Spot), las compras que alcanza el saldo y el resultado de la prueba de la clave junto a su botón. `replay.py --modelo-cartera` compara modelos sin tocar el activo. |
 | 1.0 | 2026-11-26 | Cartera Real: repite en la cuenta Spot de MEXC lo que Paper ejecuta, con topes en USDT, modo sombra y confirmación escrita. Selector Paper / Real en la cabecera y vista Real con el mismo tablero que Paper: saldo de MEXC, activos de la cuenta y órdenes reales. |
 | 0.9 | 2026-11-26 | Despertador antes del cierre diario. WLD entra en lugar de BDX. Auditoría de diseño: un control por dimensión en Mercado, fechas ISO, horas en 24 h y errores en español. |
@@ -159,8 +159,6 @@ El servidor registra sus mensajes en `data/servidor.log`. El panel queda en http
 
 ## Cartera Real: tu cuenta Spot de MEXC
 
-> **En esta entrega el envío real está bloqueado.** Con `SOLO_PAPER = True` en `bot/real.py`, el cliente rechaza `POST /api/v3/order` antes de llamar a MEXC, el modo Real no se enciende (la API responde 403) y un modo real guardado de antes se lee como apagado. `tests/test_solo_paper.py` lo prueba. Sombra sigue funcionando: arma cada orden y MEXC la valida sin ejecutarla. Lo que sigue describe la cartera completa.
-
 La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera. La vista Real usa el mismo tablero que Paper: arriba el saldo de tu cuenta Spot, lo invertido por el bot, el resultado del día, el máximo por orden y el estado de la clave. En medio, un circuito muestra el camino de cada orden (Paper ejecuta → topes → MEXC Spot) y cuántas compras alcanza tu saldo; con la cartera encendida, el enlace se ilumina. Abajo, los activos de la cuenta y las órdenes reales.
 
 1. En MEXC, en API Management, crea una clave con **View Account Details**, **View Order Details** y **Trade** de Spot. Nunca Withdraw ni Transfer. Si puedes, lígala a tu IP.
@@ -170,7 +168,7 @@ La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. C
 5. Elige un modo:
     - **Apagada:** no envía nada.
     - **Sombra:** arma cada orden y MEXC la valida con `/api/v3/order/test`, sin ejecutarla.
-    - **Real:** envía las órdenes. Pide escribir `ACTIVAR REAL`. Bloqueado en esta entrega.
+    - **Real:** envía las órdenes. Pide escribir `ACTIVAR REAL`.
 
 Al encenderla solo repite lo que Paper ejecute desde ese momento. Cada compra va a mercado por hasta `max_orden_usdt`, mientras lo invertido no pase de `tope_total_usdt`; si el resultado del día llega a `−perdida_diaria_usdt`, no compra más ese día. Los topes por omisión son 50, 10 y 5 USDT; se cambian en `config/real.json`:
 
@@ -421,7 +419,7 @@ Por defecto usa validación. Para TE exige `--conjunto TE --confirmo-abrir-te`, 
 cd frontend && npx vitest run
 ```
 
-En GitHub, `.github/workflows/ci.yml` corre en cada push: tipos, pruebas y build del panel, y compila todo el código de Python. `tests/test_solo_paper.py` comprueba que la app rechaza el endpoint real de MEXC y que nadie enciende la cartera Real.
+En GitHub, `.github/workflows/ci.yml` corre en cada push: tipos, pruebas y build del panel, y compila todo el código de Python.
 
 Nueve escenarios de error tienen pruebas automáticas:
 
@@ -451,7 +449,7 @@ Para exportar los registros a CSV, aun con el bot encendido:
 
 ## Seguridad
 
-Las claves viven solo en `.env`, que git ignora; `.env.example` trae los nombres sin valores. La clave de MEXC lee la cuenta y opera Spot, nunca retira. Las órdenes reales solo podrían salir de `bot/real.py`, y en esta entrega ese módulo rechaza el endpoint real antes de llamar a MEXC (solo Paper, probado); el panel no tiene ruta para mandar una orden a mano ni para retirar. El panel escucha solo en esta laptop y guarda tu contraseña como huella scrypt y cada sesión como huella SHA-256. Antes de subir cambios a GitHub, este comando revisa todo el historial sin mostrar ningún valor; `git push` lo corre solo:
+Las claves viven solo en `.env`, que git ignora; `.env.example` trae los nombres sin valores. La clave de MEXC lee la cuenta y opera Spot, nunca retira. Las órdenes reales solo salen de `bot/real.py`, detrás de la cartera Real, que arranca apagada y pide escribir la confirmación; el panel no tiene ruta para mandar una orden a mano ni para retirar. El panel escucha solo en esta laptop y guarda tu contraseña como huella scrypt y cada sesión como huella SHA-256. Antes de subir cambios a GitHub, este comando revisa todo el historial sin mostrar ningún valor; `git push` lo corre solo:
 
 ```bash
 .venv\Scripts\python scripts\revisar_secretos.py

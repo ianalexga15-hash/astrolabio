@@ -25,10 +25,6 @@ from bot.store import ahora_iso
 
 RUTAS_ORDENES = ('/api/v3/order', '/api/v3/order/test')
 MODOS = ('apagada', 'sombra', 'real')
-# Entrega del curso (rúbrica del 2026-11-26): la app solo opera en Paper. Con esto el cliente rechaza el endpoint real antes de
-# cualquier llamada y nadie enciende el modo real; Sombra sigue, porque /api/v3/order/test nunca ejecuta. tests/test_solo_paper.py
-SOLO_PAPER = True
-BLOQUEO = 'Envío real bloqueado: esta versión solo opera en Paper. Sombra valida cada orden en MEXC sin ejecutarla.'
 CONFIRMACION = 'ACTIVAR REAL'
 TOPES = dict(tope_total_usdt=50.0, max_orden_usdt=10.0, perdida_diaria_usdt=5.0)
 FINALES = ('FILLED', 'CANCELED', 'PARTIALLY_CANCELED', 'REJECTED', 'EXPIRED')
@@ -53,8 +49,6 @@ class ClienteOrdenes(CuentaMexc):
     def _orden(self, metodo, ruta, params):
         if ruta not in RUTAS_ORDENES:
             raise MexcError(f'{ruta}: la cartera Real solo envía, prueba y consulta órdenes Spot.')
-        if SOLO_PAPER and metodo == 'POST' and ruta == '/api/v3/order':
-            raise PermissionError(BLOQUEO)
         if self.desfase_ms is None:
             self._sincronizar()
         consulta = urlencode({**params, 'timestamp': int(self.reloj() * 1000 + self.desfase_ms), 'recvWindow': VENTANA_MS})
@@ -105,10 +99,7 @@ class CarteraReal:
     # Estado y modo
     def estado(self):
         f = self.store._una('SELECT datos FROM real_estado WHERE id=1')
-        datos = dict(modo='apagada', desde_orden=None, compras_bloqueadas=False, motivo='', verificacion=None) | (json.loads(f['datos']) if f else {})
-        if SOLO_PAPER and datos['modo'] == 'real':  # un modo real guardado antes del bloqueo no envía nada
-            datos |= dict(modo='apagada', motivo=BLOQUEO)
-        return datos
+        return dict(modo='apagada', desde_orden=None, compras_bloqueadas=False, motivo='', verificacion=None) | (json.loads(f['datos']) if f else {})
 
     def _guardar(self, **cambios):
         datos = self.estado() | cambios
@@ -118,8 +109,6 @@ class CarteraReal:
     def cambiar_modo(self, modo, confirmacion=''):
         if modo not in MODOS:
             raise ValueError(f'Modo desconocido: {modo}. Usa apagada, sombra o real.')
-        if modo == 'real' and SOLO_PAPER:
-            raise PermissionError(BLOQUEO)
         if modo == 'real' and confirmacion != CONFIRMACION:
             raise PermissionError(f'Para encender la cartera Real escribe «{CONFIRMACION}».')
         if modo != 'apagada' and not self.cliente.configurada:
@@ -284,7 +273,7 @@ class CarteraReal:
 
     def resumen(self):
         """Lo que muestra el panel. No consulta a MEXC: el saldo sale de /api/cuenta-mexc."""
-        return self.estado() | dict(topes=self.topes, clave_configurada=self.cliente.configurada, confirmacion=CONFIRMACION, solo_paper=SOLO_PAPER,
+        return self.estado() | dict(topes=self.topes, clave_configurada=self.cliente.configurada, confirmacion=CONFIRMACION,
                                     posiciones=self.posiciones(), ordenes=self.ordenes(), expuesto=self._expuesto(), resultado_hoy=self._resultado_hoy())
 
 

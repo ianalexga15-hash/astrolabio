@@ -6,7 +6,6 @@ from urllib.parse import urlparse
 
 import pytest
 
-from bot import real
 from bot.mexc import MexcError, MexcUnavailable
 from bot.real import CONFIRMACION, CarteraReal, ClienteOrdenes
 from bot.store import Store
@@ -61,12 +60,6 @@ class Cliente:
 class Mercado:
     def filters(self, simbolo):
         return dict(paso_cantidad=0.0001, minimo_quote=5.0, base='BTC', maker=0.0, taker=0.0005)
-
-
-@pytest.fixture(autouse=True)
-def real_desbloqueada(monkeypatch):
-    """Estas pruebas revisan la lógica de la cartera Real; la entrega la deja bloqueada en Paper (tests/test_solo_paper.py)."""
-    monkeypatch.setattr(real, 'SOLO_PAPER', False)
 
 
 @pytest.fixture

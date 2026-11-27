@@ -19,7 +19,7 @@ Corre `.venv/Scripts/python -m pytest -q` y, si tocaste el panel, `npm run build
 
 ## Reglas fijas
 
-- Etapa actual: MEXC en modo Paper más la cartera Real (etapa 4, decisión de Alex del 2026-11-26). La Real repite en la cuenta Spot lo que Paper ejecuta, desde `bot/real.py`, arranca apagada y solo Alex la enciende desde el panel escribiendo la confirmación. Las órdenes reales solo salen de `bot/real.py`; no agregues otras rutas de órdenes, ni rutas para mandar órdenes a mano, ni retiros o transferencias. Para la entrega del curso (decisión de Alex del 2026-11-27, por la rúbrica) `SOLO_PAPER = True` bloquea el envío real: solo Apagada y Sombra; `tests/test_solo_paper.py` lo prueba.
+- Etapa actual: MEXC en modo Paper más la cartera Real (etapa 4, decisión de Alex del 2026-11-26). La Real repite en la cuenta Spot lo que Paper ejecuta, desde `bot/real.py`, arranca apagada y solo Alex la enciende desde el panel escribiendo la confirmación. Las órdenes reales solo salen de `bot/real.py`; no agregues otras rutas de órdenes, ni rutas para mandar órdenes a mano, ni retiros o transferencias. Alex decidió el 2026-11-27 que el envío real no se bloquea, aunque la rúbrica del curso lo penalice: no agregues bloqueos de la cartera Real.
 - Las claves y otros secretos no van en el repositorio, los logs ni el chat.
 - El bot en ejecución no llama a Claude ni a Codex. Su único LLM es Ollama local.
 - El LLM propone; los controles de riesgo deterministas deciden si se ejecuta.
