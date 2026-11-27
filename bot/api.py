@@ -371,24 +371,37 @@ def crear_app(aj, mercado=None, ollama_http=None, proponente=None, hilos=True, a
         return dict(filas=filas, estadisticas=c.reflejo.estadisticas() | dict(red=c.medicion()), resumen=c.resumen(), error=c.error_libro, servidor_ms=ctx.ahora())
 
     @app.get('/api/velas', dependencies=[Depends(sesion)])
-    def velas(limite: int = 200, simbolo: str | None = None):
-        """Velas diarias guardadas de un activo, hasta 1,000."""
-        return ctx.store.velas(simbolo or ctx.limites.simbolo, min(limite, 1000))
+    def velas(limite: int = 200, simbolo: str | None = None, historia: bool = False):
+        """Velas diarias guardadas de un activo, hasta 1,000. Con historia, desde que cotiza: antepone las de data/cartera que la base no tiene."""
+        s = simbolo or ctx.limites.simbolo
+        if not historia:
+            return ctx.store.velas(s, min(limite, 1000))
+        if s not in ctx.simbolos:  # el símbolo arma la ruta del archivo: solo los de la cartera
+            raise HTTPException(422, 'Elige un activo de la cartera.')
+        guardadas = ctx.store.velas(s, 100_000)
+        archivo = aj.raiz / 'data' / 'cartera' / f'{s}.csv'
+        previas = []
+        if archivo.exists():
+            with archivo.open(encoding='utf-8', newline='') as f:
+                previas = [dict(open_time=int(r['open_time']), open=float(r['open']), high=float(r['high']), low=float(r['low']), close=float(r['close']))
+                           for r in csv.DictReader(f)]
+        desde = guardadas[0]['open_time'] if guardadas else math.inf
+        return [v for v in previas if v['open_time'] < desde] + guardadas
 
     velas_cortas = {}  # (simbolo, intervalo) -> (ms, velas): caché de 30 s para no saturar a MEXC
 
     @app.get('/api/velas-intradia', dependencies=[Depends(sesion)])
     def velas_intradia(simbolo: str, intervalo: str = '5m'):
-        """Últimas 60 velas de 5 min (5m) o de 1 h (60m) de un activo, leídas de MEXC en solo lectura; se repiten durante 30 s."""
-        if simbolo not in ctx.simbolos or intervalo not in ('5m', '60m'):
-            raise HTTPException(422, 'Elige un activo de la cartera y un intervalo de 5m o 60m.')
+        """Últimas 200 velas de 5 min (5m), de 1 h (60m) o diarias (1d, con la del día en curso) de un activo, leídas de MEXC en solo lectura; se repiten durante 30 s."""
+        if simbolo not in ctx.simbolos or intervalo not in ('5m', '60m', '1d'):
+            raise HTTPException(422, 'Elige un activo de la cartera y un intervalo de 5m, 60m o 1d.')
         ahora = ctx.ahora()
         guardadas = velas_cortas.get((simbolo, intervalo))
         if guardadas and ahora - guardadas[0] < 30_000:
             return guardadas[1]
         try:
             filas = [dict(open_time=int(f[0]), open=float(f[1]), high=float(f[2]), low=float(f[3]), close=float(f[4]))
-                     for f in ctx.mercado.klines(simbolo, limit=60, intervalo=intervalo)]
+                     for f in ctx.mercado.klines(simbolo, limit=200, intervalo=intervalo)]  # 200: los indicadores llegan calientes a las 100 que se ven
             for vela in filas:
                 precios = [vela[k] for k in ('open', 'high', 'low', 'close')]
                 if (not all(math.isfinite(p) and p > 0 for p in precios)

@@ -1,4 +1,5 @@
 import asyncio
+import csv
 import json
 import time
 
@@ -7,7 +8,7 @@ import pytest
 from fastapi.routing import APIRoute
 from fastapi.testclient import TestClient
 
-from bot import llm, mexc, model
+from bot import llm, mexc, model, real
 from bot.api import crear_app
 from bot.config import Ajustes
 from bot.events import Eventos
@@ -23,6 +24,9 @@ class Mercado:
 
     def closed_candles(self, simbolo, limit, now_ms):
         return [f for f in self.filas if f[6] <= now_ms][-limit:]
+
+    def klines(self, simbolo, limit=500, intervalo='1d', **_):
+        return self.filas[-limit:]
 
     def filters(self, simbolo):
         return dict(paso_cantidad=0.000001, minimo_quote=1.0, maker=0.0, taker=0.0)
@@ -283,7 +287,8 @@ def test_ninguna_ruta_del_panel_envia_ordenes_ni_retira(raiz):
     assert sorted(r for r in rutas if 'real' in r) == ['/api/real', '/api/real/modo', '/api/real/verificar']
 
 
-def test_la_cartera_real_arranca_apagada_y_encenderla_pide_confirmacion(raiz):
+def test_la_cartera_real_arranca_apagada_y_encenderla_pide_confirmacion(raiz, monkeypatch):
+    monkeypatch.setattr(real, 'SOLO_PAPER', False)  # la lógica con el bloqueo levantado; la entrega lo deja puesto (test_solo_paper.py)
     c, _ = app_cliente(raiz, mexc_clave='clave', mexc_secreto='secreto')
     assert c.get('/api/real').status_code == 401
     entrar(c)
@@ -426,6 +431,30 @@ def test_radar_muestra_cada_activo_con_sus_condiciones_y_la_latencia(cliente):
 
 def test_radar_exige_sesion(cliente):
     assert cliente.get('/api/radar').status_code == 401
+
+
+def test_velas_con_historia_suman_el_archivo_de_la_cartera_sin_duplicar(cliente, raiz):
+    entrar(cliente)
+    cliente.post('/api/control/iniciar')
+    cliente.post('/api/control/ciclo')
+    guardadas = cliente.get('/api/velas?limite=1000').json()
+    assert guardadas
+    (raiz / 'data' / 'cartera').mkdir(exist_ok=True)
+    viejas = rows(random_walk(12, seed=5), start=guardadas[0]['open_time'] - 10 * DAY)  # 10 anteriores y 2 que ya están en la base
+    with (raiz / 'data' / 'cartera' / 'BTCUSDT.csv').open('w', encoding='utf-8', newline='') as f:
+        csv.writer(f).writerows([['open_time', 'open', 'high', 'low', 'close', 'volume', 'close_time', 'quote_volume']] + viejas)
+    todas = cliente.get('/api/velas?historia=true&simbolo=BTCUSDT').json()
+    tiempos = [v['open_time'] for v in todas]
+    assert len(todas) == len(guardadas) + 10 and tiempos == sorted(set(tiempos))
+    assert todas[10] == guardadas[0]  # donde se juntan, manda la base
+    assert cliente.get('/api/velas?historia=true&simbolo=../../.env').status_code == 422  # el símbolo arma una ruta: solo los de la cartera
+
+
+def test_velas_de_mexc_incluyen_el_dia_en_curso(cliente):
+    entrar(cliente)
+    r = cliente.get('/api/velas-intradia?simbolo=BTCUSDT&intervalo=1d')
+    assert r.status_code == 200 and r.json()[-1]['close'] > 0
+    assert cliente.get('/api/velas-intradia?simbolo=BTCUSDT&intervalo=1w').status_code == 422
 
 
 def test_universo_reparte_el_capital_entre_sus_activos(raiz):

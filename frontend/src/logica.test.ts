@@ -2,8 +2,26 @@ import { describe, expect, it } from 'vitest';
 import {
   centroDeGalaxia, conectadas, cuentaAtras, filtrarNotas, indexar100, type Nota, pctSigno, polvoDeGalaxia, posicionesUniverso, precio, proyectar, rutasDeEsquema, sma, usd, validarNuevaClave, avisoEnergia,
   avisoDetener, conexionActivos, detalleDeError, estadoMexc, horaLocal, idsNuevos, interruptor, metricasOperaciones, puntosNuevos, registrarCambio, resumenHistorial, tonoAltura, valorCuenta,
-  limiteVacio, sumarSegundo, ejeX, avisoDetenido, comprasPosibles,
+  limiteVacio, sumarSegundo, ejeX, avisoDetenido, comprasPosibles, bollinger, rsi, macd, ema, atr, volatilidad, unirVelasDelDia,
 } from './logica';
+
+describe('vela del día en vivo', () => {
+  const DIA = 86_400_000;
+  const vela = (dia: number, close: number) => ({ open_time: dia * DIA, open: 10, high: 12, low: 9, close });
+
+  it('suma solo las velas de MEXC posteriores a las guardadas y cierra la de hoy al precio en vivo', () => {
+    const serie = unirVelasDelDia([vela(1, 10), vela(2, 11)], [vela(1, 99), vela(2, 99), vela(3, 11.5)], 13, 3 * DIA);
+    expect(serie.map((v) => v.close)).toEqual([10, 11, 13]);
+    expect(serie[2]).toMatchObject({ open: 10, high: 13, low: 9 });
+    expect(unirVelasDelDia([vela(1, 10)], [vela(2, 11)], 8, 2 * DIA)[1]).toMatchObject({ high: 12, low: 8, close: 8 });
+  });
+
+  it('deja la última vela como está si no es la de hoy o no hay precio en vivo', () => {
+    const cerradas = [vela(1, 10), vela(2, 11)];
+    expect(unirVelasDelDia(cerradas, null, 13, 3 * DIA)).toEqual(cerradas);
+    expect(unirVelasDelDia(cerradas, [vela(3, 11.5)], null, 3 * DIA).map((v) => v.close)).toEqual([10, 11, 11.5]);
+  });
+});
 
 describe('aviso de bot detenido', () => {
   it('solo avisa con el bot detenido y posiciones abiertas', () => {
@@ -285,6 +303,52 @@ describe('valorCuenta', () => {
     expect(v.total).toBeCloseTo(240);
     expect(v.filas.map((f) => f.valor)).toEqual([100, 140, null]);
     expect(v.sinPrecio).toEqual(['XYZ']);
+  });
+});
+
+describe('indicadores iguales a los de bot/features.py', () => {
+  // Cierres y valores esperados salidos de bot/features.add_indicators con estos mismos 60 cierres
+  const CIERRES = [100.4, 102.2106, 104.9089, 107.9759, 109.1695, 107.5852, 104.9415, 102.1603, 99.8685, 99.8479, 102.2107, 105.0521, 107.4553, 108.8742, 107.7222,
+    104.4594, 101.611, 99.9844, 99.7106, 101.7022, 105.1131, 107.5324, 108.2633, 107.4383, 104.5573, 101.1081, 99.5357, 99.8897, 101.5423, 104.616, 107.6184, 108.2422,
+    106.7586, 104.3149, 101.1919, 99.0467, 99.5456, 101.7685, 104.3987, 107.1023, 108.3259, 106.6364, 103.6187, 101.0249, 99.1363, 99.0769, 101.5107, 104.6393,
+    106.7897, 107.781, 106.7112, 103.4224, 100.3675, 99.0653, 99.1753, 101.043, 104.4369, 107.0038, 107.3537, 106.1589];
+
+  it('Bollinger: SMA20 ± 2 desviaciones poblacionales', () => {
+    const b = bollinger(CIERRES);
+    expect(b[18]).toBeNull();
+    expect(b[40]?.media).toBeCloseTo(104.13984, 6);
+    expect(b[40]?.sup).toBeCloseTo(110.7510269595, 6);
+    expect(b[59]?.inf).toBeCloseTo(97.1623301906, 6);
+  });
+
+  it('RSI de Wilder que arranca con la media de los primeros 14 cambios; 50 sin movimiento', () => {
+    const r = rsi(CIERRES);
+    expect(r[13]).toBeNull();
+    expect(r[40]).toBeCloseTo(59.2906156223, 6);
+    expect(r[59]).toBeCloseTo(55.1259846221, 6);
+    expect(rsi(Array(20).fill(5))[19]).toBe(50);
+  });
+
+  it('EMA 20, ATR 14 de Wilder y volatilidad muestral de 20 días', () => {
+    const e = ema(CIERRES);
+    expect(e[18]).toBeNull();
+    expect(e[40]).toBeCloseTo(104.0138573034, 6);
+    expect(e[59]).toBeCloseTo(103.8785464468, 6);
+    const a = atr(CIERRES.map((c) => ({ high: c * 1.01, low: c * 0.99, close: c })));
+    expect(a[12]).toBeNull();
+    expect(a[40]).toBeCloseTo(3.075799093, 6);
+    expect(a[59]).toBeCloseTo(3.0331911186, 6);
+    const v = volatilidad(CIERRES);
+    expect(v[19]).toBeNull();
+    expect(v[40]).toBeCloseTo(0.021440509104, 9);
+    expect(v[59]).toBeCloseTo(0.021180638543, 9);
+  });
+
+  it('MACD 12/26/9 con el histograma en precio y sin valor hasta tener la señal', () => {
+    const m = macd(CIERRES);
+    expect(m[32]).toBeNull();
+    expect(m[40]?.hist).toBeCloseTo(0.3676407903, 6);
+    expect(m[59]?.hist).toBeCloseTo(0.4522867831, 6);
   });
 });
 

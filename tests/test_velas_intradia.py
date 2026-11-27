@@ -1,4 +1,4 @@
-"""Velas de 5 min y 1 h para Mercado: solo lectura de MEXC, con sesión, validación y caché de 30 s."""
+"""Velas de 5 min, 1 h y diarias (con la del día en curso) para Mercado: solo lectura de MEXC, con sesión, validación y caché de 30 s."""
 from bot import mexc
 import pytest
 from tests.helpers import START
@@ -36,17 +36,17 @@ def test_pide_sesion(raiz):
 def test_valida_activo_e_intervalo_sin_consultar_a_mexc(raiz):
     c, falso, _ = preparar(raiz)
     entrar(c)
-    for consulta in ('simbolo=BTCUSDT&intervalo=1m', 'simbolo=BTCUSDT&intervalo=1d', 'simbolo=ETHUSDT&intervalo=5m', 'simbolo=btcusdt&intervalo=5m', 'intervalo=5m'):
+    for consulta in ('simbolo=BTCUSDT&intervalo=1m', 'simbolo=BTCUSDT&intervalo=1w','simbolo=ETHUSDT&intervalo=5m', 'simbolo=btcusdt&intervalo=5m', 'intervalo=5m'):
         assert c.get(f'/api/velas-intradia?{consulta}').status_code == 422, consulta
     assert falso.pedidas == []
 
 
-def test_devuelve_60_velas_con_numeros(raiz):
+def test_devuelve_200_velas_con_numeros(raiz):
     c, falso, _ = preparar(raiz)
     entrar(c)
     velas = c.get('/api/velas-intradia?simbolo=BTCUSDT&intervalo=60m').json()
-    assert falso.pedidas == [('BTCUSDT', '60m', 60)]
-    assert len(velas) == 60 and velas[0] == dict(open_time=START, open=100.0, high=101.5, low=99.0, close=100.5)
+    assert falso.pedidas == [('BTCUSDT', '60m', 200)]  # el panel muestra 100; las otras calientan los indicadores
+    assert len(velas) == 200 and velas[0] == dict(open_time=START, open=100.0, high=101.5, low=99.0, close=100.5)
 
 
 def test_cache_de_30_s_por_activo_e_intervalo(raiz):

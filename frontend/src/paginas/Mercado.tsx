@@ -1,22 +1,28 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { type Decision, enviar, type Estado, type Orden, type Radar, useDatos } from '../api';
+import { type Decision, enviar, type Estado, type EstadoReal, type Orden, type Radar, useDatos } from '../api';
 import { type Marca, Lineas } from '../graficos/Lineas';
 import { Velas, type VelaOHLC } from '../graficos/Velas';
-import { cuentaAtras, fechaHora, NOMBRE_ACCION, num, pct, pctSigno, precio as fmtPrecio, type PuntoSegundo, sma, sumarSegundo } from '../logica';
+import { atr, bollinger, cuentaAtras, ema, fechaHora, macd, NOMBRE_ACCION, num, pct, pctSigno, precio as fmtPrecio, type PuntoSegundo, rsi, sma, sumarSegundo, unirVelasDelDia, volatilidad } from '../logica';
 import { CifraViva, useCambio } from '../movimiento';
 
 const DIA_MS = 86_400_000;
-// Un control por dimensión: primero el intervalo; solo el diario elige entre velas y línea (la línea suma SMA20 y operaciones).
+// Un control por dimensión: primero el intervalo; solo el diario elige entre velas y línea (la línea suma SMA20 y operaciones) y el rango de fechas.
 const INTERVALOS = [['1s', '1 s'], ['5m', '5 min'], ['60m', '1 h'], ['1d', '1 día']] as const;
 const TIPOS_DIARIOS = [['velas', 'Velas'], ['linea', 'Línea']] as const;
+const RANGOS = [['1m', '1 mes', 30], ['6m', '6 meses', 182], ['1a', '1 año', 365], ['todo', 'Desde que cotiza', Infinity]] as const;
 
-/** Velas de 5 min o de 1 h que el servidor lee de MEXC y repite durante 30 s. */
-function VelasIntradia({ simbolo, intervalo }: { simbolo: string; intervalo: '5m' | '60m' }) {
+/** Velas de 5 min o de 1 h que el servidor lee de MEXC y repite durante 30 s, con los mismos indicadores que las diarias.
+ *  La vela en curso cierra al precio en vivo de cada segundo; se muestran las últimas 100 y los indicadores usan las 200. */
+function VelasIntradia({ simbolo, intervalo, vivo, ahora }: { simbolo: string; intervalo: '5m' | '60m'; vivo: number | null; ahora: number }) {
   const { datos, error } = useDatos<VelaOHLC[]>(`/api/velas-intradia?simbolo=${simbolo}&intervalo=${intervalo}`, 30_000);
+  const ms = intervalo === '5m' ? 300_000 : 3_600_000;
+  const actual = Math.floor(ahora / ms) * ms;
+  const enVivo = useMemo(() => datos && unirVelasDelDia(datos, null, vivo, actual), [datos, vivo, actual]);
   return (
     <>
       {error && <p className="aviso-error" role="alert">{error}</p>}
-      {datos ? <Velas datos={datos} simbolo={simbolo} intervalo={intervalo} /> : !error && <p className="vacio">Leyendo las velas de MEXC…</p>}
+      {enVivo ? <Velas datos={enVivo} simbolo={simbolo} intervalo={intervalo} ventana={100} indicadores enCurso={enVivo[enVivo.length - 1]?.open_time === actual} />
+        : !error && <p className="vacio">Leyendo las velas de MEXC…</p>}
     </>
   );
 }
@@ -167,10 +173,97 @@ function PanelDecision({ d, estado }: { d: Decision | null; estado: Estado | nul
   );
 }
 
-export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estado | null; recargar: () => void; simbolo: string; alElegir: (s: string) => void }) {
-  const { datos: velas, error: errorVelas } = useDatos<VelaOHLC[]>(`/api/velas?limite=240&simbolo=${simbolo}`, 60_000);
+/** Lecturas de la última vela cerrada con las fórmulas de bot/features.py. Las etiquetadas entran en la decisión del bot; las demás son de lectura. */
+function IndicadoresBot({ velas, vivo, estado }: { velas: VelaOHLC[]; vivo: number | null; estado: Estado | null }) {
+  const v = useMemo(() => {
+    const cierres = velas.map((x) => x.close), i = velas.length - 1;
+    return {
+      cierre: cierres[i], previo: cierres[i - 1], fecha: i < 0 ? '' : new Date(velas[i].open_time).toISOString().slice(0, 10),
+      media: sma(cierres, 20)[i], banda: bollinger(cierres)[i], fuerza: rsi(cierres)[i], impulso: macd(cierres)[i], exp: ema(cierres)[i], rango: atr(velas)[i], vol: volatilidad(cierres)[i],
+    };
+  }, [velas]);
+  if (v.media == null || v.banda == null || v.fuerza == null || v.impulso == null || v.exp == null || v.rango == null || v.vol == null) return null;
+  const modelo = estado?.modelo;
+  const variables = new Set(modelo?.variables ?? []);
+  const delModelo = (nombre: string) => (variables.has(nombre) ? 'Variable del modelo' : '');
+  // El mismo criterio que model.filtro_efectivo: el filtro de la regla de VA o, si no trae, el mínimo de la configuración.
+  const filtro = !modelo?.filtro || modelo.filtro === 'ninguno' ? String(estado?.limites.filtro_minimo ?? '') || modelo?.filtro : modelo.filtro;
+  const veces = Number(estado?.limites.stop_atr ?? 2);
+  const { inf, sup } = v.banda;
+  const atipico = v.cierre > sup ? 'arriba de la banda' : v.cierre < inf ? 'debajo de la banda' : '';
+  const extremo = v.fuerza > 70 ? 'Sobrecompra: arriba de 70' : v.fuerza < 30 ? 'Sobreventa: abajo de 30' : '';
+  const fichas = [
+    { nombre: 'Rendimiento diario', valor: pctSigno(v.cierre / v.previo - 1), detalle: variables.has('ret') ? `El modelo lee los últimos ${modelo?.lookback ?? 20} días` : 'Cambio del último cierre', uso: delModelo('ret') },
+    { nombre: 'SMA 20', valor: fmtPrecio(v.media), detalle: `${vivo == null ? 'Cierre' : 'Precio en vivo'} ${pctSigno((vivo ?? v.cierre) / v.media - 1)}`,
+      uso: [filtro === 'sma20' ? 'Filtro: compra solo arriba' : '', delModelo('dist_sma20')].filter(Boolean).join(' · ') },
+    { nombre: 'ATR 14', valor: fmtPrecio(v.rango), detalle: `${pct(v.rango / v.cierre)} del precio · el stop va a ${veces} ATR de la compra`, uso: 'Riesgo: stop y tamaño' },
+    { nombre: 'Volatilidad 20 días', valor: pct(v.vol), detalle: 'Desviación de 20 rendimientos diarios', uso: delModelo('vol20') },
+    { nombre: 'Bandas de Bollinger', valor: atipico ? 'Atípico' : 'Dentro', detalle: atipico ? `Cerró ${atipico}: ${fmtPrecio(inf)} a ${fmtPrecio(sup)}` : `${fmtPrecio(inf)} a ${fmtPrecio(sup)}`, uso: delModelo('bb_pos'), tono: atipico && 'aviso-alta' },
+    { nombre: 'RSI 14', valor: v.fuerza.toFixed(1), detalle: extremo || 'Neutral, entre 30 y 70', uso: delModelo('rsi14'), tono: extremo && 'aviso-alta' },
+    { nombre: 'MACD 12/26/9', valor: v.impulso.hist >= 0 ? '↑ Alcista' : '↓ Bajista', detalle: `Histograma ${fmtPrecio(v.impulso.hist)}`, uso: delModelo('macd_hist'), tono: v.impulso.hist >= 0 ? 'positivo' : 'negativo' },
+    { nombre: 'EMA 20', valor: fmtPrecio(v.exp), detalle: `Cierre ${pctSigno(v.cierre / v.exp - 1)}`, uso: delModelo('dist_ema20') },
+  ].sort((a, b) => Number(!a.uso) - Number(!b.uso));
+  return (
+    <section className="indicadores-bot" aria-labelledby="titulo-indicadores">
+      <h2 id="titulo-indicadores">Indicadores del activo</h2>
+      <p className="dato-menor">Con la vela cerrada del {v.fecha} y las mismas fórmulas del bot. Los que dicen para qué los usa entran en su decisión; los demás son de lectura.</p>
+      <dl className="lecturas">
+        {fichas.map((f) => (
+          <div key={f.nombre} className={f.uso ? 'en-uso' : undefined}>
+            <dt>{f.nombre}</dt>
+            <dd className={f.tono || undefined}>{f.valor}</dd>
+            <small>{f.detalle}</small>
+            <span className="uso-bot">{f.uso || 'Lectura'}</span>
+          </div>
+        ))}
+      </dl>
+    </section>
+  );
+}
+
+/** Velas diarias desde que el activo cotiza, más la del día en curso de MEXC con su cierre al precio en vivo de cada segundo.
+ *  Va con key por activo: al cambiar de activo empieza vacía y no mezcla velas de uno con el precio de otro. */
+function PrecioDiario({ simbolo, tipo, ventana, vivo, ahora, ordenes, estado }:
+  { simbolo: string; tipo: 'velas' | 'linea'; ventana: number; vivo: number | null; ahora: number; ordenes: Orden[] | null; estado: Estado | null }) {
+  const { datos: cerradas, error } = useDatos<VelaOHLC[]>(`/api/velas?historia=true&limite=1000&simbolo=${simbolo}`, 60_000);
+  const { datos: deMexc } = useDatos<VelaOHLC[]>(`/api/velas-intradia?simbolo=${simbolo}&intervalo=1d`, 30_000);
+  const hoy = Math.floor(ahora / DIA_MS) * DIA_MS;
+  const enVivo = useMemo(() => cerradas && unirVelasDelDia(cerradas, deMexc, vivo, hoy), [cerradas, deMexc, vivo, hoy]);
+  const linea = useMemo(() => {
+    const lista = cerradas ?? [];
+    const desde = Math.max(0, lista.length - ventana);
+    const todos = lista.map((v) => v.close);
+    const vista = lista.slice(desde);
+    const marcas: Marca[] = (ordenes ?? []).filter((o) => o.estado === 'ejecutada' && o.vela != null).flatMap((o) => {
+      const i = vista.findIndex((v) => v.open_time === o.vela);
+      return i < 0 ? [] : [{ i, tipo: o.lado as Marca['tipo'], etiqueta: `${o.lado} a ${fmtPrecio(o.precio)}` }];
+    });
+    return { etiquetas: vista.map((v) => new Date(v.open_time).toISOString().slice(0, 10)), cierres: todos.slice(desde), media: sma(todos, 20).slice(desde), marcas };
+  }, [cerradas, ordenes, ventana]);
+
+  return (
+    <>
+      {error && <p className="aviso-error" role="alert">No se pudieron leer las velas diarias: {error}</p>}
+      {!enVivo ? !error && <p className="vacio">Leyendo las velas diarias…</p>
+        : tipo === 'velas' ? <Velas datos={enVivo} simbolo={simbolo} ventana={ventana} indicadores enCurso={enVivo[enVivo.length - 1]?.open_time === hoy} />
+        : <Lineas
+          identidad={simbolo}
+          titulo={`Precio de cierre de ${simbolo} y su promedio de 20 días`}
+          etiquetas={linea.etiquetas}
+          series={[{ nombre: 'Cierre', color: '#3D8BEB', valores: linea.cierres }, { nombre: 'SMA20', color: '#C08226', valores: linea.media, punteada: true }]}
+          marcas={linea.marcas}
+          formato={fmtPrecio}
+        />}
+      {cerradas && <IndicadoresBot velas={cerradas} vivo={vivo} estado={estado} />}
+    </>
+  );
+}
+
+export function Mercado({ estado, recargar, simbolo, alElegir, modoReal }:
+  { estado: Estado | null; recargar: () => void; simbolo: string; alElegir: (s: string) => void; modoReal?: EstadoReal['modo'] }) {
   const [intervalo, setIntervalo] = useState<(typeof INTERVALOS)[number][0]>('1d');
   const [tipoDiario, setTipoDiario] = useState<(typeof TIPOS_DIARIOS)[number][0]>('velas');
+  const [rango, setRango] = useState<(typeof RANGOS)[number][0]>('6m');
   const vistaPrecio = intervalo === '1d' ? tipoDiario : intervalo;
   const { datos: ordenes } = useDatos<Orden[]>(`/api/ordenes?simbolo=${simbolo}`, 30_000);
   const { datos: decisiones } = useDatos<Decision[]>(`/api/decisiones?simbolo=${simbolo}`, 30_000);
@@ -184,22 +277,13 @@ export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estad
     if (radar && t) setSegundos((s) => Object.fromEntries(radar.filas.map((f) => [f.simbolo, sumarSegundo(s[f.simbolo] ?? [], t, f.bid, f.ask)])));
   }, [radar]);
   const serie = segundos[simbolo] ?? [];
+  const fila = radar?.filas.find((f) => f.simbolo === simbolo);
+  const vivo = fila?.bid && fila.ask ? (fila.bid + fila.ask) / 2 : null;
 
   useEffect(() => {
     const t = setInterval(() => setAhora(Date.now()), 1000);
     return () => clearInterval(t);
   }, []);
-
-  const { etiquetas, cierres, media, marcas } = useMemo(() => {
-    const lista = velas ?? [];
-    const cierres = lista.map((v) => v.close);
-    const etiquetas = lista.map((v) => new Date(v.open_time).toISOString().slice(0, 10));
-    const marcas: Marca[] = (ordenes ?? []).filter((o) => o.estado === 'ejecutada' && o.vela != null).flatMap((o) => {
-      const i = lista.findIndex((v) => v.open_time === o.vela);
-      return i < 0 ? [] : [{ i, tipo: o.lado as Marca['tipo'], etiqueta: `${o.lado} a ${fmtPrecio(o.precio)}` }];
-    });
-    return { etiquetas, cierres, media: sma(cierres, 20), marcas };
-  }, [velas, ordenes]);
 
   const pronosticos = useMemo(() => {
     const lista = decisiones ?? [];
@@ -222,7 +306,11 @@ export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estad
         </label>
         <div className="modo-paper">
           <h2>Modo de operación</h2>
-          <p className="modo-valor">Paper</p>
+          <p className="modo-valor">
+            Paper
+            {modoReal === 'real' && <> + <span className="positivo" title="La cartera Real repite en tu cuenta Spot de MEXC lo que Paper ejecuta">Real</span></>}
+            {modoReal === 'sombra' && <> + <span className="aviso-alta" title="MEXC valida cada orden sin ejecutarla">Real en sombra</span></>}
+          </p>
         </div>
         <Controles estado={estado} recargar={recargar} />
       </section>
@@ -247,21 +335,24 @@ export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estad
             <div role="group" aria-label="Intervalo del precio">
               {INTERVALOS.map(([v, nombre]) => <button key={v} aria-pressed={intervalo === v} onClick={() => setIntervalo(v)}>{nombre}</button>)}
             </div>
-            {intervalo === '1d' && (
+            {intervalo === '1d' && <>
               <div role="group" aria-label="Tipo de gráfica diaria">
                 {TIPOS_DIARIOS.map(([v, nombre]) => <button key={v} aria-pressed={tipoDiario === v} onClick={() => setTipoDiario(v)}>{nombre}</button>)}
               </div>
-            )}
+              <div role="group" aria-label="Rango de fechas">
+                {RANGOS.map(([v, nombre]) => <button key={v} aria-pressed={rango === v} onClick={() => setRango(v)}>{nombre}</button>)}
+              </div>
+            </>}
           </div>
-          {(vistaPrecio === 'velas' || vistaPrecio === 'linea') && errorVelas && <p className="aviso-error" role="alert">No se pudieron leer las velas diarias: {errorVelas}</p>}
-          {vistaPrecio === 'velas' && (velas ? <Velas datos={velas} simbolo={simbolo} /> : !errorVelas && <p className="vacio">Leyendo las velas diarias…</p>)}
-          {vistaPrecio === 'linea' && <Lineas
-            identidad={simbolo}
-            titulo={`Precio de cierre de ${simbolo} y su promedio de 20 días`}
-            etiquetas={etiquetas}
-            series={[{ nombre: 'Cierre', color: '#3D8BEB', valores: cierres }, { nombre: 'SMA20', color: '#C08226', valores: media, punteada: true }]}
-            marcas={marcas}
-            formato={fmtPrecio}
+          {(vistaPrecio === 'velas' || vistaPrecio === 'linea') && <PrecioDiario
+            key={simbolo}
+            simbolo={simbolo}
+            tipo={vistaPrecio}
+            ventana={RANGOS.find(([v]) => v === rango)?.[2] ?? 182}
+            vivo={vivo}
+            ahora={ahora}
+            ordenes={ordenes}
+            estado={estado}
           />}
           {vistaPrecio === '1s' && <Lineas
             quieta
@@ -271,7 +362,7 @@ export function Mercado({ estado, recargar, simbolo, alElegir }: { estado: Estad
             series={[{ nombre: 'Compra (bid)', color: '#3D8BEB', valores: serie.map((p) => p.bid) }, { nombre: 'Venta (ask)', color: '#C08226', valores: serie.map((p) => p.ask), punteada: true }]}
             formato={fmtPrecio}
           />}
-          {(vistaPrecio === '5m' || vistaPrecio === '60m') && <VelasIntradia key={simbolo + vistaPrecio} simbolo={simbolo} intervalo={vistaPrecio} />}
+          {(vistaPrecio === '5m' || vistaPrecio === '60m') && <VelasIntradia key={simbolo + vistaPrecio} simbolo={simbolo} intervalo={vistaPrecio} vivo={vivo} ahora={ahora} />}
           {pronosticos.etiquetas.length > 1 && (
             <Lineas identidad={simbolo} titulo="Pronóstico del modelo para el día siguiente" etiquetas={pronosticos.etiquetas} series={[{ nombre: 'Pronóstico', color: '#3D8BEB', valores: pronosticos.valores }]} formato={(v) => `${(v * 100).toFixed(2)} %`} alto={180} referencia={0} />
           )}

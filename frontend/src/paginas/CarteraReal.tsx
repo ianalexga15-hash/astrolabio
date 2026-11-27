@@ -88,12 +88,15 @@ export function CarteraReal({ radar }: { radar: Radar | null }) {
   return (
     <>
       <div className="titulo-vista">
-        <div><h2>Cartera Real<span className="marca-punto">.</span></h2><p>Tu cuenta Spot de MEXC. Dinero real, los mismos controles de Paper.</p></div>
+        <div><h2>Cartera Real<span className="marca-punto">.</span></h2><p>{real?.solo_paper
+          ? 'Tu cuenta Spot de MEXC en Sombra: cada orden de Paper se arma y MEXC la valida sin ejecutarla. El envío real está bloqueado en esta versión.'
+          : 'Tu cuenta Spot de MEXC. Dinero real, los mismos controles de Paper.'}</p></div>
         <div className="titulo-acciones">
           <span className="cadencia"><span className={`punto-real real-${modo}`} />{real ? `Modo ${nombreModo.toLowerCase()}` : 'Leyendo el modo…'}</span>
           <div className="filtros-radar modos-real" role="group" aria-label="Modo de la cartera Real">
             {MODOS.map(([m, nombre]) => (
-              <button key={m} aria-pressed={modo === m} className={modo === m ? 'seleccionado' : ''} disabled={enviando || !real}
+              <button key={m} aria-pressed={modo === m} className={modo === m ? 'seleccionado' : ''} disabled={enviando || !real || (m === 'real' && real.solo_paper)}
+                title={m === 'real' && real?.solo_paper ? 'Bloqueado en esta versión: la app solo opera en Paper' : undefined}
                 onClick={() => (m === 'real' ? setPidiendo(true) : pedirServidor('/api/real/modo', { modo: m }))}>{nombre}</button>
             ))}
           </div>

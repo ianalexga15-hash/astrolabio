@@ -55,6 +55,89 @@ export function cuentaAtras(ms: number): string {
 }
 
 /** Media móvil simple. Los primeros valores quedan vacíos: nunca se rellenan hacia atrás. */
+/** Bandas de Bollinger como bot/features.py: SMA20 ± 2 desviaciones poblacionales (ddof = 0). Un cierre fuera de las bandas es atípico. */
+export function bollinger(cierres: number[], n = 20, k = 2) {
+  return cierres.map((_, i) => {
+    if (i < n - 1) return null;
+    const v = cierres.slice(i - n + 1, i + 1);
+    const media = v.reduce((a, b) => a + b, 0) / n;
+    const desv = Math.sqrt(v.reduce((a, b) => a + (b - media) ** 2, 0) / n);
+    return { media, sup: media + k * desv, inf: media - k * desv };
+  });
+}
+
+/** RSI de Wilder como bot/features.py: arranca con la media de los primeros 14 cambios y luego pesa 1/14; 50 sin movimiento. */
+export function rsi(cierres: number[], n = 14): (number | null)[] {
+  const salida: (number | null)[] = cierres.map(() => null);
+  let sube = 0, baja = 0;
+  for (let i = 1; i < cierres.length; i++) {
+    const d = cierres[i] - cierres[i - 1];
+    if (i <= n) {
+      sube += Math.max(d, 0) / n;
+      baja += Math.max(-d, 0) / n;
+      if (i < n) continue;
+    } else {
+      sube += (Math.max(d, 0) - sube) / n;
+      baja += (Math.max(-d, 0) - baja) / n;
+    }
+    salida[i] = sube + baja === 0 ? 50 : (100 * sube) / (sube + baja);
+  }
+  return salida;
+}
+
+/** MACD 12/26/9 como bot/features.py (EMA sin ajuste), en precio: el bot además divide el histograma entre el cierre. */
+export function macd(cierres: number[], rapida = 12, lenta = 26, nSenal = 9) {
+  const alfa = (n: number) => 2 / (n + 1);
+  let er = cierres[0], el = cierres[0], senal: number | null = null, conSenal = 0;
+  return cierres.map((c, i) => {
+    if (i) { er += alfa(rapida) * (c - er); el += alfa(lenta) * (c - el); }
+    if (i < lenta - 1) return null;
+    const linea = er - el;
+    senal = senal == null ? linea : senal + alfa(nSenal) * (linea - senal);
+    return ++conSenal < nSenal ? null : { macd: linea, senal, hist: linea - senal };
+  });
+}
+
+/** EMA como bot/features.py (span, sin ajuste); sin valor hasta tener n cierres. */
+export function ema(cierres: number[], n = 20): (number | null)[] {
+  let e = cierres[0];
+  return cierres.map((c, i) => {
+    if (i) e += (2 / (n + 1)) * (c - e);
+    return i < n - 1 ? null : e;
+  });
+}
+
+/** ATR de Wilder como bot/features.py: rango verdadero suavizado con 1/14 desde la primera vela, en precio (el bot lo divide entre el cierre). */
+export function atr(velas: { high: number; low: number; close: number }[], n = 14): (number | null)[] {
+  let a = 0;
+  return velas.map((v, i) => {
+    const previo = i ? velas[i - 1].close : null;
+    const rango = previo == null ? v.high - v.low : Math.max(v.high - v.low, Math.abs(v.high - previo), Math.abs(v.low - previo));
+    a = i ? a + (rango - a) / n : rango;
+    return i < n - 1 ? null : a;
+  });
+}
+
+/** Volatilidad de 20 días como bot/features.py: desviación muestral (ddof = 1) de los rendimientos diarios. */
+export function volatilidad(cierres: number[], n = 20): (number | null)[] {
+  const r = cierres.map((c, i) => (i ? c / cierres[i - 1] - 1 : 0));
+  return r.map((_, i) => {
+    if (i < n) return null;
+    const v = r.slice(i - n + 1, i + 1);
+    const m = v.reduce((x, y) => x + y, 0) / n;
+    return Math.sqrt(v.reduce((x, y) => x + (y - m) ** 2, 0) / (n - 1));
+  });
+}
+
+/** Velas cerradas más las más nuevas de MEXC (la del día en curso incluida); la de hoy cierra al precio en vivo, que también estira su máximo o su mínimo. */
+export function unirVelasDelDia<V extends { open_time: number; high: number; low: number; close: number }>(cerradas: V[], deMexc: V[] | null, vivo: number | null, hoy: number): V[] {
+  const ultima = cerradas.length ? cerradas[cerradas.length - 1].open_time : -Infinity;
+  const serie = [...cerradas, ...(deMexc ?? []).filter((v) => v.open_time > ultima)];
+  const u = serie[serie.length - 1];
+  if (!u || u.open_time !== hoy || vivo == null) return serie;
+  return [...serie.slice(0, -1), { ...u, close: vivo, high: Math.max(u.high, vivo), low: Math.min(u.low, vivo) }];
+}
+
 export function sma(valores: number[], ventana: number): (number | null)[] {
   let suma = 0;
   return valores.map((v, i) => {

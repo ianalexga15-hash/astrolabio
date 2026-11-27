@@ -229,7 +229,7 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
         {cartera === 'real' && <CarteraReal radar={radar ?? null} />}
         {cartera === 'paper' && <>
         {pagina === 'radar' && <Radar estado={estado} recargar={recargar} alElegir={(s) => { setSimbolo(s); setPagina('mercado'); }} />}
-        {pagina === 'mercado' && <Mercado estado={estado} recargar={recargar} simbolo={simbolo} alElegir={setSimbolo} />}
+        {pagina === 'mercado' && <Mercado estado={estado} recargar={recargar} simbolo={simbolo} alElegir={setSimbolo} modoReal={real?.modo} />}
         {pagina === 'resumen' && <Resumen estado={estado} />}
         {pagina === 'operaciones' && <Operaciones estado={estado} />}
         {pagina === 'estrategia' && <Estrategia />}
