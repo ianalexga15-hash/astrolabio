@@ -4,19 +4,49 @@ Agente de IA que opera solo una cartera de 40 activos de MEXC: 32 criptomonedas 
 
 En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo en NumPy, Ollama local y reglas deterministas. Corre en la laptop, así que no opera mientras esté apagada.
 
-## Estado al 2026-11-26
+> **El mercado cayó 15.1 %. Astrolabio, 0.47 %.** Del 4 al 26 de noviembre de 2026, con 50,000 USDT virtuales y precios reales de MEXC, la cartera Paper terminó en 49,765.88 USDT mientras comprar y mantener sus mismos 40 activos perdía 15.1 %. Su peor caída fue de 0.48 %; la de la canasta, de 17.1 %. *Observado en Paper; no promete resultados futuros.*
+
+| En números | |
+| --- | --- |
+| Activos vigilados cada segundo | 40, con 23,388 barridos del radar desde su último arranque |
+| Latencia del reflejo | 2.4 ms de media para revisar los 40 activos |
+| Futuros simulados antes de cada compra | 10,000, con la máquina del tiempo |
+| Propuestas del LLM rechazadas por el motor de riesgo | 62, en vivo |
+| Decisiones y órdenes registradas | 77,649 y 8,588, en vivo y en replays |
+| Modelos entrenados en una GPU Tesla T4 | 2: BTC (682 s) y la cartera (258 s) |
+| Pruebas automáticas | 707: 650 de Python y 57 del panel |
+
+```mermaid
+flowchart LR
+    A["MEXC: velas, libro y comisión"] --> B["Modelo en NumPy: pronóstico"]
+    B --> C["LLM local con Ollama: propone"]
+    C --> D{"Motor de riesgo y máquina del tiempo: deciden"}
+    D -- "aprueba" --> E["Paper: el reflejo ejecuta cada segundo"]
+    E -- "repite con topes" --> F["Real: tu cuenta Spot de MEXC"]
+    D -- "rechaza" --> G["Registro con su porqué"]
+```
+
+**Lo que lo hace único:**
+- **Máquina del tiempo.** Antes de cada compra simula 10,000 futuros de 60 días con la historia reciente del activo; si en promedio pierde, no compra. En el replay de la cartera en VA bajó la caída máxima de 4.68 % a 2.45 % (simulado).
+- **El riesgo decide.** El LLM solo propone. Reglas fijas aprueban o rechazan: 62 rechazos en vivo.
+- **Reflejo de un segundo.** Stops, objetivos y compras armadas se revisan con el libro de órdenes en vivo.
+- **Una prueba final, una vez.** La TE de BTC se abrió una sola vez, y ningún cambio entra sin una regla escrita antes: la cartera entrenada en T4 no se activó porque su resultado fue mixto.
+
+## Estado al 2026-11-27
 
 - **Modelo de BTC:** se entrenó en una GPU Tesla T4 de Colab (682 s, sin errores) y abrió TE una sola vez. BTC opera con ese modelo, `t4-2026-11-12`.
+- **Modelo de la cartera en T4:** el 2026-11-27 el modelo conjunto de los otros 39 activos también se entrenó en una Tesla T4 (258 s, mismos cortes de fecha, TE sin abrir). En el replay de la cartera en VA ganó más (+1.54 % frente a +1.28 %) pero con más caída (2.70 % frente a 1.69 %): resultado mixto, así que sigue activo el modelo de CPU y el de T4 queda como evidencia en `models/t4-cartera-2025-09-17-40` (simulado).
 - **Comparación final en TE** (BTC, 60 días, simulado): regla sin LLM −0.61 %, con LLM −3.13 %, comprar y mantener −3.13 %. Corrió con la configuración de ese momento, antes de la meta de 13 % y del filtro SMA20: la configuración de hoy no tiene validación en TE, solo simulación en VA y evidencia prospectiva en Paper.
 - **Meta por operación:** cada compra pone su venta a +13 % más la comisión del par. Es un precio objetivo, no un 13 % neto asegurado: muchas operaciones cierran antes en el stop.
 - **Cartera:** 32 criptomonedas y 8 tokens de acciones, divisas y oro. DASH, XMR y BDX salieron porque MEXC los retiró; RUNE entró en lugar de XMR y WLD en lugar de BDX, con la misma regla.
-- **Paper en vivo** (observado, vela del 2026-11-25): 763 ciclos en 19 velas diarias; 28 órdenes ejecutadas y 6 compras que vencieron sin precio; 14 operaciones cerradas, 1 con ganancia, con resultado neto de −248.26 USDT; patrimonio de los 40 activos actuales en 49,765.88 USDT (−0.47 %), mientras la canasta de esos activos cayó 16.9 %.
-- **Cartera Real:** lista desde el 2026-11-26. La clave de la cuenta pasó la prueba de MEXC para operar Spot con una orden de prueba que nunca se ejecuta. Arranca apagada: todavía no ha enviado ninguna orden real.
+- **Paper en vivo** (observado, del 4 al 26 de noviembre): 28 órdenes ejecutadas y 6 compras que vencieron sin precio; 14 operaciones cerradas, 1 con ganancia, con resultado neto de −248.26 USDT; patrimonio de los 40 activos actuales en 49,765.88 USDT (−0.47 %), mientras la canasta de esos activos cayó 15.1 %.
+- **Cartera Real:** lista desde el 2026-11-26, con saldo en la cuenta Spot. La clave pasó la prueba de MEXC para operar Spot con una orden de prueba que nunca se ejecuta. El 2026-11-27 se encendió unos minutos para capturar la vista y se apagó; no envió ninguna orden real porque Paper no tenía compras armadas.
 
 ## Versiones y avances
 
 | Versión | Fecha | Avances |
 | --- | --- | --- |
+| 1.1 | 2026-11-27 | Modelo de la cartera entrenado en una GPU Tesla T4 con su propio notebook; queda como evidencia porque su replay en VA fue mixto. Vista Real con el circuito de la orden (Paper → topes → MEXC Spot), las compras que alcanza el saldo y el resultado de la prueba de la clave junto a su botón. `replay.py --modelo-cartera` compara modelos sin tocar el activo. |
 | 1.0 | 2026-11-26 | Cartera Real: repite en la cuenta Spot de MEXC lo que Paper ejecuta, con topes en USDT, modo sombra y confirmación escrita. Selector Paper / Real en la cabecera y vista Real con el mismo tablero que Paper: saldo de MEXC, activos de la cuenta y órdenes reales. |
 | 0.9 | 2026-11-26 | Despertador antes del cierre diario. WLD entra en lugar de BDX. Auditoría de diseño: un control por dimensión en Mercado, fechas ISO, horas en 24 h y errores en español. |
 | 0.8 | 2026-11-21 | Métricas de riesgo (Sharpe, Sortino, VaR y CVaR), RSI y Bollinger alineados con su definición, y modelos de investigación en CPU: redes recurrentes, autoencoders, generativos y Double DQN. |
@@ -36,7 +66,7 @@ Tecnologías y versiones:
 | FastAPI y Uvicorn | 0.162.0 y 0.54.0 |
 | NumPy, pandas y httpx | 2.5.4, 2.3.3 y 0.28.1 |
 | PyTorch, Keras y scikit-learn (investigación) | 2.12.1+cpu, 3.15.1 y 1.9.1 |
-| TensorFlow y Keras en Colab T4 (modelo de BTC) | 2.21.0 y 3.13.2 |
+| TensorFlow y Keras en Colab T4 (modelos de BTC y de la cartera) | 2.21.0 y 3.13.2 |
 | Ollama y modelo local | 0.40.16, `qwen3:4b-instruct` |
 | React, TypeScript y Vite | 19.3.1, 5.9.3 y 7.3.7 |
 | Node | 24.21.0 |
@@ -94,7 +124,7 @@ El servidor registra sus mensajes en `data/servidor.log`. El panel queda en http
 
 ## Cartera Real: tu cuenta Spot de MEXC
 
-La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera. La vista Real usa el mismo tablero que Paper: arriba el saldo de tu cuenta Spot, lo invertido por el bot, el resultado del día, el máximo por orden y el estado de la clave; abajo, los activos de la cuenta y las órdenes reales.
+La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera. La vista Real usa el mismo tablero que Paper: arriba el saldo de tu cuenta Spot, lo invertido por el bot, el resultado del día, el máximo por orden y el estado de la clave. En medio, un circuito muestra el camino de cada orden (Paper ejecuta → topes → MEXC Spot) y cuántas compras alcanza tu saldo; con la cartera encendida, el enlace se ilumina. Abajo, los activos de la cuenta y las órdenes reales.
 
 1. En MEXC, en API Management, crea una clave con **View Account Details**, **View Order Details** y **Trade** de Spot. Nunca Withdraw ni Transfer. Si puedes, lígala a tu IP.
 2. Copia la Access Key y la Secret Key en `.env`, en `MEXC_API_KEY=` y `MEXC_API_SECRET=`. No las pegues en el chat ni en otro archivo.
@@ -224,7 +254,7 @@ BTC usa el modelo de `models/ACTIVO.txt`, entrenado en la T4. Los otros 39 usan 
 .venv\Scripts\python research\entrenar_cartera.py
 ```
 
-Un activo sin modelo aprobado queda fuera de la cartera y el panel lo avisa. El de BTC, `t4-2026-11-12`, se entrenó en la T4 de Colab; el de la cartera es de desarrollo, entrenado en CPU.
+Un activo sin modelo aprobado queda fuera de la cartera y el panel lo avisa. El de BTC, `t4-2026-11-12`, se entrenó en la T4 de Colab. El de la cartera activo es de desarrollo, entrenado en CPU; su versión entrenada en T4, `t4-cartera-2025-09-17-40`, queda como evidencia (ver «La cartera en T4»).
 
 **Indicadores** (`bot/features.py`, los mismos al entrenar y en vivo; cada uno usa solo historia hasta el cierre):
 - Distancias del cierre a su SMA20 y a su EMA20.
@@ -250,6 +280,31 @@ El modelo de BTC usa solo rendimientos. El de la cartera usa rendimientos, dista
 **TE se abre una sola vez.** Si reejecutas y cambia algo, el notebook lo declara contaminado.
 
 `models/dev-cpu-*` se entrenó en CPU para integrar el sistema: es de desarrollo. El modelo final de BTC es `t4-2026-11-12`.
+
+### La cartera en T4
+
+**Hecho el 2026-11-27:** `notebooks/Astrolabio_Modelo_Cartera.ipynb` entrenó el modelo conjunto de la cartera en una Tesla T4 en 258 s. Sigue el protocolo de `research\entrenar_cartera.py`, con el código común en `research/cartera.py`: mismas variables, redes e hiperparámetros, regla elegida con VA simulando la cartera completa y los mismos cortes de fecha que el modelo activo. **No abre TE.**
+
+1. En Colab, *Archivo > Subir notebook* y elige `notebooks/Astrolabio_Modelo_Cartera.ipynb`. Ya pide GPU T4 y se detiene si no la hay.
+2. *Ejecutar todo*. Baja `data/cartera/` y `config/universo.json` de este repositorio, fijados a un commit, así que entrena exactamente con los datos del proyecto.
+3. Descarga `resultados_cartera_t4.zip` y copia su carpeta `t4-cartera-…` a `models/`.
+4. Compara antes de activarlo, con la misma configuración:
+
+```bash
+.venv\Scripts\python research\replay.py --decisor regla --cartera --dias 5000
+.venv\Scripts\python research\replay.py --decisor regla --cartera --dias 5000 --modelo-cartera t4-cartera-2025-09-17-40
+```
+
+Solo se escribe en `models/CARTERA.txt` si sube el rendimiento sin subir la caída máxima, o baja la caída sin bajar el rendimiento. Resultado del 2026-11-27, en VA del 2024-08-02 al 2025-09-16 (simulado):
+
+| Modelo de la cartera | Rendimiento | Caída máxima | Operaciones | Sharpe |
+| --- | --- | --- | --- | --- |
+| Activo, en CPU | +1.28 % | 1.69 % | 509 | 0.55 |
+| T4 | +1.54 % | 2.70 % | 873 | 0.46 |
+
+Rindió más, pero con más caída: es mixto, así que no se activó.
+
+`research\construir_notebook_cartera.py` regenera el notebook. Para probarlo sin GPU, con cuatro activos y dos épocas: `NB_PRUEBA=1` y `NB_DATOS` con la carpeta del proyecto.
 
 Si cambias el entrenamiento, regenera el notebook con `research\construir_notebook.py`: copia los módulos de `bot/` y `research/` para que el notebook y el agente usen el mismo código. `research\probar_notebook.py` lo ejecuta completo con datos sintéticos y sin GPU, sin abrir el TE real. En esta laptop, Control de aplicaciones bloquea un binario de scikit-learn 1.9.1 y la prueba se detiene en el diagnóstico de sesgo y varianza, después de la celda de TE sintético; en Colab no pasa.
 
@@ -371,11 +426,19 @@ Qué se protege, qué hacer si una clave se filtra y cómo avisar de un problema
 | --- | --- |
 | `bot/` | Cartera, reflejo, agente, riesgo, simulador, cartera Real, cliente de MEXC, gateway del LLM y API |
 | `frontend/` | Panel en React y TypeScript |
-| `research/` | Laboratorio, entrenamientos en CPU, replay y generador del notebook |
-| `notebooks/` | Entrenamiento para Colab con T4 |
+| `research/` | Laboratorio, entrenamientos en CPU, replay y generadores de los notebooks |
+| `notebooks/` | Entrenamiento para Colab con T4: el modelo de BTC y el de la cartera |
 | `models/` | Modelos versionados con su contrato de variables |
 | `data/` | Datos originales y procesados con su ficha de auditoría; `data/cartera/` tiene la historia diaria de los activos de la cartera |
 | `docs/` | Documentación técnica: orden en espera, observatorio, estrategias intradía y logos de los activos |
+
+## Análisis final
+
+- **Lo que logró (observado).** En tres semanas de Paper en vivo, con un mercado que cayó 15.1 %, Astrolabio perdió 0.47 % y su peor caída fue de 0.48 %. Cerró 14 operaciones con 1 ganadora: la mayoría salió por stop, que es lo que protege el capital.
+- **Lo que no logró.** Ningún modelo superó con claridad al pronóstico cero, ni en BTC ni en la cartera. La ventaja medible está en el riesgo (stops, máquina del tiempo y topes), no en adivinar el precio.
+- **Disciplina.** La prueba final de BTC se abrió una sola vez. La cartera entrenada en T4 rindió más en VA, pero no se activó porque también cayó más: la regla escrita antes del replay manda. Cada resultado se declara como propuesto, simulado, observado o validado.
+- **Ingeniería.** 707 pruebas automáticas, dos entrenamientos en GPU T4, un radar que barre 40 activos cada segundo con 2.4 ms de latencia y una cartera Real que repite en MEXC lo que Paper ejecuta, con topes y sin rutas de retiro.
+- **Siguiente paso.** Probar la cartera Real en modo Sombra, juntar más velas en vivo antes de subir los topes y correr el bot en un equipo siempre encendido.
 
 ## Límites conocidos
 
@@ -385,7 +448,7 @@ Qué se protege, qué hacer si una clave se filtra y cómo avisar de un problema
 - La meta por operación, desde el 2026-11-13, es 13 % en los pares sin comisión y 13 % más la comisión en los demás. El bot la usa como objetivo de venta de cada operación (XRP a +13 %, la mayoría a +13.05 %, los de 0.08 % a +13.08 %). Es el precio al que se pone la venta, no una ganancia neta asegurada: muchas operaciones cierran antes en el stop, y el resultado neto depende de comisiones y deslizamiento. Tampoco garantiza que la cartera gane 13 %, y los resultados actuales quedan lejos: VA +2.64 % con la meta y +2.87 % con el objetivo anterior en ATR (simulados), TE −0.61 % con la regla sin LLM (simulado, con la configuración anterior a la meta y al filtro SMA20) y Paper en vivo −0.45 % al 19 de noviembre (observado).
 - El cerebro decide una vez al día: 20 días de decisiones en vivo tardan 20 días. Con 40 activos son 800 decisiones.
 - Las reglas de entrada en vivo (spread, no perseguir, cruce de SMA20 durante el día) no se pueden validar con historia por segundo: solo el Paper en vivo dirá cómo se comportan.
-- El modelo de BTC se entrenó y se evaluó en la T4. Los otros 39 activos usan un modelo conjunto de desarrollo, entrenado en CPU.
+- El modelo de BTC se entrenó y se evaluó en la T4. Los otros 39 activos usan un modelo conjunto de desarrollo, entrenado en CPU: su versión de T4 dio un resultado mixto en VA y no se activó.
 - Las acciones, divisas y oro (8 de los 40, desde el 2026-11-13) se operan sin validación propia: el modelo de la cartera solo vio criptomonedas. Ver «Acciones, divisas y oro».
 - Si MEXC limita las consultas, el reflejo las espacia y lo avisa; mientras no haya precio fresco no opera.
 - Windows bloquea binarios recientes en esta laptop, así que `pandas` y `torch` quedan en versiones fijas.

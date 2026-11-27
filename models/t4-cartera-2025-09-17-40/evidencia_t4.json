@@ -1,0 +1,16 @@
+{
+  "python": "3.13.16",
+  "semilla": 11,
+  "inicio": "2026-11-27 05:49:06",
+  "prueba_sin_gpu": false,
+  "gpu": "Tesla T4",
+  "tensorflow": "2.21.0",
+  "dispositivo_operacion": "/job:localhost/replica:0/task:0/device:GPU:0",
+  "valido_para_entrega": true,
+  "keras": "3.13.2",
+  "backend": "tensorflow",
+  "memoria_gpu_pico": 86996992,
+  "fin": "2026-11-27 05:53:24",
+  "segundos_totales": 258,
+  "dispositivo_entrenamiento": "Tesla T4"
+}

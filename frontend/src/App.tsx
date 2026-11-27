@@ -226,7 +226,7 @@ function Tablero({ alSalir }: { alSalir: () => void }) {
       {sinVigilar && <p className="aviso-atencion">{sinVigilar}</p>}
 
       <main key={cartera === 'real' ? 'real' : pagina} className={`contenido vista-${cartera === 'real' ? 'real' : pagina}`} id="contenido" tabIndex={-1}>
-        {cartera === 'real' && <CarteraReal />}
+        {cartera === 'real' && <CarteraReal radar={radar ?? null} />}
         {cartera === 'paper' && <>
         {pagina === 'radar' && <Radar estado={estado} recargar={recargar} alElegir={(s) => { setSimbolo(s); setPagina('mercado'); }} />}
         {pagina === 'mercado' && <Mercado estado={estado} recargar={recargar} simbolo={simbolo} alElegir={setSimbolo} />}

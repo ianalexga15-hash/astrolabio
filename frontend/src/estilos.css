@@ -149,6 +149,22 @@ summary:hover { color: var(--luz); }
 .confirmar-real label { display: grid; gap: 6px; font-size: var(--t-aux); color: var(--ceniza); }
 /* Modos de la cartera Real: los mismos botones de los filtros del radar, en su propia caja */
 .modos-real { padding: 3px; border: 1px solid var(--polvo); border-radius: 9px; background: #121e2e; }
+.prueba-clave { display: flex; flex-wrap: wrap; align-items: center; justify-content: flex-end; gap: 8px 14px; font-size: 12.5px; }
+/* Camino de una orden de Paper a MEXC: el enlace es punteado y quieto con la cartera apagada; con Sombra o Real lo recorre la orden */
+.circuito { display: grid; grid-template-columns: minmax(0, 1fr) 72px minmax(0, 1fr) 72px minmax(0, 1fr); align-items: stretch; }
+.circuito-nodo { display: grid; align-content: start; gap: 6px; padding: 16px 18px; background: var(--nebulosa); border: 1px solid var(--polvo); border-radius: var(--r-panel); }
+.circuito-nodo strong { font: 600 var(--t-cifra)/1.2 var(--cifras); letter-spacing: -.01em; font-variant-numeric: tabular-nums lining-nums; }
+.circuito-nombre { display: flex; align-items: center; gap: 7px; font-size: var(--t-aux); font-weight: 600; color: var(--ceniza); }
+.circuito-barra { display: block; height: 6px; margin: 2px 0; border-radius: 3px; overflow: hidden; background: var(--polvo-suave); }
+.circuito-barra i { display: block; height: 100%; background: var(--positivo); transition: width 300ms var(--salida); }
+.circuito-enlace { position: relative; align-self: center; height: 2px; margin: 0 8px; color: var(--reposo); background: repeating-linear-gradient(90deg, currentColor 0 6px, transparent 6px 12px); }
+.circuito-enlace i { position: absolute; top: -3px; left: 0; width: 8px; height: 8px; border-radius: 50%; background: currentColor; opacity: 0; }
+.circuito.modo-sombra .circuito-enlace { color: var(--ambar); background: currentColor; }
+.circuito.modo-real .circuito-enlace { color: var(--positivo); background: currentColor; }
+.circuito.modo-sombra .circuito-enlace i, .circuito.modo-real .circuito-enlace i { opacity: 1; box-shadow: 0 0 8px currentColor; animation: viaje-orden 1.8s linear infinite; }
+@keyframes viaje-orden { from { left: 0; } to { left: calc(100% - 8px); } }
+.circuito-estado { grid-column: 1 / -1; margin-top: 10px; color: var(--ceniza); font-size: 13.5px; }
+@media (max-width: 900px) { .circuito { grid-template-columns: minmax(0, 1fr); gap: 10px; } .circuito-enlace { display: none; } }
 .punto-paper { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--cian); }
 .mercado-insignia { font-size: 11px; font-weight: 700; letter-spacing: .06em; }
 .mercado-insignia i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--reposo); }
@@ -636,7 +652,7 @@ blockquote { margin: 0 0 10px; padding-left: 12px; border-left: 2px solid var(--
   html { scroll-behavior: auto; }
   button, input, select, textarea, .pestanas-linea, .chip i, .anillo-valor, .barra-celda i, summary::before, .condiciones-boton::before { transition: none; }
   .contenido, .texto-cambia, .chip.halo, .globo-interruptor, .menu-acciones, .asistente, .icono-cambia, .borde-recorre, .pulso-barrido, .fila-nueva, .fila-nueva td:first-child,
-  .aviso-orden, .evento-nuevo, .espera, .cola-traza, .cola-aparece, .pulso-extremo { animation: none; }
+  .aviso-orden, .evento-nuevo, .espera, .cola-traza, .cola-aparece, .pulso-extremo, .circuito-enlace i { animation: none; }
 }
 
 /* Paleta de bolsa: mantiene estructura y semántica operativa. */

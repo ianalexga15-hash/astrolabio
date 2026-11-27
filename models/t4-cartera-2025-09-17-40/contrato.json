@@ -1,0 +1,162 @@
+{
+  "version": "t4-cartera-2025-09-17-40",
+  "tipo": "lstm",
+  "lookback": 20,
+  "variables": [
+    "ret",
+    "dist_sma20",
+    "vol20"
+  ],
+  "umbral": 0.001,
+  "filtro": "ninguno",
+  "escalador": {
+    "media": [
+      0.0027068071588933606,
+      0.013428996409768357,
+      0.052219039624879095
+    ],
+    "desv": [
+      0.06422341421049753,
+      0.16258350974157793,
+      0.04157137542629606
+    ]
+  },
+  "y_media": 0.002565233892833428,
+  "y_desv": 0.06263706188273178,
+  "miembros": [
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ],
+    [
+      {
+        "tipo": "lstm"
+      },
+      {
+        "tipo": "dense",
+        "activacion": "linear"
+      }
+    ]
+  ],
+  "valido_para_entrega": true,
+  "dispositivo": "Tesla T4",
+  "motivo": "Modelo conjunto entrenado en T4 con el protocolo de la cartera; TE sin abrir.",
+  "huella_datos": "f7d7dbb09e6252d790d465601f574836321ee035789a38adf5d7a4ff5ddbedaa",
+  "commit_datos": "96f7faaf8692c979e3621983405da2d592a962f0",
+  "nombre": "LSTM ensamble de 3 semillas, 16 neuronas",
+  "conjunto_variables": "rezagos_indicadores",
+  "seleccion": {
+    "periodo_va": [
+      "2024-08-02",
+      "2025-09-16"
+    ],
+    "modelo": "LSTM ensamble de 3 semillas, 16 neuronas",
+    "variables": "rezagos_indicadores",
+    "regla": {
+      "umbral": 0.001,
+      "filtro": "ninguno",
+      "rendimiento": 0.3544103515392487,
+      "drawdown": 0.4061398538333515,
+      "operaciones": 1050,
+      "win_rate": 0.4476130846466175,
+      "costos": 3026.525297798024
+    },
+    "metricas_va": {
+      "MAE": 0.0355422535594799,
+      "RMSE": 0.051838989278206356,
+      "direccional": 0.49582433405327575,
+      "R2": -0.001046323935669058,
+      "correlacion": 0.031016449455151633,
+      "sesgo_modelo": 2.6188375713544367,
+      "n": 13947
+    },
+    "comprar_y_mantener_va": {
+      "rendimiento": 0.5232870953197868,
+      "drawdown": 0.5479895004093609
+    },
+    "rmse_cero_va": 0.05184820565777425,
+    "activos": 40,
+    "particion": [
+      {
+        "conjunto": "TR",
+        "ejemplos": 39285,
+        "primera_emision": "2018-08-21",
+        "ultima_emision": "2024-08-01",
+        "primer_objetivo": "2018-08-22",
+        "ultimo_objetivo": "2024-08-02"
+      },
+      {
+        "conjunto": "VA",
+        "ejemplos": 13947,
+        "primera_emision": "2024-08-02",
+        "ultima_emision": "2025-09-16",
+        "primer_objetivo": "2024-08-03",
+        "ultimo_objetivo": "2025-09-17"
+      },
+      {
+        "conjunto": "TE",
+        "ejemplos": 16527,
+        "primera_emision": "2025-09-17",
+        "ultima_emision": "2026-11-24",
+        "primer_objetivo": "2025-09-18",
+        "ultimo_objetivo": "2026-11-25"
+      }
+    ]
+  },
+  "activos": [
+    "BTCUSDT",
+    "ETHUSDT",
+    "SOLUSDT",
+    "XRPUSDT",
+    "ENAUSDT",
+    "BNBUSDT",
+    "DOGEUSDT",
+    "INJUSDT",
+    "TRXUSDT",
+    "ZECUSDT",
+    "ADAUSDT",
+    "BCHUSDT",
+    "LTCUSDT",
+    "NEARUSDT",
+    "MXUSDT",
+    "RUNEUSDT",
+    "FILUSDT",
+    "ETHFIUSDT",
+    "PEPEUSDT",
+    "DOTUSDT",
+    "CAKEUSDT",
+    "TAOUSDT",
+    "WLDUSDT",
+    "ATOMUSDT",
+    "SUIUSDT",
+    "ZANOUSDT",
+    "PENDLEUSDT",
+    "SHIBUSDT",
+    "STRKUSDT",
+    "TIAUSDT",
+    "FETUSDT",
+    "UNIUSDT",
+    "GOLD(XAUT)USDT",
+    "EURUSDT",
+    "BRLUSDT",
+    "SPYONUSDT",
+    "QQQONUSDT",
+    "AAPLXUSDT",
+    "METAXUSDT",
+    "MSFTONUSDT"
+  ]
+}

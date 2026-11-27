@@ -104,6 +104,7 @@ def main():
     a.add_argument('--proteger', type=float, help='ATR de ganancia con los que el stop sube a la entrada más costos; 0 lo apaga')
     a.add_argument('--pausa', type=float, help='Días sin comprar un activo tras un stop que cerró perdiendo; 0 la apaga')
     a.add_argument('--filtro-minimo', help="Filtro técnico si la regla de VA no trae ninguno: sma20, o '' para apagarlo; por defecto, la configuración")
+    a.add_argument('--modelo-cartera', help='Carpeta en models/ del modelo de cartera a probar; por defecto, el de CARTERA.txt. No cambia el modelo activo')
     a.add_argument('--prioridad', choices=['lista', 'repaso'], default='lista',
                    help='Orden de cada día en la cartera: lista, el del universo; repaso, primero el mejor de la máquina del tiempo')
     args = a.parse_args()
@@ -134,6 +135,7 @@ def main():
         limites = replace(limites, filtro_minimo=args.filtro_minimo).validar()
     leer = lambda nombre: model.cargar(aj.raiz / 'models' / (aj.raiz / 'models' / nombre).read_text(encoding='utf-8').strip())
     principal = leer('ACTIVO.txt')
+    modelo_cartera = model.cargar(aj.raiz / 'models' / args.modelo_cartera) if args.modelo_cartera else leer('CARTERA.txt')
     if args.decisor == 'llm':
         proponente = llm.ProponenteLLM(http=httpx.Client(), url=f'http://127.0.0.1:{aj.puerto}/llm/chat', clave=aj.llm_key, modelo=aj.llm_modelo)
     else:
@@ -149,10 +151,11 @@ def main():
         + (f', pausa de {limites.pausa_tras_perdida_dias:g} días tras un stop con pérdida' if limites.pausa_tras_perdida_dias else '') \
         + (f', filtro mínimo {limites.filtro_minimo.upper()}' if limites.filtro_minimo else '') \
         + (f', objetivo a +{limites.objetivo_pct * 100:g} % más la comisión del par' if limites.objetivo_pct
-           else f', objetivo a {limites.objetivo_atr:g} ATR' if args.objetivo is not None else '')
+           else f', objetivo a {limites.objetivo_atr:g} ATR' if args.objetivo is not None else '') \
+        + (f', modelo de cartera {modelo_cartera.version}' if args.modelo_cartera else '')
 
     if args.cartera:
-        conjunto = leer('CARTERA.txt')
+        conjunto = modelo_cartera
         simbolos = cargar_universo(aj.raiz, limites.simbolo)
         cupo = limites.capital_inicial / len(simbolos)
         grupo = f'replay-cartera-{args.conjunto}-{args.decisor}-{sello}'
@@ -175,7 +178,7 @@ def main():
     else:
         run = f'replay-{args.conjunto}-{args.decisor}-{args.simbolo}-{sello}'
         etiqueta = f'Replay {args.conjunto} de {args.simbolo}, {nombre}, {fechas[0]} a {fechas[-1]}'
-        m = principal if args.simbolo == limites.simbolo else leer('CARTERA.txt')
+        m = principal if args.simbolo == limites.simbolo else modelo_cartera
         lim_s = replace(limites, simbolo=args.simbolo)
         store.abrir_run(run, 'replay', etiqueta, dict(modelo=m.version, decisor=args.decisor,
                         limites=asdict(lim_s), conjunto=args.conjunto, desde=fechas[0], hasta=fechas[-1]))

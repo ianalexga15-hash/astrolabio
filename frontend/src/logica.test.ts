@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   centroDeGalaxia, conectadas, cuentaAtras, filtrarNotas, indexar100, type Nota, pctSigno, polvoDeGalaxia, posicionesUniverso, precio, proyectar, rutasDeEsquema, sma, usd, validarNuevaClave, avisoEnergia,
   avisoDetener, conexionActivos, detalleDeError, estadoMexc, horaLocal, idsNuevos, interruptor, metricasOperaciones, puntosNuevos, registrarCambio, resumenHistorial, tonoAltura, valorCuenta,
-  limiteVacio, sumarSegundo, ejeX, avisoDetenido,
+  limiteVacio, sumarSegundo, ejeX, avisoDetenido, comprasPosibles,
 } from './logica';
 
 describe('aviso de bot detenido', () => {
@@ -285,6 +285,17 @@ describe('valorCuenta', () => {
     expect(v.total).toBeCloseTo(240);
     expect(v.filas.map((f) => f.valor)).toEqual([100, 140, null]);
     expect(v.sinPrecio).toEqual(['XYZ']);
+  });
+});
+
+describe('comprasPosibles', () => {
+  it('cuenta las compras de monto completo que caben en el USDT libre y en el cupo que queda del tope', () => {
+    expect(comprasPosibles(40.04, 0, 50, 10)).toBe(4); // manda el saldo
+    expect(comprasPosibles(100, 0, 50, 10)).toBe(5); // manda el tope
+    expect(comprasPosibles(100, 45, 50, 10)).toBe(0); // quedan 5 de cupo: no alcanza para una orden completa
+    expect(comprasPosibles(9.99, 0, 50, 10)).toBe(0);
+    expect(comprasPosibles(30, 0, 50, 10)).toBe(3); // sin perder una por redondeo
+    expect(comprasPosibles(40, 60, 50, 10)).toBe(0); // invertido por encima del tope
   });
 });
 

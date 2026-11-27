@@ -1,7 +1,8 @@
 import { useState } from 'react';
 import { enviar, type EstadoReal, type Radar, useDatos } from '../api';
 import { ActivoCompacto, IdentidadActivo } from '../componentes/IdentidadActivo';
-import { horaLocal, NOMBRE_ACCION, num, precio, usd, valorCuenta } from '../logica';
+import { comprasPosibles, horaLocal, NOMBRE_ACCION, num, precio, usd, valorCuenta } from '../logica';
+import { useCambio } from '../movimiento';
 import type { CuentaMexc } from './Sistema';
 
 const MODOS = [
@@ -14,11 +15,44 @@ const ESTADOS: Record<string, [string, string]> = {
   enviando: ['Sin respuesta', 'e-atencion'], no_enviada: ['No llegó a MEXC', 'o-rechazada'], sin_ejecutar: ['Sin ejecutar', 'o-expirada'],
 };
 
+/** El camino de una orden: Paper la ejecuta, los topes la acotan y MEXC Spot la recibe. El enlace solo se mueve con la cartera encendida. */
+function Circuito({ modo, radar, real, usdt }: { modo: EstadoReal['modo']; radar: Radar | null; real: EstadoReal | null; usdt: number }) {
+  const r = radar?.resumen;
+  const barrido = useCambio(radar?.estadisticas?.ultimo_barrido_ms ?? null);
+  const topes = real?.topes;
+  const expuesto = real?.expuesto ?? 0;
+  const usado = topes ? Math.min(1, expuesto / topes.tope_total_usdt) : 0;
+  const compras = topes ? comprasPosibles(usdt, expuesto, topes.tope_total_usdt, topes.max_orden_usdt) : 0;
+  return (
+    <section className={`circuito modo-${modo}`} aria-label="Camino de una orden de Paper a tu cuenta de MEXC">
+      <div className="circuito-nodo">
+        <span className="circuito-nombre"><span className="punto-paper" />Paper ejecuta</span>
+        <strong>{r ? `${r.posiciones} de ${r.activos}` : 'sin dato'}</strong>
+        <small>posiciones abiertas, {r?.armadas ?? 0} compras armadas</small>
+        <small>{barrido.veces > 0 && <i key={barrido.veces} className="pulso-barrido" aria-hidden="true" />}el radar revisa cada segundo</small>
+      </div>
+      <div className="circuito-enlace" aria-hidden="true"><i /></div>
+      <div className="circuito-nodo">
+        <span className="circuito-nombre">Topes</span>
+        <strong>{usd(expuesto)} de {usd(topes?.tope_total_usdt)}</strong>
+        <span className="circuito-barra" role="meter" aria-label="Parte usada del tope" aria-valuemin={0} aria-valuemax={100} aria-valuenow={Math.round(usado * 100)}><i style={{ width: `${usado * 100}%` }} /></span>
+        <small>hasta {usd(topes?.max_orden_usdt)} por orden; las compras se pausan en −{usd(topes?.perdida_diaria_usdt)} al día</small>
+      </div>
+      <div className="circuito-enlace" aria-hidden="true"><i /></div>
+      <div className="circuito-nodo">
+        <span className="circuito-nombre"><span className={`punto-real real-${modo}`} />MEXC Spot</span>
+        <strong>{usd(usdt)}</strong>
+        <small>en USDT; alcanza para {compras} {compras === 1 ? 'compra' : 'compras'} de {usd(topes?.max_orden_usdt)}</small>
+      </div>
+      <p className="circuito-estado">{MODOS.find(([m]) => m === modo)?.[2]} Encendida, repite solo lo que Paper ejecute desde ese momento; sin USDT en Spot no manda órdenes.</p>
+    </section>
+  );
+}
+
 /** Cartera Real: el mismo tablero que Paper, sobre tu cuenta Spot de MEXC. Repite lo que Paper ejecuta y solo Alex la enciende, escribiendo la confirmación. */
-export function CarteraReal() {
+export function CarteraReal({ radar }: { radar: Radar | null }) {
   const { datos: real, error, recargar } = useDatos<EstadoReal>('/api/real', 5000);
   const { datos: cuenta, error: errorCuenta } = useDatos<CuentaMexc>('/api/cuenta-mexc', 30_000);
-  const { datos: radar } = useDatos<Radar>('/api/radar', 15_000);
   const [pidiendo, setPidiendo] = useState(false);
   const [texto, setTexto] = useState('');
   const [enviando, setEnviando] = useState(false);
@@ -79,7 +113,7 @@ export function CarteraReal() {
           <small>{real?.verificacion ? `probada el ${horaLocal(real.verificacion.fecha)}` : 'solo Spot, sin retiros'}</small>
         </div>
       </dl>
-      <p className="explicacion">{MODOS.find(([m]) => m === modo)?.[2]} Encendida, repite solo lo que Paper ejecute desde ese momento; sin USDT en Spot no manda órdenes.</p>
+      <Circuito modo={modo} radar={radar} real={real} usdt={usdt} />
 
       {pidiendo && (
         <form className="confirmar-real" onSubmit={(e) => { e.preventDefault(); pedirServidor('/api/real/modo', { modo: 'real', confirmacion: texto }); }}>
@@ -102,7 +136,15 @@ export function CarteraReal() {
       <section className="panel-radar">
         <div className="radar-herramientas">
           <h3>Activos en tu cuenta Spot</h3>
-          <button disabled={enviando || !real?.clave_configurada} onClick={() => pedirServidor('/api/real/verificar')}>{enviando ? 'Probando…' : 'Probar la clave'}</button>
+          <div className="prueba-clave">
+            {/* La hora con segundos y la clave por fecha hacen visible cada prueba, aunque el resultado sea el mismo */}
+            {real?.verificacion && (
+              <span key={real.verificacion.fecha} className={`texto-cambia ${real.verificacion.ok ? 'positivo' : 'negativo'}`} role="status">
+                {real.verificacion.ok ? 'Clave lista: MEXC validó una orden de prueba sin ejecutarla' : real.verificacion.mensaje} ({horaLocal(real.verificacion.fecha, true)})
+              </span>
+            )}
+            <button disabled={enviando || !real?.clave_configurada} onClick={() => pedirServidor('/api/real/verificar')}>{enviando ? 'Probando…' : 'Probar la clave'}</button>
+          </div>
         </div>
         {filas.length > 0 ? (
           <div className="tabla-scroll">

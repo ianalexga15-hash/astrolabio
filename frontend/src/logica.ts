@@ -280,6 +280,12 @@ export function valorCuenta(saldos: SaldoMexc[], precios: Record<string, number>
   return { filas, total: filas.reduce((t, f) => t + (f.valor ?? 0), 0), sinPrecio: filas.filter((f) => f.valor == null).map((f) => f.activo) };
 }
 
+/** Compras de monto completo que la cartera Real puede hacer: bot/real.py compra hasta `porOrden`, limitado por el USDT libre y el cupo que queda del tope. */
+export function comprasPosibles(usdt: number, expuesto: number, tope: number, porOrden: number): number {
+  const alcance = Math.min(usdt, tope - expuesto);
+  return porOrden > 0 && alcance > 0 ? Math.floor(alcance / porOrden + 1e-9) : 0;
+}
+
 /** Mensaje de error para la persona: los genéricos del servidor, en inglés, se dicen en español. */
 export function detalleDeError(estado: number, detalle: unknown): string {
   if (estado === 404 && detalle === 'Not Found') return 'Esta parte del panel todavía no está activa en el servidor.';
