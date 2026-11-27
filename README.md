@@ -32,6 +32,23 @@ flowchart LR
 - **Reflejo de un segundo.** Stops, objetivos y compras armadas se revisan con el libro de órdenes en vivo.
 - **Una prueba final, una vez.** La TE de BTC se abrió una sola vez, y ningún cambio entra sin una regla escrita antes: la cartera entrenada en T4 no se activó porque su resultado fue mixto.
 
+## Contenido
+
+- [Estado al 2026-11-27](#estado-al-2026-11-27)
+- [Versiones y avances](#versiones-y-avances), con las [tecnologías y sus versiones](#tecnologías-y-versiones)
+- [Instalación y uso](#instalación-y-uso)
+- [Cartera Real: tu cuenta Spot de MEXC](#cartera-real-tu-cuenta-spot-de-mexc)
+- [Cómo decide](#cómo-decide)
+- [Activos y modelos](#activos-y-modelos)
+- [Entrenamiento en GPU (Colab T4)](#entrenamiento-en-gpu-colab-t4), con [la cartera en T4](#la-cartera-en-t4)
+- [Modelos de investigación (CPU)](#modelos-de-investigación-cpu)
+- [Comparación con y sin LLM](#comparación-con-y-sin-llm)
+- [Pruebas](#pruebas)
+- [Seguridad](#seguridad)
+- [Estructura](#estructura)
+- [Análisis final](#análisis-final)
+- [Límites conocidos](#límites-conocidos)
+
 ## Estado al 2026-11-27
 
 - **Modelo de BTC:** se entrenó en una GPU Tesla T4 de Colab (682 s, sin errores) y abrió TE una sola vez. BTC opera con ese modelo, `t4-2026-11-12`.
@@ -58,7 +75,7 @@ flowchart LR
 | 0.2 | 2026-11-05 | Cartera de 40 activos con cupos iguales, reflejo cada segundo, observatorio de calidad, contraseña del panel y arranque automático. |
 | 0.1 | 2026-11-04 | Agente Paper de BTCUSDT: ingesta pública de MEXC con auditoría, modelo en NumPy igual a Keras, motor de riesgo determinista, Ollama local con gateway privado y panel en React. |
 
-Tecnologías y versiones:
+### Tecnologías y versiones
 
 | Pieza | Versión |
 | --- | --- |
@@ -72,7 +89,7 @@ Tecnologías y versiones:
 | Node | 24.21.0 |
 | Pruebas | pytest 9.2.0 y Vitest 4.1.12 |
 
-## Abrir
+## Instalación y uso
 
 Doble clic en **Astrolabio**, el acceso del escritorio. Arranca el servidor en segundo plano y abre el panel en su propia ventana. Cerrar la ventana no apaga el bot, para que siga vigilando: se apaga en la pestaña Sistema, con **Apagar Astrolabio**.
 
