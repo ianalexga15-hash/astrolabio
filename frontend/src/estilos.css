@@ -147,6 +147,8 @@ summary:hover { color: var(--luz); }
 .pestanas.en-real .pestanas-linea { opacity: 0; }
 .confirmar-real { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 10px; margin-top: 10px; }
 .confirmar-real label { display: grid; gap: 6px; font-size: var(--t-aux); color: var(--ceniza); }
+/* Modos de la cartera Real: los mismos botones de los filtros del radar, en su propia caja */
+.modos-real { padding: 3px; border: 1px solid var(--polvo); border-radius: 9px; background: #121e2e; }
 .punto-paper { display: inline-block; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--cian); }
 .mercado-insignia { font-size: 11px; font-weight: 700; letter-spacing: .06em; }
 .mercado-insignia i { flex: none; width: 7px; height: 7px; border-radius: 50%; background: var(--reposo); }
@@ -270,7 +272,8 @@ tbody tr:hover, tbody tr:focus-within { background: rgba(139, 196, 255, .05); }
 .tabla-corridas :is(th, td):nth-child(n + 3),
 .tabla-historial :is(th, td):is(:nth-child(3), :nth-child(6), :nth-child(8), :nth-child(9)),
 .tabla-decisiones :is(th, td):is(:nth-child(6), :nth-child(7), :nth-child(8)),
-.tabla-ordenes :is(th, td):is(:nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)) { text-align: right; }
+.tabla-ordenes :is(th, td):is(:nth-child(4), :nth-child(5), :nth-child(6), :nth-child(7)),
+.tabla-ordenes-reales :is(th, td):is(:nth-child(6), :nth-child(7)) { text-align: right; }
 .etiqueta-estado { display: inline-flex; align-items: center; gap: 6px; font-size: 12.5px; white-space: nowrap; }
 .etiqueta-estado::before { content: ''; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--reposo); }
 .e-activo::before { background: #7cc4ff; }

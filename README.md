@@ -17,7 +17,7 @@ En ejecución no usa Claude ni Codex ni ningún servicio de pago: solo el modelo
 
 | Versión | Fecha | Avances |
 | --- | --- | --- |
-| 1.0 | 2026-11-26 | Cartera Real: repite en la cuenta Spot de MEXC lo que Paper ejecuta, con topes en USDT, modo sombra y confirmación escrita. Selector Paper / Real en la cabecera. |
+| 1.0 | 2026-11-26 | Cartera Real: repite en la cuenta Spot de MEXC lo que Paper ejecuta, con topes en USDT, modo sombra y confirmación escrita. Selector Paper / Real en la cabecera y vista Real con el mismo tablero que Paper: saldo de MEXC, activos de la cuenta y órdenes reales. |
 | 0.9 | 2026-11-26 | Despertador antes del cierre diario. WLD entra en lugar de BDX. Auditoría de diseño: un control por dimensión en Mercado, fechas ISO, horas en 24 h y errores en español. |
 | 0.8 | 2026-11-21 | Métricas de riesgo (Sharpe, Sortino, VaR y CVaR), RSI y Bollinger alineados con su definición, y modelos de investigación en CPU: redes recurrentes, autoencoders, generativos y Double DQN. |
 | 0.7 | 2026-11-19 | RUNE entra en lugar de XMR. Repositorio público con historial limpio y escaneo de secretos antes de cada `git push`. |
@@ -94,7 +94,7 @@ El servidor registra sus mensajes en `data/servidor.log`. El panel queda en http
 
 ## Cartera Real: tu cuenta Spot de MEXC
 
-La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera.
+La cartera Real repite con dinero real las compras y ventas que Paper ejecuta. Cuando Paper vende por stop, objetivo o stop móvil, la Real vende lo que compró. Se maneja en el panel, con el selector **PAPER / REAL** de la cabecera. La vista Real usa el mismo tablero que Paper: arriba el saldo de tu cuenta Spot, lo invertido por el bot, el resultado del día, el máximo por orden y el estado de la clave; abajo, los activos de la cuenta y las órdenes reales.
 
 1. En MEXC, en API Management, crea una clave con **View Account Details**, **View Order Details** y **Trade** de Spot. Nunca Withdraw ni Transfer. Si puedes, lígala a tu IP.
 2. Copia la Access Key y la Secret Key en `.env`, en `MEXC_API_KEY=` y `MEXC_API_SECRET=`. No las pegues en el chat ni en otro archivo.
